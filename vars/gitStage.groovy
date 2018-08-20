@@ -6,12 +6,10 @@ def call(String stageName = 'Git', Closure body) {
     body.delegate = config
     body()
 
-    def gitURL = config.url
-    def gitBranch = config.branch
     def changelog = config.get('changelog', false)
     def poll = config.get('poll', false)
 
     stage(stageName) {
-        git branch: "${gitBranch}", changelog: changelog, poll: poll, url: "${gitURL}"
+        git branch: config.branch, changelog: changelog, poll: poll, url: config.url
     }
 }
