@@ -3,6 +3,6 @@
 def call(String stageName = 'Record JaCoCo coverage') {
 
     stage(stageName) {
-        jacoco()
+        step([$class: 'JacocoPublisher'])
     }
 }
