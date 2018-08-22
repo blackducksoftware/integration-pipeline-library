@@ -11,8 +11,7 @@ def call(String stageName = 'GitHub auto release', Closure body) {
     def options = config.options
 
     stage(stageName) {
-        sh "#!/bin/bash \n" + "wget -N \"${shellURL}\" \n"
-        +"chmod 777 github_auto_release.sh \n" + "./github_auto_release.sh ${options} -m \"${commitMessage}\""
+        sh "#!/bin/bash \n" + "wget -N \"${shellURL}\" \n" + "chmod 777 github_auto_release.sh \n" + "./github_auto_release.sh ${options} -m \"${commitMessage}\""
 
     }
 }
