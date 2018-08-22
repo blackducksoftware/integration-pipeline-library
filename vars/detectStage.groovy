@@ -9,7 +9,12 @@ def call(String stageName = 'Run Detect', Closure body) {
     def detectURL = config.get('detectURL', "${HUB_DETECT_URL}")
     def detectCommands = config.get('detectCommand', '')
 
+    List<String> commandLines = new ArrayList<>()
+    commandLines.add("#!/bin/bash")
+    commandLines.add("bash <(curl -s ${detectURL}) ${detectCommands}")
+
+
     stage(stageName) {
-        sh "#!/bin/bash \n" + "bash <(curl -s ${detectURL}) ${detectCommands}"
+        sh commandLines.join(" \n")
     }
 }

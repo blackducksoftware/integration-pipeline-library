@@ -10,7 +10,6 @@ def call(String stageName = 'Maven Build', Closure body) {
     def mavenBuildCommand = config.get('buildCommand', '-U clean package deploy')
 
     def mvnHome = tool "${mavenToolName}"
-
     stage(stageName) {
         sh "${mvnHome}/bin/mvn ${mavenBuildCommand}"
     }
