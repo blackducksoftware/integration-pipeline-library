@@ -10,7 +10,7 @@ def call(String stageName = 'GitHub auto release', Closure body) {
     def commitMessage = config.get('commitMessage', "${COMMIT_MESSAGE}")
     def options = config.options
 
-    List<String> commandLines = new ArrayList<>()
+    def commandLines = []
     commandLines.add("#!/bin/bash")
     commandLines.add("wget -N \"${shellURL}\"")
     commandLines.add("chmod 777 github_auto_release.sh")
