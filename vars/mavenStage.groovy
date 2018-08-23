@@ -25,7 +25,8 @@ def call(String stageName = 'Maven Build', Closure body) {
         if (isUnix()) {
             sh "${mavenExe} ${mavenBuildCommand}"
         } else {
-            "${mavenExe} ${mavenBuildCommand}".execute().waitFor()
+
+            "cmd.exe /C \"${mavenExe} ${mavenBuildCommand}\"".execute().waitFor()
         }
     }
 }
