@@ -5,7 +5,8 @@ def call(String stageName = 'Setup', Closure body) {
         if (isUnix()) {
             sh 'rm -rf *'
         } else {
-            File currentDirectory = new File(".")
+            def currentDirectoryPath = pwd()
+            File currentDirectory = new File(currentDirectoryPath)
             def files = currentDirectory.listFiles()
             def delete = ''
             files.each {
