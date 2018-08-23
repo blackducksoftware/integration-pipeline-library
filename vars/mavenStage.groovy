@@ -15,7 +15,7 @@ def call(String stageName = 'Maven Build', Closure body) {
             sh "${mvnHome}/bin/mvn ${mavenBuildCommand}"
         } else {
             bat "echo ${mvnHome}"
-            bat "${mvnHome}\\bin\\mvn.bat ${mavenBuildCommand}"
+            //  bat "${mvnHome}\\bin\\mvn.bat ${mavenBuildCommand}"
         }
     }
 }
