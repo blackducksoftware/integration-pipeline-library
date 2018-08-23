@@ -14,8 +14,17 @@ def call(String stageName = 'Maven Build', Closure body) {
         if (isUnix()) {
             sh "${mvnHome}/bin/mvn ${mavenBuildCommand}"
         } else {
-            "echo ${mvnHome}".execute().waitFor()
-            "${mvnHome}\\bin\\mvn.bat ${mavenBuildCommand}".execute().waitFor()
+            dir "${mvnHome}"
+            def currentDirectoryPath = pwd()
+            File directory = new File(currentDirectoryPath)
+            directory = new File(directory, 'bin')
+            def files = directory.listFiles()
+            if (null != files && !files.isEmpty()) {
+                files.each {
+                    println it.getAbsolutePath()
+                }
+            }
+            //            "${mvnHome}\\bin\\mvn.bat ${mavenBuildCommand}".execute().waitFor()
         }
     }
 }
