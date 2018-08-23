@@ -6,27 +6,29 @@ def call(String stageName = 'Maven Build', Closure body) {
     body.delegate = config
     body()
 
+    def mavenExe = config.exe
     def mavenToolName = config.get('toolName', 'maven-3')
     def mavenBuildCommand = config.get('buildCommand', '-U clean package deploy')
+
+    if (null == mavenExe || mavenExe.trim().length() == 0) {
+        File mavenHome = new File("${mvnHome}")
+        File mavenBin = new File(mavenHome, 'bin')
+        File[] mvnFiles = mavenBin.listFiles(new FilenameFilter() {
+            @Override
+            boolean accept(final File dir, final String name) {
+                return name.contains('mvn')
+            }
+        })
+        File mavenFile = mvnFiles[0]
+        mavenExe = mavenFile.getAbsolutePath()
+    }
 
     def mvnHome = tool "${mavenToolName}"
     stage(stageName) {
         if (isUnix()) {
-            sh "${mvnHome}/bin/mvn ${mavenBuildCommand}"
+            sh "${mavenExe} ${mavenBuildCommand}"
         } else {
-            println "${mvnHome}"
-            println "${mavenToolName}"
-            File directory = new File("${mvnHome}")
-            directory = new File(directory, 'bin')
-            println directory.getAbsolutePath()
-            def files = directory.listFiles()
-            println files.size()
-            if (null != files && !files.isEmpty()) {
-                files.each {
-                    println it.getAbsolutePath()
-                }
-            }
-            //            "${mvnHome}\\bin\\mvn.bat ${mavenBuildCommand}".execute().waitFor()
+            "${mavenExe} ${mavenBuildCommand}".execute().waitFor()
         }
     }
 }
