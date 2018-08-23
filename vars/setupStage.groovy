@@ -8,7 +8,7 @@ def call(String stageName = 'Setup', Closure body) {
             def currentDirectoryPath = pwd()
             File currentDirectory = new File(currentDirectoryPath)
             def files = currentDirectory.listFiles()
-            if (!files.isEmpty()) {
+            if (null != files && !files.isEmpty()) {
                 def delete = ''
                 files.each {
                     delete = it.getAbsolutePath() + " " + delete
