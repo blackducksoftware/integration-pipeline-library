@@ -6,10 +6,15 @@ def call(String stageName = 'Git', Closure body) {
     body.delegate = config
     body()
 
+    def gitTool = config.get('git', 'Default')
     def changelog = config.get('changelog', false)
     def poll = config.get('poll', false)
+    def relativeTargetDir = config.get('relativeTargetDir', './')
 
     stage(stageName) {
-        git branch: config.branch, changelog: changelog, poll: poll, url: config.url
+        checkout changelog: changelog, poll: poll,
+                scm: [$class    : 'GitSCM', branches: [[name: config.branch]], doGenerateSubmoduleConfigurations: false,
+                      extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: relativeTargetDir]], gitTool: gitTool, submoduleCfg: [], userRemoteConfigs: [[url: config.url]]]
+
     }
 }
