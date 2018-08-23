@@ -5,9 +5,14 @@ def call(String stageName = 'Setup', Closure body) {
         if (isUnix()) {
             sh 'rm -rf *'
         } else {
-            def files = bat 'dir /a'
-            bat "echo ${files}"
-            bat "rmdir /s /q ${files}"
+            File currentDirectory = new File(".")
+            def files = currentDirectory.listFiles()
+            def delete = ''
+            files.each {
+                delete = it.getAbsolutePath() + " " + delete
+            }
+            bat "echo ${delete}"
+            bat "rmdir /s /q ${delete}"
         }
         body()
     }
