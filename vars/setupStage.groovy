@@ -5,7 +5,7 @@ def call(String stageName = 'Setup', Closure body) {
         if (isUnix()) {
             sh 'rm -rf *'
         } else {
-            bat 'rmdir /s *'
+            bat 'rmdir /s /q *'
         }
         body()
     }
