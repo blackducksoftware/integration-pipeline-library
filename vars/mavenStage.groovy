@@ -14,9 +14,7 @@ def call(String stageName = 'Maven Build', Closure body) {
         if (isUnix()) {
             sh "${mvnHome}/bin/mvn ${mavenBuildCommand}"
         } else {
-            dir "${mvnHome}"
-            def currentDirectoryPath = pwd()
-            File directory = new File(currentDirectoryPath)
+            File directory = new File("${mvnHome}")
             directory = new File(directory, 'bin')
             def files = directory.listFiles()
             if (null != files && !files.isEmpty()) {
