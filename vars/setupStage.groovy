@@ -2,7 +2,11 @@
 
 def call(String stageName = 'Setup', Closure body) {
     stage(stageName) {
-        sh 'rm -rf *'
+        if (isUnix()) {
+            sh 'rm -rf *'
+        } else {
+            bat 'rm -rf *'
+        }
         body()
     }
 }
