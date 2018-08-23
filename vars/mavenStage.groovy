@@ -11,6 +11,10 @@ def call(String stageName = 'Maven Build', Closure body) {
 
     def mvnHome = tool "${mavenToolName}"
     stage(stageName) {
-        sh "${mvnHome}/bin/mvn ${mavenBuildCommand}"
+        if (isUnix()) {
+            sh "${mvnHome}/bin/mvn ${mavenBuildCommand}"
+        } else {
+            bat "${mvnHome}\\bin\\mvn.bat ${mavenBuildCommand}"
+        }
     }
 }

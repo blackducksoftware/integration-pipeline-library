@@ -8,12 +8,14 @@ def call(String stageName = 'Setup', Closure body) {
             def currentDirectoryPath = pwd()
             File currentDirectory = new File(currentDirectoryPath)
             def files = currentDirectory.listFiles()
-            def delete = ''
-            files.each {
-                delete = it.getAbsolutePath() + " " + delete
+            if (!files.isEmpty()) {
+                def delete = ''
+                files.each {
+                    delete = it.getAbsolutePath() + " " + delete
+                }
+                bat "echo ${delete}"
+                bat "rmdir /s /q ${delete}"
             }
-            bat "echo ${delete}"
-            bat "rmdir /s /q ${delete}"
         }
         body()
     }
