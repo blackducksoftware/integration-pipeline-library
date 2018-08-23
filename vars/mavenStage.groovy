@@ -15,13 +15,9 @@ def call(String stageName = 'Maven Build', Closure body) {
     if (null == mavenExe || mavenExe.trim().length() == 0) {
         File mavenHome = new File("${mvnHome}")
         File mavenBin = new File(mavenHome, 'bin')
-        File[] mvnFiles = mavenBin.listFiles(new FilenameFilter() {
-            @Override
-            boolean accept(final File dir, final String name) {
-                return name.contains('mvn')
-            }
-        })
-        File mavenFile = mvnFiles[0]
+        File mavenFile = mavenBin.listFiles().find {
+            it.getName().contains('mvn')
+        }
         mavenExe = mavenFile.getAbsolutePath()
     }
 
