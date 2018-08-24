@@ -7,7 +7,8 @@ public String getMavenProjectVersion(String exe){
         if(exe) {
             mavenExe = exe
         }
-        def mavenProcess = "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['".execute().waitFor()
+        def mavenProcess = "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['".execute()
+        mavenProcess.waitFor()
         mavenVersion = mavenProcess.getText()
     } catch (Exception e) {
         println "Failed to run the mvn command to get the Project version ${e.getMessage()}"
@@ -26,8 +27,12 @@ public String getMavenProjectVersionProcess(String exe){
     if(exe) {
         mavenExe = exe
     }
-    println "whoami".execute().waitFor().getText()
-    def mavenProcess = "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['".execute().waitFor()
+    def process "whoami".execute()
+    process.waitFor()
+    println process.getText()
+
+    def mavenProcess = "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['".execute()
+    mavenProcess.waitFor()
     return mavenProcess.getText()
 }
 
