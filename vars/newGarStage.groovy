@@ -64,7 +64,10 @@ def call(String stageName = 'GitHub auto release', Closure body) {
     commandLines.add("./github_auto_release.sh ${options.join(' ')} -m \"${commitMessage}\"")
 
     stage(stageName) {
-        sh commandLines.join(" \n")
-
+        try {
+            sh commandLines.join(" \n")
+        } catch (Exception e) {
+            println "Failed to run the GitHub auto release ${e.getMessage()}"
+        }
     }
 }
