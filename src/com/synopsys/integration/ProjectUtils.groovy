@@ -2,16 +2,16 @@ package com.synopsys.integration;
 
 
 public String getProjectVersion(String tool, String exe){
-    if(tool.equals('maven')){
+    if(tool.equalsIgnoreCase('maven')){
         def version = getMavenProjectVersionProcess(exe)
-        if (!version){
+        if (null == version || version.trim().length() == 0){
             version = getMavenProjectVersionParse()
         }
         println version
         return version
     } else {
         def version = getGradleProjectVersionProcess(exe)
-        if (!version){
+        if (null == version || version.trim().length() == 0){
             version = getGradleProjectVersionParse()
         }
         println version
@@ -20,7 +20,7 @@ public String getProjectVersion(String tool, String exe){
 }
 
 public String getProjectVersion(String tool){
-    if(tool.equals('maven')){
+    if(tool.equalsIgnoreCase('maven')){
         def version = getMavenProjectVersionParse()
         println version
         return version
@@ -35,7 +35,7 @@ public String getMavenProjectVersionProcess(String exe){
     try {
         def mvnHome = tool "maven-3"
         def mavenExe = "${mvnHome}/bin/mvn"
-        if(exe) {
+        if(null != exe && exe.trim().length() > 0) {
             mavenExe = exe
         }
         def version = sh(script: "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['", returnStdout: true)
@@ -56,7 +56,7 @@ public String getMavenProjectVersionParse(){
 public String getGradleProjectVersionProcess(String exe){
    try {
        def gradleExe = './gradlew'
-       if(exe) {
+       if(null != exe && exe.trim().length() > 0) {
             gradleExe = exe
        }
        def version = sh(script: "${gradleExe} properties -q | grep 'version:'", returnStdout: true)
@@ -73,7 +73,7 @@ public String getGradleProjectVersionParse(){
    def fileText = readFile file: "${WORKSPACE}/build.gradle"
    fileText.split('\n').each { line ->
        def trimmedLine = line.trim()
-       if (!versionLine && trimmedLine.startsWith('version')) {
+       if ((null == versionLine || versionLine.trim().length() == 0) && trimmedLine.startsWith('version')) {
            versionLine = trimmedLine;
        }
    }
