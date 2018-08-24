@@ -1,9 +1,13 @@
 package com.synopsys.integration;
 
-public String getMavenProjectVersion(){
+public String getMavenProjectVersion(String exe){
     def mavenVersion = ''
     try {
-        def mavenProcess = "mvn help:evaluate -Dexpression=project.version | grep -v '\\['".execute().waitFor()
+        def mavenExe = 'mvn'
+        if(exe) {
+            mavenExe = exe
+        }
+        def mavenProcess = "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['".execute().waitFor()
         mavenVersion = mavenProcess.getText()
     } catch (Exception e) {
         println "Failed to run the mvn command to get the Project version ${e.getMessage()}"
@@ -17,8 +21,12 @@ public String getMavenProjectVersion(){
     return mavenVersion
 }
 
-public String getMavenProjectVersionProcess(){
-    def mavenProcess = "mvn help:evaluate -Dexpression=project.version | grep -v '\\['".execute().waitFor()
+public String getMavenProjectVersionProcess(String exe){
+    def mavenExe = 'mvn'
+    if(exe) {
+        mavenExe = exe
+    }
+    def mavenProcess = "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['".execute().waitFor()
     return mavenProcess.getText()
 }
 
@@ -28,10 +36,14 @@ public String getMavenProjectVersionParse(){
     return project.version.text()
 }
 
-public String getGradleProjectVersion(){
+public String getGradleProjectVersion(String exe){
     def gradleVersion = ''
     try {
-        def gradleProcess = "./gradlew properties -q | grep 'version:'".execute().waitFor()
+        def gradleExe = './gradlew'
+        if(exe) {
+            gradleExe = exe
+        }
+        def gradleProcess = "${gradleExe} properties -q | grep 'version:'".execute().waitFor()
         gradleVersion = gradleProcess.getText()
         gradleVersion = gradleVersion.substring(gradleVersion.indexOf(':') + 1).trim()
     } catch (Exception e) {
@@ -51,8 +63,12 @@ public String getGradleProjectVersion(){
     return gradleVersion
 }
 
-public String getGradleProjectVersionProcess(){
-   def gradleProcess = "./gradlew properties -q | grep 'version:'".execute().waitFor()
+public String getGradleProjectVersionProcess(String exe){
+   def gradleExe = './gradlew'
+   if(exe) {
+        gradleExe = exe
+   }
+   def gradleProcess = "${gradleExe} properties -q | grep 'version:'".execute().waitFor()
    gradleVersion = gradleProcess.getText()
    return gradleVersion.substring(gradleVersion.indexOf(':') + 1).trim()
 }

@@ -9,13 +9,14 @@ def call(String stageName = 'Setup', Closure body) {
     body()
 
     def tool = config.tool
+    def exe = config.exe
 
     ProjectUtils projectUtils = new ProjectUtils()
     if(tool.equals('maven')){
-        sh "echo ${projectUtils.getMavenProjectVersionProcess()}"
+        sh "echo ${projectUtils.getMavenProjectVersionProcess(exe)}"
         sh "echo ${projectUtils.getMavenProjectVersionParse()}"
     } else {
-        sh "echo ${projectUtils.getGradleProjectVersionProcess()}"
+        sh "echo ${projectUtils.getGradleProjectVersionProcess(exe)}"
         sh "echo ${projectUtils.getGradleProjectVersionParse()}"
     }
 }
