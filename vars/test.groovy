@@ -1,8 +1,5 @@
 #!/usr/bin/groovy
 
-import groovy.xml.*
-import groovy.xml.dom.*
-
 def call(String stageName = 'Setup', Closure body) {
     def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
@@ -33,9 +30,8 @@ public String getMavenProjectVersionProcess(String exe){
 
 public String getMavenProjectVersionParse(){
     def fileText = readFile file: "${WORKSPACE}/pom.xml"
-    def xmlDom = DOMBuilder.newInstance().parseText(fileText)
-    def root = xmlDom.documentElement
-    return root.project.version.text()
+    def project = new XmlSlurper().parseText(fileText)
+    return project.version.text()
 }
 
 
