@@ -41,7 +41,7 @@ public String getGradleProjectVersion(){
         def versionLine = ''
         new File('build.gradle').eachLine { line ->
             def trimmedLine = line.trim()
-            if (trimmedLine.startsWith('version') {
+            if (trimmedLine.startsWith('version')) {
                 versionLine = trimmedLine;
                 break;
             }
@@ -61,7 +61,7 @@ public String getGradleProjectVersionParse(){
    def versionLine = ''
    new File('build.gradle').eachLine { line ->
        def trimmedLine = line.trim()
-       if (trimmedLine.startsWith('version') {
+       if (trimmedLine.startsWith('version')) {
            versionLine = trimmedLine;
            break;
        }
