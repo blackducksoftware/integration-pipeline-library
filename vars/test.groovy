@@ -30,7 +30,9 @@ public String getMavenProjectVersionProcess(String exe){
 
 public String getMavenProjectVersionParse(){
     def workspace = new File("${WORKSPACE}")
-    def fileText =  new File(workspace, "pom.xml").text
+    def pom = new File(workspace, "pom.xml")
+    pom.setReadable()
+    def fileText =  pom.text
     def project = new XmlSlurper().parseText(fileText)
     return project.version.text()
 }
@@ -48,6 +50,8 @@ public String getGradleProjectVersionProcess(String exe){
 public String getGradleProjectVersionParse(){
    def versionLine = ''
    def workspace = new File("${WORKSPACE}")
+   def build = new File(workspace, "build.gradle")
+   build.setReadable()
    new File(workspace, "build.gradle").eachLine { line ->
        def trimmedLine = line.trim()
        if (!versionLine && trimmedLine.startsWith('version')) {
