@@ -9,7 +9,6 @@ def call(String stageName = 'Setup', Closure body) {
     def tool = config.tool
     def exe = config.exe
 
-    ProjectUtils projectUtils = new ProjectUtils()
     if(tool.equals('maven')){
         sh "echo ${getMavenProjectVersionProcess(exe)}"
         sh "echo ${getMavenProjectVersionParse()}"
