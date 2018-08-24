@@ -46,6 +46,7 @@ def call(Closure body) {
                 url = gitUrl
             }
             mavenStage {
+                toolName = mavenToolName
                 buildCommand = mavenCommand
             }
             detectStage {
