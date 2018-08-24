@@ -32,7 +32,7 @@ public String getMavenProjectVersionParse(){
     def fileText = readFile file: "${WORKSPACE}/pom.xml"
     def xmlDom = DOMBuilder.newInstance().parseText(fileText)
     def root = xmlDom.documentElement
-    return root.version.text()
+    return root.project.version.text()
 }
 
 
