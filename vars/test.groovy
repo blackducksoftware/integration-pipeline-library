@@ -24,12 +24,12 @@ public String getMavenProjectVersionProcess(String exe){
     if(exe) {
         mavenExe = exe
     }
-    def version = sh "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['"
+    def version = sh(script: "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['", returnStdout: true)
     return version
 }
 
 public String getMavenProjectVersionParse(){
-    def fileText =  new File('pom.xml').text
+    def fileText =  new File('./pom.xml').text
     def project = new XmlSlurper().parseText(fileText)
     return project.version.text()
 }
@@ -40,13 +40,13 @@ public String getGradleProjectVersionProcess(String exe){
    if(exe) {
         gradleExe = exe
    }
-   def version = sh "${gradleExe} properties -q | grep 'version:'"
+   def version = sh(script: "${gradleExe} properties -q | grep 'version:'", returnStdout: true)
    return version.substring(version.indexOf(':') + 1).trim()
 }
 
 public String getGradleProjectVersionParse(){
    def versionLine = ''
-   new File('build.gradle').eachLine { line ->
+   new File('./build.gradle').eachLine { line ->
        def trimmedLine = line.trim()
        if (!versionLine && trimmedLine.startsWith('version')) {
            versionLine = trimmedLine;
