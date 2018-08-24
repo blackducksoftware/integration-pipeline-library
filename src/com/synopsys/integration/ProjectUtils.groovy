@@ -27,10 +27,6 @@ public String getMavenProjectVersionProcess(String exe){
     if(exe) {
         mavenExe = exe
     }
-    def process = "whoami".execute()
-    process.waitFor()
-    println process.getText()
-
     def mavenProcess = "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['".execute()
     mavenProcess.waitFor()
     return mavenProcess.getText()
