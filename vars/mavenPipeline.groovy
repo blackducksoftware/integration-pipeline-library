@@ -8,12 +8,18 @@ def call(Closure body) {
 
     def emailList = config.emailList
     def gitUrl = config.gitUrl
-    def gradleCommand = config.buildCommand
+
+    def mavenToolName = config.get('toolName', 'maven-3')
+    def mvnHome = tool "${mavenToolName}"
+    def mavenCommand = config.buildCommand
 
     def detectCommand = config.detectCommand
 
     def runGitHubRelease = config.get('runGitHubRelease', true)
     def mavenExe = config.mavenExe
+    if (null == mavenExe || mavenExe.trim().length() == 0) {
+        mavenExe = "${mvnHome}/bin/mvn"
+    }
     def releaseVersion = config.releaseVersion
     def owner = config.owner
     def artifactFile = config.artifactFile
@@ -38,8 +44,8 @@ def call(Closure body) {
             gitStage {
                 url = gitUrl
             }
-            gradleStage {
-                buildCommand = gradleCommand
+            mavenStage {
+                buildCommand = mavenCommand
             }
             detectStage {
                 detectCommand = detectCommand
