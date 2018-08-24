@@ -20,7 +20,8 @@ def call(String stageName = 'Setup', Closure body) {
 
 
 public String getMavenProjectVersionProcess(String exe){
-    def mavenExe = 'mvn'
+    def mvnHome = tool "maven-3"
+    def mavenExe = "${mvnHome}/bin/mvn"
     if(exe) {
         mavenExe = exe
     }
