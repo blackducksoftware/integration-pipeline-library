@@ -6,6 +6,7 @@ def call(String stageName = 'Git', Closure body) {
     body.delegate = config
     body()
 
+    def url = config.url
     def branch = config.get('branch', "${BRANCH}")
     if (null == branch || branch.trim().length() == 0) {
         branch = 'master'
@@ -19,7 +20,7 @@ def call(String stageName = 'Git', Closure body) {
     stage(stageName) {
         checkout changelog: changelog, poll: poll,
                 scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
-                      extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: relativeTargetDir]], gitTool: gitTool, submoduleCfg: [], userRemoteConfigs: [[url: config.url]]]
+                      extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: relativeTargetDir]], gitTool: gitTool, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
 
     }
 }

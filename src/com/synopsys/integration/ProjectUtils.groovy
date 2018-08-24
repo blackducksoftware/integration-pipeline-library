@@ -3,7 +3,7 @@ package com.synopsys.integration;
 public String getMavenProjectVersion(){
     def mavenVersion = ''
     try {
-        def mavenProcess = "mvn help:evaluate -Dexpression=project.version | grep -v '\['".execute().waitFor()
+        def mavenProcess = "mvn help:evaluate -Dexpression=project.version | grep -v '\\['".execute().waitFor()
         mavenVersion = mavenProcess.getText()
     } catch (Exception e) {
         println "Failed to run the mvn command to get the Project version ${e.getMessage()}"

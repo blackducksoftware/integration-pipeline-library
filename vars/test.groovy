@@ -8,8 +8,10 @@ def call(String stageName = 'Setup', Closure body) {
     body.delegate = config
     body()
 
+    def tool = config.tool
+
     ProjectUtils projectUtils = new ProjectUtils()
-    if(config.tool.equals('maven')){
+    if(tool.equals('maven')){
         sh "echo ${projectUtils.getMavenProjectVersionProcess()}"
         sh "echo ${projectUtils.getMavenProjectVersionParse()}"
     } else {
