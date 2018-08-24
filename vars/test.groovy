@@ -29,7 +29,7 @@ public String getMavenProjectVersionProcess(String exe){
 }
 
 public String getMavenProjectVersionParse(){
-    def fileText =  new File('./pom.xml').text
+    def fileText =  new File("${WORKSPACE}/pom.xml").text
     def project = new XmlSlurper().parseText(fileText)
     return project.version.text()
 }
@@ -46,7 +46,7 @@ public String getGradleProjectVersionProcess(String exe){
 
 public String getGradleProjectVersionParse(){
    def versionLine = ''
-   new File('./build.gradle').eachLine { line ->
+   new File("${WORKSPACE}/build.gradle").eachLine { line ->
        def trimmedLine = line.trim()
        if (!versionLine && trimmedLine.startsWith('version')) {
            versionLine = trimmedLine;
