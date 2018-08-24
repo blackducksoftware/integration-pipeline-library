@@ -25,13 +25,8 @@ public String getMavenProjectVersionProcess(String exe){
     if(exe) {
         mavenExe = exe
     }
-    def process = "whoami".execute()
-    process.waitFor()
-    println process.getText()
-
-    def mavenProcess = "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['".execute()
-    mavenProcess.waitFor()
-    return mavenProcess.getText()
+    def version = sh "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['"
+    return version
 }
 
 public String getMavenProjectVersionParse(){
@@ -46,9 +41,8 @@ public String getGradleProjectVersionProcess(String exe){
    if(exe) {
         gradleExe = exe
    }
-   def gradleProcess = "${gradleExe} properties -q | grep 'version:'".execute().waitFor()
-   gradleVersion = gradleProcess.getText()
-   return gradleVersion.substring(gradleVersion.indexOf(':') + 1).trim()
+   def version = sh "${gradleExe} properties -q | grep 'version:'"
+   return version.substring(version.indexOf(':') + 1).trim()
 }
 
 public String getGradleProjectVersionParse(){
