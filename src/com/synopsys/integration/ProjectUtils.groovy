@@ -27,7 +27,7 @@ public String getMavenProjectVersionProcess(String exe){
     if(exe) {
         mavenExe = exe
     }
-    def process "whoami".execute()
+    def process = "whoami".execute()
     process.waitFor()
     println process.getText()
 
