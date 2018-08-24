@@ -30,8 +30,9 @@ public String getMavenProjectVersionProcess(String exe){
 
 public String getMavenProjectVersionParse(){
     def fileText = readFile file: "${WORKSPACE}/pom.xml"
-    def project = new XmlSlurper().parseText(fileText)
-    return project.version.text()
+    def xmlDom = DOMBuilder.newInstance().parseText(fileText)
+    def root = xmlDom.documentElement
+    return root.version.text()
 }
 
 
