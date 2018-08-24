@@ -32,7 +32,7 @@ public String getMavenProjectVersionParse(){
     def workspace = new File("${WORKSPACE}")
     def pom = new File(workspace, "pom.xml")
     pom.setReadable()
-    def fileText =  pom.text
+    def fileText = pom.text
     def project = new XmlSlurper().parseText(fileText)
     return project.version.text()
 }
@@ -52,7 +52,7 @@ public String getGradleProjectVersionParse(){
    def workspace = new File("${WORKSPACE}")
    def build = new File(workspace, "build.gradle")
    build.setReadable()
-   new File(workspace, "build.gradle").eachLine { line ->
+   build.eachLine { line ->
        def trimmedLine = line.trim()
        if (!versionLine && trimmedLine.startsWith('version')) {
            versionLine = trimmedLine;
