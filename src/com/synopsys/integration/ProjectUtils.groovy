@@ -18,7 +18,7 @@ public String getMavenProjectVersion(){
 }
 
 public String getMavenProjectVersionProcess(){
-    def mavenProcess = "mvn help:evaluate -Dexpression=project.version | grep -v '\['".execute().waitFor()
+    def mavenProcess = "mvn help:evaluate -Dexpression=project.version | grep -v '\\['".execute().waitFor()
     return mavenProcess.getText()
 }
 
