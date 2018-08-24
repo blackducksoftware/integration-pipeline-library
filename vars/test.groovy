@@ -1,5 +1,8 @@
 #!/usr/bin/groovy
 
+import groovy.xml.*
+import groovy.xml.dom.*
+
 def call(String stageName = 'Setup', Closure body) {
     def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
