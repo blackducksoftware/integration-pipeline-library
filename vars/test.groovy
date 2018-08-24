@@ -30,7 +30,7 @@ public String getMavenProjectVersionProcess(String exe){
 
 public String getMavenProjectVersionParse(){
     def files = findFiles glob: 'pom.xml'
-    def fileText = files[0].text
+    def fileText = readFile files[0]
     def project = new XmlSlurper().parseText(fileText)
     return project.version.text()
 }
@@ -48,7 +48,8 @@ public String getGradleProjectVersionProcess(String exe){
 public String getGradleProjectVersionParse(){
    def versionLine = ''
    def files = findFiles glob: 'build.gradle'
-   files[0].eachLine { line ->
+   def fileText = readFile files[0]
+   fileText.split('\n').each { line ->
        def trimmedLine = line.trim()
        if (!versionLine && trimmedLine.startsWith('version')) {
            versionLine = trimmedLine;
