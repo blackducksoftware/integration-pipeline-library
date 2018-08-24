@@ -13,6 +13,8 @@ def call(String stageName = 'Setup', Closure body) {
 
     ProjectUtils projectUtils = new ProjectUtils()
     if(tool.equals('maven')){
+        def me = sh "whoami"
+        sh "echo ${me}"
         sh "echo ${projectUtils.getMavenProjectVersionProcess(exe)}"
         sh "echo ${projectUtils.getMavenProjectVersionParse()}"
     } else {
