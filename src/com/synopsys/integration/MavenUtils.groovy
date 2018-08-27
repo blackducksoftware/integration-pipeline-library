@@ -5,8 +5,14 @@ import groovy.xml.XmlUtil;
 
 
 public class MavenUtils implements ToolUtils {
+    private final String exe
+
+    public MavenUtils(String exe) {
+        this.exe = exe
+    }
+
     @Override
-    public String getProjectVersionProcess(String exe) {
+    public String getProjectVersionProcess() {
         try {
             def mvnHome = tool "maven-3"
             def mavenExe = "${mvnHome}/bin/mvn"
@@ -29,18 +35,44 @@ public class MavenUtils implements ToolUtils {
     }
 
     @Override
-    public void removeSnapshotFromProjectVersion() {
+    public String removeSnapshotFromProjectVersion() {
         def fileText = readFile file: "${WORKSPACE}/pom.xml"
         def project = new XmlSlurper().parseText(fileText)
         def version = project.version.text()
         project.version = version.replace('-SNAPSHOT', '')
         def xmlString = XmlUtil.serialize(project)
         writeFile file: "${WORKSPACE}/pom.xml", text: "${xmlString}"
+        return project.version.text()
     }
 
     @Override
     public boolean checkForSnapshotDependencies() {
+        def mvnHome = tool "maven-3"
+        def mavenExe = "${mvnHome}/bin/mvn"
+        if (null != exe && exe.trim().length() > 0) {
+            mavenExe = exe
+        }
+        sh "${mavenExe} dependency:tree -DoutputFile=${WORKSPACE}/dependency.txt"
+        def fileText = readFile file: "${WORKSPACE}/dependency.txt"
+        def containsSnapshot = fileText.contains('-SNAPSHOT')
+        sh "rm ${WORKSPACE}/dependency.txt"
+        return containsSnapshot
+    }
+
+    @Override
+    public String increaseSemver() {
         def fileText = readFile file: "${WORKSPACE}/pom.xml"
-        return fileText.contains('-SNAPSHOT')
+        def project = new XmlSlurper().parseText(fileText)
+        def version = project.version.text()
+
+        int finalVersionPieceIndex = version.lastIndexOf('.')
+        def finalVersionPiece = version.substring(finalVersionPieceIndex + 1)
+        def modifiedVersion = version.substring(0, finalVersionPieceIndex)
+        modifiedVersion = "${modifiedVersion}${Integer.valueOf(finalVersionPiece) + 1}-SNAPSHOT"
+        
+        project.version = modifiedVersion
+        def xmlString = XmlUtil.serialize(project)
+        writeFile file: "${WORKSPACE}/pom.xml", text: "${xmlString}"
+        return project.version.text()
     }
 }

@@ -1,11 +1,13 @@
 package com.synopsys.integration
 
 public interface ToolUtils {
-    public String getProjectVersionProcess(String exe);
+    public String getProjectVersionProcess()
 
-    public String getProjectVersionParse();
+    public String getProjectVersionParse()
 
-    public void removeSnapshotFromProjectVersion();
+    public String removeSnapshotFromProjectVersion()
 
-    public boolean checkForSnapshotDependencies();
+    public boolean checkForSnapshotDependencies()
+
+    public String increaseSemver()
 }
