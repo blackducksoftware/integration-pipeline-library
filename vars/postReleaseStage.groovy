@@ -1,5 +1,7 @@
 #!/usr/bin/groovy
 
+import com.synopsys.integration.ProjectUtils
+
 def call(String stageName = 'Post-Release Stage', Closure body) {
     def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST

@@ -10,7 +10,7 @@ def call(Closure body) {
 
     def gitUrl = config.gitUrl
 
-    def runRelease = config.get('runRelease', true)
+    def runRelease = config.get('runRelease', false)
 
     def releaseVersion = config.get('releaseVersion', "${RELEASE_VERSION}")
 

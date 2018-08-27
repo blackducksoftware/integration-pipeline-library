@@ -32,7 +32,7 @@ public class ProjectUtils {
         return version
     }
 
-    public void checkForSnapshotDependencies(String tool, String exe) {
+    public boolean checkForSnapshotDependencies(String tool, String exe) {
         ToolUtils toolUtils;
         if (tool.equalsIgnoreCase('maven')) {
             toolUtils = new MavenUtils(exe)
