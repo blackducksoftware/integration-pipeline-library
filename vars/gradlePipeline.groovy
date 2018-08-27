@@ -17,7 +17,7 @@ def call(Closure body) {
     def releaseVersion = config.releaseVersion
     def owner = config.owner
     def artifactFile = config.artifactFile
-    def artifactType = config.artifactType
+    def artifactPattern = config.artifactPattern
     def artifactDirectory = config.artifactDirectory
     def project = config.project
     def releaseDescription = config.releaseDescription
@@ -51,7 +51,7 @@ def call(Closure body) {
                     releaseVersion = releaseVersion
                     owner = owner
                     artifactFile = artifactFile
-                    artifactType = artifactType
+                    artifactPattern = artifactPattern
                     artifactDirectory = artifactDirectory
                     project = project
                     releaseDescription = releaseDescription

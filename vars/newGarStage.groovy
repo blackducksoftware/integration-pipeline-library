@@ -12,7 +12,7 @@ def call(String stageName = 'GitHub auto release', Closure body) {
     def releaseVersion = config.releaseVersion
     def owner = config.get('owner', 'blackducksoftware')
     def artifactFile = config.artifactFile
-    def artifactType = config.artifactType
+    def artifactPattern = config.artifactPattern
     def artifactDirectory = config.artifactDirectory
     def project = config.project
     def releaseDescription = config.get('releaseDescription', "${COMMIT_MESSAGE}")
@@ -30,19 +30,19 @@ def call(String stageName = 'GitHub auto release', Closure body) {
     options.add(owner)
     options.add('-v')
     options.add(releaseVersion)
-    if (null == artifactFile || artifactFile.trim().length() == 0) {
+    if (null != artifactFile && artifactFile.trim().length() > 0) {
         options.add('-f')
         options.add(artifactFile)
     }
-    if (null == artifactType || artifactType.trim().length() == 0) {
+    if (null != artifactPattern && artifactPattern.trim().length() > 0) {
         options.add('-t')
-        options.add(artifactType)
+        options.add(artifactPattern)
     }
-    if (null == artifactDirectory || artifactDirectory.trim().length() == 0) {
+    if (null != artifactDirectory && artifactDirectory.trim().length() > 0) {
         options.add('-d')
         options.add(artifactDirectory)
     }
-    if (null == project || project.trim().length() == 0) {
+    if (null != project && project.trim().length() > 0) {
         options.add('-p')
         options.add(project)
     }
