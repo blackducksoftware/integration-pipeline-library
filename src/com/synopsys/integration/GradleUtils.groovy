@@ -3,11 +3,11 @@ package com.synopsys.integration
 import com.synopsys.integration.ToolUtils
 
 public class GradleUtils implements ToolUtils, Serializable {
-    def environment
+    def script
     private final String exe
 
-    public GradleUtils(environment, String exe) {
-        this.environment = environment
+    public GradleUtils(script, String exe) {
+        this.script = script
         this.exe = exe
     }
 
@@ -18,7 +18,7 @@ public class GradleUtils implements ToolUtils, Serializable {
             if (null != exe && exe.trim().length() > 0) {
                 gradleExe = exe
             }
-            def version = sh(script: "${gradleExe} properties -q | grep 'version:'", returnStdout: true)
+            def version = script.sh(script: "${gradleExe} properties -q | grep 'version:'", returnStdout: true)
             return version.substring(version.indexOf(':') + 1).trim()
         } catch (Exception e) {
             println "Failed to run the gradle command to get the Project version ${e.getMessage()}"
@@ -29,7 +29,7 @@ public class GradleUtils implements ToolUtils, Serializable {
     @Override
     public String getProjectVersionParse() {
         def versionLine = ''
-        def fileText = readFile file: "${environment.WORKSPACE}/build.gradle"
+        def fileText = script.readFile file: "${script.env.WORKSPACE}/build.gradle"
         for (String line : fileText.split('\n')) {
             def trimmedLine = line.trim()
             if (trimmedLine.startsWith('version')) {
@@ -44,7 +44,7 @@ public class GradleUtils implements ToolUtils, Serializable {
     public String removeSnapshotFromProjectVersion() {
         def versionLine = ''
         def modifiedVersion = ''
-        def fileText = readFile file: "${environment.WORKSPACE}/build.gradle"
+        def fileText = script.readFile file: "${script.env.WORKSPACE}/build.gradle"
         def splitLines = fileText.split('\n')
         def versionLineIndex = 0
         for (int i = 0; i < splitLines.size(); i++) {
@@ -61,7 +61,7 @@ public class GradleUtils implements ToolUtils, Serializable {
         splitLines[versionLineIndex] = versionLine
 
         def finalFileText = splitLines.join('\n')
-        writeFile file: "${environment.WORKSPACE}/build.gradle", text: "${finalFileText}"
+        script.writeFile file: "${script.env.WORKSPACE}/build.gradle", text: "${finalFileText}"
         return modifiedVersion
     }
 
@@ -71,7 +71,7 @@ public class GradleUtils implements ToolUtils, Serializable {
         if (null != exe && exe.trim().length() > 0) {
             gradleExe = exe
         }
-        def dependencyText = sh(script: "${gradleExe} dependencies -q", returnStdout: true)
+        def dependencyText = script.sh(script: "${gradleExe} dependencies -q", returnStdout: true)
         return dependencyText.contains('-SNAPSHOT')
     }
 
@@ -79,7 +79,7 @@ public class GradleUtils implements ToolUtils, Serializable {
     public String increaseSemver() {
         def versionLine = ''
         def modifiedVersion = ''
-        def fileText = readFile file: "${environment.WORKSPACE}/build.gradle"
+        def fileText = script.readFile file: "${script.env.WORKSPACE}/build.gradle"
         def splitLines = fileText.split('\n')
         def versionLineIndex = 0
         for (int i = 0; i < splitLines.size(); i++) {
@@ -99,7 +99,7 @@ public class GradleUtils implements ToolUtils, Serializable {
         splitLines[versionLineIndex] = versionLine
 
         def finalFileText = splitLines.join('\n')
-        writeFile file: "${environment.WORKSPACE}/build.gradle", text: "${finalFileText}"
+        script.writeFile file: "${script.env.WORKSPACE}/build.gradle", text: "${finalFileText}"
         return modifiedVersion
     }
 }

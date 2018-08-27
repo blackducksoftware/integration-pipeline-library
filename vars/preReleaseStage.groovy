@@ -14,7 +14,7 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
 
     def branch = config.get('branch', "${BRANCH}")
 
-    ProjectUtils projectUtils = new ProjectUtils(this.env)
+    ProjectUtils projectUtils = new ProjectUtils(this)
     if (runRelease) {
         def hasMavenSnapshotDependencies = projectUtils.checkForSnapshotDependencies('maven', exe)
         def hasGradleSnapshotDependencies = projectUtils.checkForSnapshotDependencies('gradle', exe)

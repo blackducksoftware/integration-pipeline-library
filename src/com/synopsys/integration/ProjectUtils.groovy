@@ -1,10 +1,10 @@
 package com.synopsys.integration;
 
 public class ProjectUtils {
-    def environment
+    def script
 
-    public ProjectUtils(environment) {
-        this.environment = environment
+    public ProjectUtils(script) {
+        this.script = script
     }
 
 
@@ -13,9 +13,9 @@ public class ProjectUtils {
     public String getProjectVersion(String tool, String exe) {
         ToolUtils toolUtils;
         if (tool.equalsIgnoreCase('maven')) {
-            toolUtils = new MavenUtils(environment, exe)
+            toolUtils = new MavenUtils(script.env, exe)
         } else {
-            toolUtils = new GradleUtils(environment, exe)
+            toolUtils = new GradleUtils(script.env, exe)
         }
         def version = toolUtils.getProjectVersionProcess()
         if (null == version || version.trim().length() == 0) {
@@ -29,9 +29,9 @@ public class ProjectUtils {
     public String getProjectVersion(String tool) {
         ToolUtils toolUtils;
         if (tool.equalsIgnoreCase('maven')) {
-            toolUtils = new MavenUtils(environment, null)
+            toolUtils = new MavenUtils(script.env, null)
         } else {
-            toolUtils = new GradleUtils(environment, null)
+            toolUtils = new GradleUtils(script.env, null)
         }
         def version = toolUtils.getMavenProjectVersionParse()
         println version
@@ -41,9 +41,9 @@ public class ProjectUtils {
     public boolean checkForSnapshotDependencies(String tool, String exe) {
         ToolUtils toolUtils;
         if (tool.equalsIgnoreCase('maven')) {
-            toolUtils = new MavenUtils(environment, exe)
+            toolUtils = new MavenUtils(script.env, exe)
         } else {
-            toolUtils = new GradleUtils(environment, exe)
+            toolUtils = new GradleUtils(script.env, exe)
         }
         return toolUtils.checkForSnapshotDependencies()
     }
@@ -52,9 +52,9 @@ public class ProjectUtils {
     public String removeSnapshotFromProjectVersion(String tool, String exe) {
         ToolUtils toolUtils;
         if (tool.equalsIgnoreCase('maven')) {
-            toolUtils = new MavenUtils(environment, exe)
+            toolUtils = new MavenUtils(script.env, exe)
         } else {
-            toolUtils = new GradleUtils(environment, exe)
+            toolUtils = new GradleUtils(script.env, exe)
         }
         return toolUtils.removeSnapshotFromProjectVersion()
     }
@@ -62,9 +62,9 @@ public class ProjectUtils {
     public void increaseSemver(String tool, String exe) {
         ToolUtils toolUtils;
         if (tool.equalsIgnoreCase('maven')) {
-            toolUtils = new MavenUtils(environment, exe)
+            toolUtils = new MavenUtils(script.env, exe)
         } else {
-            toolUtils = new GradleUtils(environment, exe)
+            toolUtils = new GradleUtils(script.env, exe)
         }
         toolUtils.increaseSemver()
     }
