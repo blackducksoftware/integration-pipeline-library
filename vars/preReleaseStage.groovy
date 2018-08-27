@@ -12,7 +12,7 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
     def buildTool = config.buildTool
     def exe = config.exe
 
-    def branch = config.get('branch', 'master')
+    def branch = config.get('branch', "${BRANCH}")
 
     ProjectUtils projectUtils = new ProjectUtils()
     if (runRelease) {

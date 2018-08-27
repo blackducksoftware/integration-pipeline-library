@@ -11,6 +11,7 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
     def runRelease = config.runRelease
     def buildTool = config.buildTool
     def exe = config.exe
+    def branch = config.get('branch', "${BRANCH}")
 
     ProjectUtils projectUtils = new ProjectUtils()
     if (runRelease) {
