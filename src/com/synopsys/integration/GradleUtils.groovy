@@ -2,10 +2,12 @@ package com.synopsys.integration
 
 import com.synopsys.integration.ToolUtils
 
-public class GradleUtils implements ToolUtils {
+public class GradleUtils implements ToolUtils, Serializable {
+    def environment
     private final String exe
 
-    public GradleUtils(String exe) {
+    public GradleUtils(environment, String exe) {
+        this.environment = environment
         this.exe = exe
     }
 
@@ -27,7 +29,7 @@ public class GradleUtils implements ToolUtils {
     @Override
     public String getProjectVersionParse() {
         def versionLine = ''
-        def fileText = readFile file: "${WORKSPACE}/build.gradle"
+        def fileText = readFile file: "${environment.WORKSPACE}/build.gradle"
         for (String line : fileText.split('\n')) {
             def trimmedLine = line.trim()
             if (trimmedLine.startsWith('version')) {
@@ -42,7 +44,7 @@ public class GradleUtils implements ToolUtils {
     public String removeSnapshotFromProjectVersion() {
         def versionLine = ''
         def modifiedVersion = ''
-        def fileText = readFile file: "${WORKSPACE}/build.gradle"
+        def fileText = readFile file: "${environment.WORKSPACE}/build.gradle"
         def splitLines = fileText.split('\n')
         def versionLineIndex = 0
         for (int i = 0; i < splitLines.size(); i++) {
@@ -59,7 +61,7 @@ public class GradleUtils implements ToolUtils {
         splitLines[versionLineIndex] = versionLine
 
         def finalFileText = splitLines.join('\n')
-        writeFile file: "${WORKSPACE}/build.gradle", text: "${finalFileText}"
+        writeFile file: "${environment.WORKSPACE}/build.gradle", text: "${finalFileText}"
         return modifiedVersion
     }
 
@@ -77,7 +79,7 @@ public class GradleUtils implements ToolUtils {
     public String increaseSemver() {
         def versionLine = ''
         def modifiedVersion = ''
-        def fileText = readFile file: "${WORKSPACE}/build.gradle"
+        def fileText = readFile file: "${environment.WORKSPACE}/build.gradle"
         def splitLines = fileText.split('\n')
         def versionLineIndex = 0
         for (int i = 0; i < splitLines.size(); i++) {
@@ -97,7 +99,7 @@ public class GradleUtils implements ToolUtils {
         splitLines[versionLineIndex] = versionLine
 
         def finalFileText = splitLines.join('\n')
-        writeFile file: "${WORKSPACE}/build.gradle", text: "${finalFileText}"
+        writeFile file: "${environment.WORKSPACE}/build.gradle", text: "${finalFileText}"
         return modifiedVersion
     }
 }

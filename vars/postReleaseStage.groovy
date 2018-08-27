@@ -13,7 +13,7 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
     def exe = config.exe
     def branch = config.get('branch', "${BRANCH}")
 
-    ProjectUtils projectUtils = new ProjectUtils()
+    ProjectUtils projectUtils = new ProjectUtils(this.env)
     if (runRelease) {
         println "Using the next snapshot post release"
         def newMavenVersion = projectUtils.increaseSemver('maven', exe)

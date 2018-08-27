@@ -12,7 +12,7 @@ def call(Closure body) {
 
     def runRelease = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
 
-    ProjectUtils projectUtils = new ProjectUtils()
+    ProjectUtils projectUtils = new ProjectUtils(this.env)
 
     integrationNode {
         setupStage {
