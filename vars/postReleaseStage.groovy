@@ -14,6 +14,7 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
 
     ProjectUtils projectUtils = new ProjectUtils()
     if (runRelease) {
+        println "Using the next snapshot post release"
         def newMavenVersion = projectUtils.increaseSemver('maven', exe)
         def newGradleVersion = projectUtils.increaseSemver('gradle', exe)
         sh "git commit -a -m \"Using the next snapshot post release ${newMavenVersion}  ${newGradleVersion}\""

@@ -10,18 +10,9 @@ def call(Closure body) {
 
     def gitUrl = config.gitUrl
 
-    def runRelease = config.get('runRelease', false)
-
-    def releaseVersion = config.get('releaseVersion', "${RELEASE_VERSION}")
+    def runRelease = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
 
     ProjectUtils projectUtils = new ProjectUtils()
-    if (null == releaseVersion || releaseVersion.trim().length() == 0) {
-        def exe = config.exe
-        releaseVersion = projectUtils.getProjectVersion(buildTool, exe)
-    }
-    if (!releaseVersion.contains('-SNAPSHOT')) {
-        runRelease = true
-    }
 
     integrationNode {
         setupStage {
@@ -32,7 +23,6 @@ def call(Closure body) {
         }
         preReleaseStage {
             runRelease = runRelease
-            releaseVersion = releaseVersion
         }
         gradleStage {
             buildCommand = 'clean'
@@ -51,7 +41,6 @@ def call(Closure body) {
         }
         postReleaseStage {
             runRelease = runRelease
-            releaseVersion = releaseVersion
         }
 
     }

@@ -12,7 +12,6 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
     def buildTool = config.buildTool
     def exe = config.exe
 
-    def releaseVersion = config.releaseVersion
     def branch = config.get('branch', 'master')
 
     ProjectUtils projectUtils = new ProjectUtils()
@@ -29,7 +28,9 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
             }
             throw new Exception(errorMessage)
         }
-        if (releaseVersion.contains('-SNAPSHOT')) {
+        def version = projectUtils.getProjectVersion('maven', exe)
+
+        if (version.contains('-SNAPSHOT')) {
             println "Removing SNAPSHOT from the Project Version"
             def newMavenVersion = projectUtils.removeSnapshotFromProjectVersion('maven', exe)
             def newGradleVersion = projectUtils.removeSnapshotFromProjectVersion('gradle', exe)
