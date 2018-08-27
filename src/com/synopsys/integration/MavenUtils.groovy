@@ -40,6 +40,7 @@ public class MavenUtils implements ToolUtils {
 
     @Override
     public boolean checkForSnapshotDependencies() {
-
+        def fileText = readFile file: "${WORKSPACE}/pom.xml"
+        return fileText.contains('-SNAPSHOT')
     }
 }

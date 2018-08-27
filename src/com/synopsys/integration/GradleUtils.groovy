@@ -58,6 +58,7 @@ public class GradleUtils implements ToolUtils {
 
     @Override
     public boolean checkForSnapshotDependencies() {
-
+        def fileText = readFile file: "${WORKSPACE}/build.gradle"
+        return fileText.contains('-SNAPSHOT')
     }
 }
