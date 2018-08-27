@@ -47,21 +47,17 @@ def call(String stageName = 'GitHub auto release', Closure body) {
         options.add(project)
     }
     options.add('-m')
-    options.add(releaseDescription)
+    options.add("\"${releaseDescription}\"")
 
     println "GitHub Auto Release options ${options.join(' ')}"
 
     def shellURL = config.get('shellURL', 'https://github.com/blackducksoftware/github-auto-release/releases/download/1.1.0/github_auto_release.sh')
-    def commitMessage = config.get('commitMessage', "${COMMIT_MESSAGE}")
-    if (null == commitMessage || commitMessage.trim().length() == 0) {
-        commitMessage = 'Auto Release'
-    }
 
     def commandLines = []
     commandLines.add("#!/bin/bash")
     commandLines.add("wget -N \"${shellURL}\"")
     commandLines.add("chmod 777 github_auto_release.sh")
-    commandLines.add("./github_auto_release.sh ${options.join(' ')} -m \"${commitMessage}\"")
+    commandLines.add("./github_auto_release.sh ${options.join(' ')}")
 
     stage(stageName) {
         try {
