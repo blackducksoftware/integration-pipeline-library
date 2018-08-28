@@ -1,15 +1,19 @@
 package com.synopsys.integration
 
-
 import com.synopsys.integration.ToolUtils
 
 public class MavenUtils implements ToolUtils, Serializable {
     def script
-    private final String exe
+    private String exe
 
     public MavenUtils(script, String exe) {
         this.script = script
+        this.exe = exe
 
+    }
+
+    @Override
+    public void initialize() {
         if (null == exe || exe.trim().length() > 0) {
             def mvnHome = script.tool 'maven-3'
             def mavenExe = "${mvnHome}/bin/mvn"

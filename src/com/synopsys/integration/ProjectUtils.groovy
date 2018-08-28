@@ -17,6 +17,7 @@ public class ProjectUtils {
         } else {
             toolUtils = new GradleUtils(script, exe)
         }
+        toolUtils.initialize()
         def version = toolUtils.getProjectVersionProcess()
         if (null == version || version.trim().length() == 0) {
             version = toolUtils.getProjectVersionParse()
@@ -33,6 +34,7 @@ public class ProjectUtils {
         } else {
             toolUtils = new GradleUtils(script, null)
         }
+        toolUtils.initialize()
         def version = toolUtils.getMavenProjectVersionParse()
         script.println version
         return version
@@ -45,6 +47,7 @@ public class ProjectUtils {
         } else {
             toolUtils = new GradleUtils(script, exe)
         }
+        toolUtils.initialize()
         return toolUtils.checkForSnapshotDependencies(checkAllDependencies)
     }
 
@@ -56,6 +59,7 @@ public class ProjectUtils {
         } else {
             toolUtils = new GradleUtils(script, exe)
         }
+        toolUtils.initialize()
         return toolUtils.removeSnapshotFromProjectVersion()
     }
 
@@ -66,6 +70,7 @@ public class ProjectUtils {
         } else {
             toolUtils = new GradleUtils(script, exe)
         }
+        toolUtils.initialize()
         toolUtils.increaseSemver()
     }
 }

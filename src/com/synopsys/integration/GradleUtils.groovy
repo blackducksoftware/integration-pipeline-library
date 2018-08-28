@@ -4,7 +4,7 @@ import com.synopsys.integration.ToolUtils
 
 public class GradleUtils implements ToolUtils, Serializable {
     def script
-    private final String exe
+    private String exe
 
     public GradleUtils(script, String exe) {
         this.script = script
@@ -12,13 +12,18 @@ public class GradleUtils implements ToolUtils, Serializable {
     }
 
     @Override
+    public void initialize() {
+        if (null == exe || exe.trim().length() > 0) {
+            this.exe = './gradlew'
+        } else {
+            this.exe = exe
+        }
+    }
+
+    @Override
     public String getProjectVersionProcess() {
         try {
-            def gradleExe = './gradlew'
-            if (null != exe && exe.trim().length() > 0) {
-                gradleExe = exe
-            }
-            def version = script.sh(script: "${gradleExe} properties -q | grep 'version:'", returnStdout: true)
+            def version = script.sh(script: "${exe} properties -q | grep 'version:'", returnStdout: true)
             return version.substring(version.indexOf(':') + 1).trim()
         } catch (Exception e) {
             script.println "Failed to run the gradle command to get the Project version ${e.getMessage()}"
@@ -67,12 +72,7 @@ public class GradleUtils implements ToolUtils, Serializable {
 
     @Override
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
-        def gradleExe = './gradlew'
-        if (null != exe && exe.trim().length() > 0) {
-            gradleExe = exe
-        }
-
-        def command = "${gradleExe} dependencies -q"
+        def command = "${exe} dependencies -q"
         if (!checkAllDependencies) {
             command = "${command} --configuration compile"
         }

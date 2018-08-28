@@ -10,4 +10,6 @@ public interface ToolUtils {
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies)
 
     public String increaseSemver()
+
+    public void initialize()
 }
