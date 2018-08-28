@@ -8,7 +8,7 @@ def call(Closure body) {
 
     def gitUrl = config.gitUrl
 
-    def userCheckAllDependencies = config.checkAllDependencies
+    def userCheckAllDependencies = config.get('checkAllDependencies', false)
 
     def userRunRelease = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
     println "Going to run the Release ${userRunRelease}"
