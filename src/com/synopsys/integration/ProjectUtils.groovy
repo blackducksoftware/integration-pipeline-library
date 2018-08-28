@@ -16,7 +16,6 @@ public class ProjectUtils {
 
     public String getProjectVersion() {
         def version = toolUtils.getProjectVersionProcess()
-        script.println version
         return version
     }
 
