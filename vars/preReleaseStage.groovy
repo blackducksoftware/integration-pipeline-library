@@ -39,7 +39,7 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
                 sh "git push origin ${branch}"
             }
         } else {
-            println "Skipping the Post-Release because this was not a release build"
+            println "Skipping the Pre-Release because this was not a release build"
         }
     }
 }
