@@ -7,6 +7,7 @@ def call(Closure body) {
     body()
 
     def gitUrl = config.gitUrl
+    def userOwner = config.owner
 
     def userCheckAllDependencies = config.get('checkAllDependencies', false)
 
@@ -33,11 +34,12 @@ def call(Closure body) {
 
         newGarStage('Gradle GAR') {
             buildTool = 'gradle'
+            owner = userOwner
 
         }
         newGarStage('Maven GAR') {
             buildTool = 'maven'
-
+            owner = userOwner
         }
         postReleaseStage {
             runRelease = userRunRelease
