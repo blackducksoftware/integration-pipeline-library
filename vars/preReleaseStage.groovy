@@ -11,14 +11,15 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
     def runRelease = config.runRelease
     def buildTool = config.buildTool
     def exe = config.exe
+    def checkAllDependencies = config.get('checkAllDependencies', false)
 
     def branch = config.get('branch', "${BRANCH}")
 
     stage(stageName) {
         ProjectUtils projectUtils = new ProjectUtils(this)
         if (runRelease) {
-            def hasMavenSnapshotDependencies = projectUtils.checkForSnapshotDependencies('maven', exe)
-            def hasGradleSnapshotDependencies = projectUtils.checkForSnapshotDependencies('gradle', exe)
+            def hasMavenSnapshotDependencies = projectUtils.checkForSnapshotDependencies('maven', exe, checkAllDependencies)
+            def hasGradleSnapshotDependencies = projectUtils.checkForSnapshotDependencies('gradle', exe, checkAllDependencies)
             if (hasMavenSnapshotDependencies || hasGradleSnapshotDependencies) {
                 def errorMessage = ''
                 if (hasMavenSnapshotDependencies) {

@@ -66,12 +66,17 @@ public class GradleUtils implements ToolUtils, Serializable {
     }
 
     @Override
-    public boolean checkForSnapshotDependencies() {
+    public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
         def gradleExe = './gradlew'
         if (null != exe && exe.trim().length() > 0) {
             gradleExe = exe
         }
-        def dependencyText = script.sh(script: "${gradleExe} dependencies -q", returnStdout: true)
+
+        def command = "${gradleExe} dependencies -q"
+        if (!checkAllDependencies) {
+            command = "${command} --configuration compile"
+        }
+        def dependencyText = script.sh(script: "${command}", returnStdout: true)
         script.println "Gradle dependencies"
         script.println "${dependencyText}"
         return dependencyText.contains('-SNAPSHOT')

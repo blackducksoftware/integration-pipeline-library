@@ -8,6 +8,8 @@ def call(Closure body) {
 
     def gitUrl = config.gitUrl
 
+    def userCheckAllDependencies = config.checkAllDependencies
+
     def userRunRelease = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
     println "Going to run the Release ${userRunRelease}"
 
@@ -20,6 +22,7 @@ def call(Closure body) {
         }
         preReleaseStage {
             runRelease = userRunRelease
+            checkAllDependencies = userCheckAllDependencies
         }
         gradleStage {
             buildCommand = 'clean'

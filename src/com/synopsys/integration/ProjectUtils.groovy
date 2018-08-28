@@ -38,14 +38,14 @@ public class ProjectUtils {
         return version
     }
 
-    public boolean checkForSnapshotDependencies(String tool, String exe) {
+    public boolean checkForSnapshotDependencies(String tool, String exe, boolean checkAllDependencies) {
         ToolUtils toolUtils;
         if (tool.equalsIgnoreCase('maven')) {
             toolUtils = new MavenUtils(script, exe)
         } else {
             toolUtils = new GradleUtils(script, exe)
         }
-        return toolUtils.checkForSnapshotDependencies()
+        return toolUtils.checkForSnapshotDependencies(checkAllDependencies)
     }
 
 

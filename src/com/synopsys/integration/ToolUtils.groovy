@@ -7,7 +7,7 @@ public interface ToolUtils {
 
     public String removeSnapshotFromProjectVersion()
 
-    public boolean checkForSnapshotDependencies()
+    public boolean checkForSnapshotDependencies(boolean checkAllDependencies)
 
     public String increaseSemver()
 }
