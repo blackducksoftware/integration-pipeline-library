@@ -35,23 +35,14 @@ public class MavenUtils implements ToolUtils, Serializable {
     }
 
     @Override
-    public String getProjectVersionParse() {
-        def fileText = script.readFile file: "${script.env.WORKSPACE}/pom.xml"
-        def project = new XmlSlurper().parseText(fileText)
-        return project.version.text()
-    }
-
-    @Override
     public String removeSnapshotFromProjectVersion() {
-        def fileText = script.readFile file: "${script.env.WORKSPACE}/pom.xml"
-        def pom = new XmlSlurper().parseText(fileText)
-        script.println "MAVEN POM ${pom.text()}"
-        String version = pom['version'].text().trim()
+        def version = getProjectVersionProcess()
         script.println "MAVEN VERSION ${version}"
         String modifiedVersion = version.replace('-SNAPSHOT', '')
         script.println "MAVEN UPDATED VERSION ${modifiedVersion}"
 
         script.sh(script: "${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", returnStdout: false)
+        script.println "MAVEN UPDATED VERSION IN POM"
         return modifiedVersion
     }
 
@@ -80,9 +71,7 @@ public class MavenUtils implements ToolUtils, Serializable {
     public String increaseSemver() {
         script.sh(script: "${exe} versions:set -DgenerateBackupPoms=false -DnextSnapshot=true", returnStdout: false)
 
-        def fileText = script.readFile file: "${script.env.WORKSPACE}/pom.xml"
-        def project = new XmlSlurper().parseText(fileText)
-        String version = project.version.text()
+        def version = getProjectVersionProcess()
         return version
     }
 }
