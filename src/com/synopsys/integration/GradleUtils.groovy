@@ -43,7 +43,7 @@ public class GradleUtils implements ToolUtils, Serializable {
             if (trimmedLine.startsWith('version ')) {
                 versionLineIndex = i
                 versionLine = trimmedLine
-                def version = versionLine.substring(versionLine.indexOf('=') + 1).trim()
+                def version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').trim()
                 modifiedVersion = version.replace('-SNAPSHOT', '')
                 versionLine = versionLine.replace(version, modifiedVersion)
                 break
@@ -80,7 +80,7 @@ public class GradleUtils implements ToolUtils, Serializable {
             if (trimmedLine.startsWith('version ')) {
                 versionLineIndex = i
                 versionLine = trimmedLine
-                def version = versionLine.substring(versionLine.indexOf('=') + 1).trim()
+                def version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').trim()
                 int finalVersionPieceIndex = version.lastIndexOf('.')
                 def finalVersionPiece = version.substring(finalVersionPieceIndex + 1)
                 modifiedVersion = version.substring(0, finalVersionPieceIndex)
