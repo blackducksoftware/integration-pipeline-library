@@ -44,7 +44,7 @@ public class MavenUtils implements ToolUtils, Serializable {
         def version = pom['version'].text().trim()
         script.println "MAVEN VERSION ${version}"
         def modifiedVersion = version.replace('-SNAPSHOT', '')
-        script.println "MAVEN UPDATED VERSION ${version}"
+        script.println "MAVEN UPDATED VERSION ${modifiedVersion}"
         pom['version'] = modifiedVersion
         def xmlString = serialzePomToString(pom)
         script.println "MAVEN UPDATED POM ${xmlString}"
