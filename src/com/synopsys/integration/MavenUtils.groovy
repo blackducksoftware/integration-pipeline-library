@@ -81,6 +81,6 @@ public class MavenUtils implements ToolUtils, Serializable {
 
         script.sh(script: "${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", returnStdout: false)
         script.println "Maven pom updated with version ${modifiedVersion}"
-        return version
+        return modifiedVersion
     }
 }
