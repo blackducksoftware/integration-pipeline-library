@@ -1,9 +1,11 @@
 #!/usr/bin/groovy
 
-def call(String stageName = 'Setup', Closure body) {
+def call(String stageName = 'Setup', Boolean cleanupWorkspace = true, Closure body) {
     stage(stageName) {
-        sh "rm -rf ${WORKSPACE}"
-        sh "mkdir ${WORKSPACE}"
+        if (cleanupWorkspace) {
+            sh "rm -rf ${WORKSPACE}"
+            sh "mkdir ${WORKSPACE}"
+        }
         body()
     }
 }
