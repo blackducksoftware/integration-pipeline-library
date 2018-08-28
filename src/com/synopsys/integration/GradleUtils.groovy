@@ -42,13 +42,13 @@ public class GradleUtils implements ToolUtils, Serializable {
 
     @Override
     public String removeSnapshotFromProjectVersion() {
-        def versionLine = ''
-        def modifiedVersion = ''
+        String versionLine = ''
+        String modifiedVersion = ''
         def fileText = script.readFile file: "${script.env.WORKSPACE}/build.gradle"
         def splitLines = fileText.split('\n')
-        def versionLineIndex = 0
+        int versionLineIndex = 0
         for (int i = 0; i < splitLines.size(); i++) {
-            def trimmedLine = line[i].trim()
+            def trimmedLine = splitLines[i].trim()
             if (trimmedLine.startsWith('version ')) {
                 versionLineIndex = i
                 versionLine = trimmedLine

@@ -1,8 +1,8 @@
 package com.synopsys.integration
 
+import com.cloudbees.groovy.cps.NonCPS
 import com.synopsys.integration.ToolUtils
-import groovy.xml.XmlUtil;
-
+import groovy.xml.XmlUtil
 
 public class MavenUtils implements ToolUtils, Serializable {
     def script
