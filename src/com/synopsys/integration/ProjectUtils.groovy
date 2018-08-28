@@ -1,60 +1,34 @@
 package com.synopsys.integration;
 
 public class ProjectUtils {
-    def script
+    private ToolUtils toolUtils
 
-    public ProjectUtils(script) {
-        this.script = script
-    }
+    public ProjectUtils() {}
 
-
-    //TODO make the tool and exe fields
-
-    public String getProjectVersion(String tool, String exe) {
-        ToolUtils toolUtils;
+    public void initialize(script, String tool, String exe) {
         if (tool.equalsIgnoreCase('maven')) {
             toolUtils = new MavenUtils(script, exe)
         } else {
             toolUtils = new GradleUtils(script, exe)
         }
         toolUtils.initialize()
+    }
+
+    public String getProjectVersion() {
         def version = toolUtils.getProjectVersionProcess()
         script.println version
         return version
-
     }
 
-    public boolean checkForSnapshotDependencies(String tool, String exe, boolean checkAllDependencies) {
-        ToolUtils toolUtils;
-        if (tool.equalsIgnoreCase('maven')) {
-            toolUtils = new MavenUtils(script, exe)
-        } else {
-            toolUtils = new GradleUtils(script, exe)
-        }
-        toolUtils.initialize()
+    public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
         return toolUtils.checkForSnapshotDependencies(checkAllDependencies)
     }
 
-
-    public String removeSnapshotFromProjectVersion(String tool, String exe) {
-        ToolUtils toolUtils;
-        if (tool.equalsIgnoreCase('maven')) {
-            toolUtils = new MavenUtils(script, exe)
-        } else {
-            toolUtils = new GradleUtils(script, exe)
-        }
-        toolUtils.initialize()
+    public String removeSnapshotFromProjectVersion() {
         return toolUtils.removeSnapshotFromProjectVersion()
     }
 
-    public void increaseSemver(String tool, String exe) {
-        ToolUtils toolUtils;
-        if (tool.equalsIgnoreCase('maven')) {
-            toolUtils = new MavenUtils(script, exe)
-        } else {
-            toolUtils = new GradleUtils(script, exe)
-        }
-        toolUtils.initialize()
+    public void increaseSemver() {
         toolUtils.increaseSemver()
     }
 }

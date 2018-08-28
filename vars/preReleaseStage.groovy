@@ -8,7 +8,6 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
     body.delegate = config
     body()
 
-    def runRelease = config.runRelease
     def buildTool = config.buildTool
     def exe = config.exe
     def checkAllDependencies = config.get('checkAllDependencies', false)
@@ -18,33 +17,21 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
 
 
     stage(stageName) {
-        ProjectUtils projectUtils = new ProjectUtils(this)
-        if (runRelease) {
-            def hasMavenSnapshotDependencies = projectUtils.checkForSnapshotDependencies('maven', exe, checkAllDependencies)
-            def hasGradleSnapshotDependencies = projectUtils.checkForSnapshotDependencies('gradle', exe, checkAllDependencies)
-            if (hasMavenSnapshotDependencies || hasGradleSnapshotDependencies) {
-                def errorMessage = ''
-                if (hasMavenSnapshotDependencies) {
-                    errorMessage += 'Failing release build because of Maven SNAPSHOT dependencies'
-                }
-                if (hasGradleSnapshotDependencies) {
-                    errorMessage += 'Failing release build because of Gradle SNAPSHOT dependencies'
-                }
-                throw new Exception(errorMessage)
-            }
-            def version = projectUtils.getProjectVersion('maven', exe)
-
-            if (version.contains('-SNAPSHOT')) {
-                println "Removing SNAPSHOT from the Project Version"
-                def newMavenVersion = projectUtils.removeSnapshotFromProjectVersion('maven', exe)
-                def newGradleVersion = projectUtils.removeSnapshotFromProjectVersion('gradle', exe)
-                println "Commiting the release ${newMavenVersion}  ${newGradleVersion}"
-                sh "git commit -am \"Release ${newMavenVersion}  ${newGradleVersion}\""
-                println "Pushing release to branch ${branch}"
-                sh "git push origin ${branch}"
-            }
-        } else {
-            println "Skipping the Pre-Release because this was not a release build"
+        ProjectUtils projectUtils = new ProjectUtils()
+        projectUtils.initialize(this, buildTool, exe)
+        def hasSnapshotDependencies = projectUtils.checkForSnapshotDependencies(checkAllDependencies)
+        if (hasSnapshotDependencies) {
+            def errorMessage = "Failing release build because of ${buildTool} SNAPSHOT dependencies"
+            throw new Exception(errorMessage)
+        }
+        def version = projectUtils.getProjectVersion()
+        if (version.contains('-SNAPSHOT')) {
+            println "Removing SNAPSHOT from the Project Version"
+            def newVersion = projectUtils.removeSnapshotFromProjectVersion()
+            println "Commiting the release ${newVersion}"
+            sh "git commit -am \"Release ${newVersion}\""
+            println "Pushing release to branch ${branch}"
+            sh "git push origin ${branch}"
         }
     }
 }

@@ -20,8 +20,9 @@ def call(String stageName = 'GitHub auto release', Closure body) {
         releaseDescription = 'Auto Release'
     }
     if (null == releaseVersion || releaseVersion.trim().length() == 0) {
-        ProjectUtils projectUtils = new ProjectUtils(this)
         def exe = config.exe
+        ProjectUtils projectUtils = new ProjectUtils()
+        projectUtils.initialize(this, buildTool, exe)
         releaseVersion = projectUtils.getProjectVersion(buildTool, exe)
     }
 
