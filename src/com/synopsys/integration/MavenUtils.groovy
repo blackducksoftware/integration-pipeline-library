@@ -16,7 +16,7 @@ public class MavenUtils implements ToolUtils, Serializable {
     @Override
     public String getProjectVersionProcess() {
         try {
-            def mvnHome = tool "maven-3"
+            def mvnHome = script.tool 'maven-3'
             def mavenExe = "${mvnHome}/bin/mvn"
             if (null != exe && exe.trim().length() > 0) {
                 mavenExe = exe
@@ -49,7 +49,7 @@ public class MavenUtils implements ToolUtils, Serializable {
 
     @Override
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
-        def mvnHome = script.tool "maven-3"
+        def mvnHome = script.tool 'maven-3'
         def mavenExe = "${mvnHome}/bin/mvn"
         if (null != exe && exe.trim().length() > 0) {
             mavenExe = exe
