@@ -11,7 +11,7 @@ def call(Closure body) {
     def gitUrl = config.gitUrl
 
     def runRelease = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
-
+    println "Going to run the Release ${runRelease}"
     ProjectUtils projectUtils = new ProjectUtils(this)
 
     integrationNode {
