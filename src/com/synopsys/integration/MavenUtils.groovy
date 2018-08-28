@@ -51,7 +51,7 @@ public class MavenUtils implements ToolUtils, Serializable {
         def modifiedVersion = version.replace('-SNAPSHOT', '')
         script.println "MAVEN UPDATED VERSION ${modifiedVersion}"
 
-        script.sh "${exe} versions:set -DgenerateBackupPoms=false  -DnewVersion=${modifiedVersion}"
+        script.sh(script: "${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", returnStdout: false)
         return modifiedVersion
     }
 
@@ -87,7 +87,7 @@ public class MavenUtils implements ToolUtils, Serializable {
         def modifiedVersion = version.substring(0, finalVersionPieceIndex)
         modifiedVersion = "${modifiedVersion}${Integer.valueOf(finalVersionPiece) + 1}-SNAPSHOT"
 
-        script.sh "${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}"
+        script.sh(script: "${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", returnStdout: false)
         return project.version.text()
     }
 }
