@@ -27,7 +27,7 @@ public class MavenUtils implements ToolUtils, Serializable {
     public String getProjectVersionProcess() {
         try {
             def version = script.sh(script: "${exe} help:evaluate -Dexpression=project.version | grep -v '\\['", returnStdout: true)
-            return version
+            return version.trim()
         } catch (Exception e) {
             script.println "Failed to run the mvn command to get the Project version ${e.getMessage()}"
         }
