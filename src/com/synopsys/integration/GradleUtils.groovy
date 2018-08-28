@@ -81,8 +81,8 @@ public class GradleUtils implements ToolUtils, Serializable {
                 versionLineIndex = i
                 versionLine = trimmedLine
                 def version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').trim()
-                int finalVersionPieceIndex = version.lastIndexOf('.')
-                def finalVersionPiece = version.substring(finalVersionPieceIndex + 1)
+                int finalVersionPieceIndex = version.lastIndexOf('.') + 1
+                def finalVersionPiece = version.substring(finalVersionPieceIndex)
                 modifiedVersion = version.substring(0, finalVersionPieceIndex)
                 modifiedVersion = "${modifiedVersion}${Integer.valueOf(finalVersionPiece) + 1}-SNAPSHOT"
                 versionLine = versionLine.replace(version, modifiedVersion)
