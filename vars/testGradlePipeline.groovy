@@ -45,7 +45,8 @@ def call(Closure body) {
             }
             if (userRunRelease) {
                 preReleaseStage {
-                    runRelease = userRunRelease
+                    buildTool = 'gradle'
+                    exe = gradleExe
                     checkAllDependencies = userCheckAllDependencies
                 }
             }
@@ -70,7 +71,8 @@ def call(Closure body) {
             }
             if (userRunRelease) {
                 postReleaseStage {
-                    runRelease = userRunRelease
+                    buildTool = 'gradle'
+                    exe = gradleExe
                 }
             }
             if (runArchive) {
