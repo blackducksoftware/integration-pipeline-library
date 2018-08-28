@@ -75,7 +75,9 @@ public class MavenUtils implements ToolUtils, Serializable {
         int finalVersionPieceIndex = version.lastIndexOf('.') + 1
         def finalVersionPiece = version.substring(finalVersionPieceIndex)
         def modifiedVersion = version.substring(0, finalVersionPieceIndex)
-        modifiedVersion = "${modifiedVersion}${Integer.valueOf(finalVersionPiece) + 1}-SNAPSHOT"
+        script.println "FINAL VERSION PIECE ${finalVersionPiece}"
+        def incrementedPiece = Integer.valueOf(finalVersionPiece) + 1
+        modifiedVersion = "${modifiedVersion}${incrementedPiece}-SNAPSHOT"
 
         script.sh(script: "${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", returnStdout: false)
         script.println "Maven pom updated with version ${modifiedVersion}"
