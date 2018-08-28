@@ -41,11 +41,11 @@ public class MavenUtils implements ToolUtils, Serializable {
     @Override
     public String removeSnapshotFromProjectVersion() {
         def fileText = script.readFile file: "${script.env.WORKSPACE}/pom.xml"
-        def project = new XmlSlurper().parseText(fileText)
-        def version = project.version.text()
+        def pom = new XmlSlurper().parseText(fileText)
+        def version = pom['version'].text().trim()
         def modifiedVersion = version.replace('-SNAPSHOT', '')
-        project.version = modifiedVersion
-        def xmlString = XmlUtil.serialize(project)
+        pom['version'] = modifiedVersion
+        def xmlString = XmlUtil.serialize(pom)
         script.writeFile file: "${script.env.WORKSPACE}/pom.xml", text: "${xmlString}"
         return modifiedVersion
     }
