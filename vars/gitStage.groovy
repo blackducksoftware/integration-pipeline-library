@@ -22,5 +22,6 @@ def call(String stageName = 'Git', Closure body) {
                 scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
                       extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: relativeTargetDir]], gitTool: gitTool, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
         sh "git checkout ${branch}"
+        sh "git reset --hard origin/${branch}"
     }
 }

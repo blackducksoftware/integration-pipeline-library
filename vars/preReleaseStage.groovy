@@ -15,6 +15,8 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
 
     def branch = config.get('branch', "${BRANCH}")
 
+
+
     stage(stageName) {
         ProjectUtils projectUtils = new ProjectUtils(this)
         if (runRelease) {
@@ -38,7 +40,7 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
                 def newGradleVersion = projectUtils.removeSnapshotFromProjectVersion('gradle', exe)
                 println "Commiting the release ${newMavenVersion}  ${newGradleVersion}"
                 sh "git commit -am \"Release ${newMavenVersion}  ${newGradleVersion}\""
-                println "Pushing release to branhc ${branch}"
+                println "Pushing release to branch ${branch}"
                 sh "git push origin ${branch}"
             }
         } else {
