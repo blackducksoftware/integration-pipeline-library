@@ -24,7 +24,7 @@ public class MavenUtils implements ToolUtils, Serializable {
             def version = script.sh(script: "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['", returnStdout: true)
             return version
         } catch (Exception e) {
-            println "Failed to run the mvn command to get the Project version ${e.getMessage()}"
+            script.println "Failed to run the mvn command to get the Project version ${e.getMessage()}"
         }
         return null
     }
@@ -56,8 +56,8 @@ public class MavenUtils implements ToolUtils, Serializable {
         }
         script.sh "${mavenExe} dependency:tree -DoutputFile=${script.env.WORKSPACE}/dependency.txt"
         def fileText = script.readFile file: "${script.env.WORKSPACE}/dependency.txt"
-        println "Maven dependencies"
-        println "${fileText}"
+        script.println "Maven dependencies"
+        script.println "${fileText}"
         List<String> splitLines = fileText.split('\n')
         // need to remove the first line, since that is the GAV of the current project
         splitLines.remove(0)

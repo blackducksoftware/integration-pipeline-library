@@ -21,7 +21,7 @@ public class ProjectUtils {
         if (null == version || version.trim().length() == 0) {
             version = toolUtils.getProjectVersionParse()
         }
-        println version
+        script.println version
         return version
 
     }
@@ -34,7 +34,7 @@ public class ProjectUtils {
             toolUtils = new GradleUtils(script, null)
         }
         def version = toolUtils.getMavenProjectVersionParse()
-        println version
+        script.println version
         return version
     }
 

@@ -21,7 +21,7 @@ public class GradleUtils implements ToolUtils, Serializable {
             def version = script.sh(script: "${gradleExe} properties -q | grep 'version:'", returnStdout: true)
             return version.substring(version.indexOf(':') + 1).trim()
         } catch (Exception e) {
-            println "Failed to run the gradle command to get the Project version ${e.getMessage()}"
+            script.println "Failed to run the gradle command to get the Project version ${e.getMessage()}"
         }
         return null
     }
@@ -72,8 +72,8 @@ public class GradleUtils implements ToolUtils, Serializable {
             gradleExe = exe
         }
         def dependencyText = script.sh(script: "${gradleExe} dependencies -q", returnStdout: true)
-        println "Gradle dependencies"
-        println "${dependencyText}"
+        script.println "Gradle dependencies"
+        script.println "${dependencyText}"
         return dependencyText.contains('-SNAPSHOT')
     }
 
