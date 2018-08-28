@@ -72,6 +72,7 @@ public class GradleUtils implements ToolUtils, Serializable {
             gradleExe = exe
         }
         def dependencyText = script.sh(script: "${gradleExe} dependencies -q", returnStdout: true)
+        println dependencyText
         return dependencyText.contains('-SNAPSHOT')
     }
 
