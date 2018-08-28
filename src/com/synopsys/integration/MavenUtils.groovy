@@ -36,8 +36,6 @@ public class MavenUtils implements ToolUtils, Serializable {
         return project.version.text()
     }
 
-    //https://stackoverflow.com/questions/41171550/jenkins-java-io-notserializableexception-groovy-util-slurpersupport-nodechild
-    @NonCPS
     @Override
     public String removeSnapshotFromProjectVersion() {
         def fileText = script.readFile file: "${script.env.WORKSPACE}/pom.xml"
@@ -48,10 +46,16 @@ public class MavenUtils implements ToolUtils, Serializable {
         def modifiedVersion = version.replace('-SNAPSHOT', '')
         script.println "MAVEN UPDATED VERSION ${version}"
         pom['version'] = modifiedVersion
-        def xmlString = XmlUtil.serialize(pom)
+        def xmlString = serialzePomToString(pom)
         script.println "MAVEN UPDATED POM ${xmlString}"
         script.writeFile file: "${script.env.WORKSPACE}/pom.xml", text: "${xmlString}"
         return modifiedVersion
+    }
+
+    //https://stackoverflow.com/questions/41171550/jenkins-java-io-notserializableexception-groovy-util-slurpersupport-nodechild
+    @NonCPS
+    private String serialzePomToString(pom) {
+        return XmlUtil.serialize(pom)
     }
 
     @Override
