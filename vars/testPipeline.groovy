@@ -10,7 +10,7 @@ def call(Closure body) {
 
     def gitUrl = config.gitUrl
 
-    def runRelease = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+    def userRunRelease = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
     println "Going to run the Release ${runRelease}"
     ProjectUtils projectUtils = new ProjectUtils(this)
 
@@ -22,7 +22,7 @@ def call(Closure body) {
             url = gitUrl
         }
         preReleaseStage {
-            runRelease = runRelease
+            runRelease = userRunRelease
         }
         gradleStage {
             buildCommand = 'clean'
@@ -40,7 +40,7 @@ def call(Closure body) {
 
         }
         postReleaseStage {
-            runRelease = runRelease
+            runRelease = userRunRelease
         }
 
     }

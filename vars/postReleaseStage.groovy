@@ -13,6 +13,8 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
     def exe = config.exe
     def branch = config.get('branch', "${BRANCH}")
 
+    println "Going to run the Release ${runRelease}"
+
     stage(stageName) {
         ProjectUtils projectUtils = new ProjectUtils(this)
         if (runRelease) {
