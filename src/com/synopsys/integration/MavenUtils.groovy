@@ -9,18 +9,20 @@ public class MavenUtils implements ToolUtils, Serializable {
 
     public MavenUtils(script, String exe) {
         this.script = script
-        this.exe = exe
+
+        if (null == exe || exe.trim().length() > 0) {
+            def mvnHome = script.tool 'maven-3'
+            def mavenExe = "${mvnHome}/bin/mvn"
+            this.exe = mavenExe
+        } else {
+            this.exe = exe
+        }
     }
 
     @Override
     public String getProjectVersionProcess() {
         try {
-            def mvnHome = script.tool 'maven-3'
-            def mavenExe = "${mvnHome}/bin/mvn"
-            if (null != exe && exe.trim().length() > 0) {
-                mavenExe = exe
-            }
-            def version = script.sh(script: "${mavenExe} help:evaluate -Dexpression=project.version | grep -v '\\['", returnStdout: true)
+            def version = script.sh(script: "${exe} help:evaluate -Dexpression=project.version | grep -v '\\['", returnStdout: true)
             return version
         } catch (Exception e) {
             script.println "Failed to run the mvn command to get the Project version ${e.getMessage()}"
@@ -45,25 +47,14 @@ public class MavenUtils implements ToolUtils, Serializable {
         def modifiedVersion = version.replace('-SNAPSHOT', '')
         script.println "MAVEN UPDATED VERSION ${modifiedVersion}"
 
-        def mvnHome = script.tool 'maven-3'
-        def mavenExe = "${mvnHome}/bin/mvn"
-        if (null != exe && exe.trim().length() > 0) {
-            mavenExe = exe
-        }
-
-        script.sh "${mavenExe} versions:set -DnewVersion=${modifiedVersion}"
+        script.sh "${exe} versions:set -DgenerateBackupPoms=false  -DnewVersion=${modifiedVersion}"
         return modifiedVersion
     }
 
 
     @Override
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
-        def mvnHome = script.tool 'maven-3'
-        def mavenExe = "${mvnHome}/bin/mvn"
-        if (null != exe && exe.trim().length() > 0) {
-            mavenExe = exe
-        }
-        def command = "${mavenExe} dependency:tree -DoutputFile=${script.env.WORKSPACE}/dependency.txt"
+        def command = "${exe} dependency:tree -DoutputFile=${script.env.WORKSPACE}/dependency.txt"
         if (!checkAllDependencies) {
             command = "${command} -Dscope=compile"
         }
@@ -92,13 +83,7 @@ public class MavenUtils implements ToolUtils, Serializable {
         def modifiedVersion = version.substring(0, finalVersionPieceIndex)
         modifiedVersion = "${modifiedVersion}${Integer.valueOf(finalVersionPiece) + 1}-SNAPSHOT"
 
-        def mvnHome = script.tool 'maven-3'
-        def mavenExe = "${mvnHome}/bin/mvn"
-        if (null != exe && exe.trim().length() > 0) {
-            mavenExe = exe
-        }
-
-        script.sh "${mavenExe} versions:set -DnewVersion=${modifiedVersion}"
+        script.sh "${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}"
         return project.version.text()
     }
 }
