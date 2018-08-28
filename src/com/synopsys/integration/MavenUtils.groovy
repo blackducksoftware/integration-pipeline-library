@@ -43,10 +43,11 @@ public class MavenUtils implements ToolUtils, Serializable {
         def fileText = script.readFile file: "${script.env.WORKSPACE}/pom.xml"
         def project = new XmlSlurper().parseText(fileText)
         def version = project.version.text()
-        project.version = version.replace('-SNAPSHOT', '')
+        def modifiedVersion = version.replace('-SNAPSHOT', '')
+        project.version = modifiedVersion
         def xmlString = XmlUtil.serialize(project)
         script.writeFile file: "${script.env.WORKSPACE}/pom.xml", text: "${xmlString}"
-        return project.version.text()
+        return modifiedVersion
     }
 
     @Override
