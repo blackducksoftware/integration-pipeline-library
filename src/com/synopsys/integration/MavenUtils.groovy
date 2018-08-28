@@ -46,9 +46,9 @@ public class MavenUtils implements ToolUtils, Serializable {
         def fileText = script.readFile file: "${script.env.WORKSPACE}/pom.xml"
         def pom = new XmlSlurper().parseText(fileText)
         script.println "MAVEN POM ${pom.text()}"
-        def version = pom['version'].text().trim()
+        String version = pom['version'].text().trim()
         script.println "MAVEN VERSION ${version}"
-        def modifiedVersion = version.replace('-SNAPSHOT', '')
+        String modifiedVersion = version.replace('-SNAPSHOT', '')
         script.println "MAVEN UPDATED VERSION ${modifiedVersion}"
 
         script.sh(script: "${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", returnStdout: false)
@@ -82,7 +82,7 @@ public class MavenUtils implements ToolUtils, Serializable {
 
         def fileText = script.readFile file: "${script.env.WORKSPACE}/pom.xml"
         def project = new XmlSlurper().parseText(fileText)
-        def version = project.version.text()
+        String version = project.version.text()
         return version
     }
 }
