@@ -14,8 +14,6 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
 
     def branch = config.get('branch', "${BRANCH}")
 
-    println "Going to run the Release ${runRelease}"
-
     stage(stageName) {
         ProjectUtils projectUtils = new ProjectUtils(this)
         if (runRelease) {

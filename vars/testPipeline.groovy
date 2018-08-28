@@ -1,7 +1,5 @@
 #!/usr/bin/groovy
 
-import com.synopsys.integration.ProjectUtils
-
 def call(Closure body) {
     def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
@@ -12,7 +10,6 @@ def call(Closure body) {
 
     def userRunRelease = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
     println "Going to run the Release ${userRunRelease}"
-    ProjectUtils projectUtils = new ProjectUtils(this)
 
     integrationNode {
         setupStage {
