@@ -57,7 +57,7 @@ public class MavenUtils implements ToolUtils, Serializable {
         script.sh "${mavenExe} dependency:tree -DoutputFile=${script.env.WORKSPACE}/dependency.txt"
         def fileText = script.readFile file: "${script.env.WORKSPACE}/dependency.txt"
         println fileText
-        def splitLines = fileText.split('\n')
+        List<String> splitLines = fileText.split('\n')
         // need to remove the first line, since that is the GAV of the current project
         splitLines.remove(0)
         fileText = splitLines.join('\n')
