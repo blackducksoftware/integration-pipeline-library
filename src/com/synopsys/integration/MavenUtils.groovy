@@ -69,9 +69,16 @@ public class MavenUtils implements ToolUtils, Serializable {
 
     @Override
     public String increaseSemver() {
-        script.sh(script: "${exe} versions:set -DgenerateBackupPoms=false -DnextSnapshot=true", returnStdout: false)
-
         def version = getProjectVersionProcess()
+        script.println "Maven version ${version}"
+
+        int finalVersionPieceIndex = version.lastIndexOf('.') + 1
+        def finalVersionPiece = version.substring(finalVersionPieceIndex)
+        def modifiedVersion = version.substring(0, finalVersionPieceIndex)
+        modifiedVersion = "${modifiedVersion}${Integer.valueOf(finalVersionPiece) + 1}-SNAPSHOT"
+
+        script.sh(script: "${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", returnStdout: false)
+        script.println "Maven pom updated with version ${modifiedVersion}"
         return version
     }
 }
