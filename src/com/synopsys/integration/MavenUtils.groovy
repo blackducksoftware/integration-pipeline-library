@@ -1,8 +1,7 @@
 package com.synopsys.integration
 
-import com.cloudbees.groovy.cps.NonCPS
+
 import com.synopsys.integration.ToolUtils
-import groovy.xml.XmlUtil
 
 public class MavenUtils implements ToolUtils, Serializable {
     def script
@@ -45,18 +44,17 @@ public class MavenUtils implements ToolUtils, Serializable {
         script.println "MAVEN VERSION ${version}"
         def modifiedVersion = version.replace('-SNAPSHOT', '')
         script.println "MAVEN UPDATED VERSION ${modifiedVersion}"
-        pom['version'] = modifiedVersion
-        def xmlString = serialzePomToString(pom)
-        script.println "MAVEN UPDATED POM ${xmlString}"
-        script.writeFile file: "${script.env.WORKSPACE}/pom.xml", text: "${xmlString}"
+
+        def mvnHome = script.tool 'maven-3'
+        def mavenExe = "${mvnHome}/bin/mvn"
+        if (null != exe && exe.trim().length() > 0) {
+            mavenExe = exe
+        }
+
+        script.sh "${mavenExe} versions:set -DnewVersion=${modifiedVersion}"
         return modifiedVersion
     }
 
-    //https://stackoverflow.com/questions/41171550/jenkins-java-io-notserializableexception-groovy-util-slurpersupport-nodechild
-    @NonCPS
-    private String serialzePomToString(pom) {
-        return XmlUtil.serialize(pom)
-    }
 
     @Override
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
@@ -94,9 +92,13 @@ public class MavenUtils implements ToolUtils, Serializable {
         def modifiedVersion = version.substring(0, finalVersionPieceIndex)
         modifiedVersion = "${modifiedVersion}${Integer.valueOf(finalVersionPiece) + 1}-SNAPSHOT"
 
-        project.version = modifiedVersion
-        def xmlString = XmlUtil.serialize(project)
-        script.writeFile file: "${script.env.WORKSPACE}/pom.xml", text: "${xmlString}"
+        def mvnHome = script.tool 'maven-3'
+        def mavenExe = "${mvnHome}/bin/mvn"
+        if (null != exe && exe.trim().length() > 0) {
+            mavenExe = exe
+        }
+
+        script.sh "${mavenExe} versions:set -DnewVersion=${modifiedVersion}"
         return project.version.text()
     }
 }
