@@ -16,7 +16,7 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
         ProjectUtils projectUtils = new ProjectUtils()
         projectUtils.initialize(this, buildTool, exe)
         println "Using the next snapshot post release"
-        def newVersion = projectUtils.increaseSemver('maven', exe)
+        def newVersion = projectUtils.increaseSemver()
         sh "git commit -a -m \"Using the next snapshot post release ${newVersion}\""
         sh "git push origin ${branch}"
     }
