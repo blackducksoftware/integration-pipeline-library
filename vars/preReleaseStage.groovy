@@ -36,7 +36,7 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
                 println "Removing SNAPSHOT from the Project Version"
                 def newMavenVersion = projectUtils.removeSnapshotFromProjectVersion('maven', exe)
                 def newGradleVersion = projectUtils.removeSnapshotFromProjectVersion('gradle', exe)
-                sh "git commit -a -m \"Release ${newMavenVersion}  ${newGradleVersion}\""
+                sh "git commit -am \"Release ${newMavenVersion}  ${newGradleVersion}\""
                 sh "git push origin ${branch}"
             }
         } else {
