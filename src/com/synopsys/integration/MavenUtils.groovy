@@ -37,12 +37,12 @@ public class MavenUtils implements ToolUtils, Serializable {
     @Override
     public String removeSnapshotFromProjectVersion() {
         def version = getProjectVersionProcess()
-        script.println "MAVEN VERSION ${version}"
+        script.println "Maven version ${version}"
         String modifiedVersion = version.replace('-SNAPSHOT', '')
-        script.println "MAVEN UPDATED VERSION ${modifiedVersion}"
+        script.println "Maven updated version ${modifiedVersion}"
 
         script.sh(script: "${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", returnStdout: false)
-        script.println "MAVEN UPDATED VERSION IN POM"
+        script.println "Maven pom updated with version ${modifiedVersion}"
         return modifiedVersion
     }
 
