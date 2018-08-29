@@ -32,7 +32,12 @@ def call(Closure body) {
 
     boolean runJacocoVar = config.get('runJacoco', true)
 
-    boolean runReleaseVar = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+    boolean runReleaseVar
+    try {
+        runReleaseVar = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+    } catch (MissingPropertyException e) {
+        runReleaseVar = false
+    }
     boolean checkAllDependenciesVar = config.get('checkAllDependencies', false)
     println "Going to run the Release ${runReleaseVar}"
 
