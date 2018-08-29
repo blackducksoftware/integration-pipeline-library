@@ -3,8 +3,8 @@
 def call(String stageName = 'Setup', Boolean cleanupWorkspace = true, Closure body) {
     stage(stageName) {
         if (cleanupWorkspace) {
-            File workspace = new File("${WORKSPACE}")
-            if (new File("${WORKSPACE}").exists()) {
+            def workspaceExists = fileExists ''
+            if (workspaceExists) {
                 println "Cleaning the workspace"
                 sh "rm -rf ${WORKSPACE}"
                 sh "mkdir ${WORKSPACE}"
