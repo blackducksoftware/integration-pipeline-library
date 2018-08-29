@@ -13,7 +13,7 @@ def call(Closure body) {
 
     String detectCommandVar = config.detectCommand
 
-    boolean runGitHubReleaseVar = config.get('runGitHubRelease', true)
+    boolean runGitHubReleaseVar = config.runGitHubRelease ?: true
     String gradleExeVar = config.gradleExe
     String releaseVersionVar = config.releaseVersion
     String ownerVar = config.owner
@@ -23,16 +23,16 @@ def call(Closure body) {
     String projectVar = config.project
     String releaseDescriptionVar = config.releaseDescription
 
-    boolean runArchiveVar = config.get('runArchive', true)
+    boolean runArchiveVar = config.runArchive ?: true
     String archivePatternVar = config.archivePattern
 
-    boolean runJunitVar = config.get('runJunit', true)
+    boolean runJunitVar = config.runJunit ?: true
     String junitXmlPatternVar = config.junitXmlPattern
 
-    boolean runJacocoVar = config.get('runJacoco', true)
+    boolean runJacocoVar = config.runJacoco ?: true
 
-    boolean runReleaseVar = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
-    boolean checkAllDependenciesVar = config.get('checkAllDependencies', false)
+    boolean runReleaseVar = config.runRelease ?: Boolean.valueOf("${RUN_RELEASE}")
+    boolean checkAllDependenciesVar = config.checkAllDependencies ?: false
     println "Going to run the Release ${runReleaseVar}"
 
     integrationNode {

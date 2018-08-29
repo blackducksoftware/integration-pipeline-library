@@ -6,7 +6,7 @@ def call(Closure body) {
     body.delegate = config
     body()
 
-    String jdk = config.get('jdk', 'jdk8')
+    String jdk = config.jdk ?: 'jdk8'
 
     String jdkTool = tool "${jdk}"
     env.JAVA_HOME = "${jdkTool}"

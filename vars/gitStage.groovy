@@ -7,7 +7,7 @@ def call(String stageName = 'Git', Closure body) {
     body()
 
     String url = config.url
-    String branch = config.get('branch', "${BRANCH}")
+    String branch = config.branch ?: "${BRANCH}"
     if (null == branch || branch.trim().length() == 0) {
         branch = 'master'
     }

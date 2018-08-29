@@ -6,7 +6,7 @@ def call(String stageName = 'Run Detect', Closure body) {
     body.delegate = config
     body()
 
-    String detectURL = config.get('detectURL', "${HUB_DETECT_URL}")
+    String detectURL = config.detectURL ?: "${HUB_DETECT_URL}"
     String detectCommand = config.detectCommand
 
     def commandLines = []

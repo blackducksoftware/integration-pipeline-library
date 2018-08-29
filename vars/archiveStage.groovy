@@ -6,7 +6,7 @@ def call(String stageName = 'Archive artifacts', Closure body) {
     body.delegate = config
     body()
 
-    String artifactPatterns = config.get('patterns', '**/*.jar')
+    String artifactPatterns = config.patterns ?: '**/*.jar'
     stage(stageName) {
         archiveArtifacts "${artifactPatterns}"
     }

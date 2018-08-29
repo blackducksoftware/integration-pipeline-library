@@ -10,7 +10,7 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
 
     String buildTool = config.buildTool
     String exe = config.exe
-    String branch = config.get('branch', "${BRANCH}")
+    String branch = config.branch ?: "${BRANCH}"
 
     stage(stageName) {
         ProjectUtils projectUtils = new ProjectUtils()

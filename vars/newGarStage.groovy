@@ -8,14 +8,14 @@ def call(String stageName = 'GitHub auto release', Closure body) {
     body.delegate = config
     body()
 
-    String buildTool = config.get('buildTool', 'gradle')
+    String buildTool = config.buildTool ?: 'gradle'
     String releaseVersion = config.releaseVersion
-    String owner = config.get('owner', 'blackducksoftware')
+    String owner = config.owner ?: 'blackducksoftware'
     String artifactFile = config.artifactFile
     String artifactPattern = config.artifactPattern
     String artifactDirectory = config.artifactDirectory
     String project = config.project
-    String releaseDescription = config.get('releaseDescription', "${COMMIT_MESSAGE}")
+    String releaseDescription = config.releaseDescription ?: "${COMMIT_MESSAGE}"
     if (null == releaseDescription || releaseDescription.trim().length() == 0) {
         releaseDescription = 'Auto Release'
     }
@@ -26,7 +26,7 @@ def call(String stageName = 'GitHub auto release', Closure body) {
         releaseVersion = projectUtils.getProjectVersion()
     }
 
-    String shellURL = config.get('shellURL', 'https://github.com/blackducksoftware/github-auto-release/releases/download/1.1.0/github_auto_release.sh')
+    String shellURL = config.shellURL ?: 'https://github.com/blackducksoftware/github-auto-release/releases/download/1.1.0/github_auto_release.sh'
 
     def options = []
     options.add('-o')
@@ -67,6 +67,7 @@ def call(String stageName = 'GitHub auto release', Closure body) {
             sh commandLines.join(" \n")
         } catch (Exception e) {
             println "Failed to run the GitHub auto release ${e.getMessage()}"
+            currentBuild.result = 'FAILURE'
         }
     }
 }

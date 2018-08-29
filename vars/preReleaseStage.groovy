@@ -10,9 +10,9 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
 
     String buildTool = config.buildTool
     String exe = config.exe
-    boolean checkAllDependencies = config.get('checkAllDependencies', false)
+    boolean checkAllDependencies = config.checkAllDependencies ?: false
 
-    String branch = config.get('branch', "${BRANCH}")
+    String branch = config.branch ?: "${BRANCH}"
 
 
 
