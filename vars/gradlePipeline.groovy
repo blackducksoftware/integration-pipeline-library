@@ -12,7 +12,7 @@ def call(Closure body) {
 
     String detectCommandVar = config.detectCommand
 
-    boolean runGitHubReleaseVar = config.runGitHubRelease ?: true
+    boolean runGitHubReleaseVar = config.get('runGitHubRelease', true)
     String gradleExeVar = config.gradleExe
     String releaseVersionVar = config.releaseVersion
     String ownerVar = config.owner
@@ -22,13 +22,13 @@ def call(Closure body) {
     String projectVar = config.project
     String releaseDescriptionVar = config.releaseDescription
 
-    boolean runArchiveVar = config.runArchive ?: true
+    boolean runArchiveVar = config.get('runArchive', true)
     String archivePatternVar = config.archivePattern
 
-    boolean runJunitVar = config.runJunit ?: true
+    boolean runJunitVar = config.get('runJunit', true)
     String junitXmlPatternVar = config.junitXmlPattern
 
-    boolean runJacocoVar = config.runJacoco ?: true
+    boolean runJacocoVar = config.get('runJacoco', true)
 
     integrationNode {
         emailWrapper(emailListVar) {
