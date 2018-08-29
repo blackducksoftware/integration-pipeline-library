@@ -8,14 +8,14 @@ def call(String stageName = 'GitHub auto release', Closure body) {
     body.delegate = config
     body()
 
-    def buildTool = config.get('buildTool', 'gradle')
-    def releaseVersion = config.releaseVersion
-    def owner = config.get('owner', 'blackducksoftware')
-    def artifactFile = config.artifactFile
-    def artifactPattern = config.artifactPattern
-    def artifactDirectory = config.artifactDirectory
-    def project = config.project
-    def releaseDescription = config.get('releaseDescription', "${COMMIT_MESSAGE}")
+    String buildTool = config.get('buildTool', 'gradle')
+    String releaseVersion = config.releaseVersion
+    String owner = config.get('owner', 'blackducksoftware')
+    String artifactFile = config.artifactFile
+    String artifactPattern = config.artifactPattern
+    String artifactDirectory = config.artifactDirectory
+    String project = config.project
+    String releaseDescription = config.get('releaseDescription', "${COMMIT_MESSAGE}")
     if (null == releaseDescription || releaseDescription.trim().length() == 0) {
         releaseDescription = 'Auto Release'
     }
@@ -25,6 +25,8 @@ def call(String stageName = 'GitHub auto release', Closure body) {
         projectUtils.initialize(this, buildTool, exe)
         releaseVersion = projectUtils.getProjectVersion()
     }
+
+    String shellURL = config.get('shellURL', 'https://github.com/blackducksoftware/github-auto-release/releases/download/1.1.0/github_auto_release.sh')
 
     def options = []
     options.add('-o')
@@ -50,15 +52,15 @@ def call(String stageName = 'GitHub auto release', Closure body) {
     options.add('-m')
     options.add("\"${releaseDescription}\"")
 
-    println "GitHub Auto Release options ${options.join(' ')}"
+    String commandOptions = options.join(' ')
 
-    def shellURL = config.get('shellURL', 'https://github.com/blackducksoftware/github-auto-release/releases/download/1.1.0/github_auto_release.sh')
+    println "GitHub Auto Release options ${commandOptions}"
 
     def commandLines = []
     commandLines.add("#!/bin/bash")
     commandLines.add("wget -N \"${shellURL}\"")
     commandLines.add("chmod 777 github_auto_release.sh")
-    commandLines.add("./github_auto_release.sh ${options.join(' ')}")
+    commandLines.add("./github_auto_release.sh ${commandOptions}")
 
     stage(stageName) {
         try {

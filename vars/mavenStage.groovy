@@ -6,10 +6,10 @@ def call(String stageName = 'Maven Build', Closure body) {
     body.delegate = config
     body()
 
-    def mavenToolName = config.get('toolName', 'maven-3')
-    def mavenBuildCommand = config.get('buildCommand', '-U clean package deploy')
+    String mavenToolName = config.get('toolName', 'maven-3')
+    String mavenBuildCommand = config.get('buildCommand', '-U clean package deploy')
 
-    def mvnHome = tool "${mavenToolName}"
+    String mvnHome = tool "${mavenToolName}"
     stage(stageName) {
         sh "${mvnHome}/bin/mvn ${mavenBuildCommand}"
     }

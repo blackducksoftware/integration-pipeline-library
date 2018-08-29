@@ -6,76 +6,76 @@ def call(Closure body) {
     body.delegate = config
     body()
 
-    def emailList = config.emailList
-    def gitUrl = config.gitUrl
+    String emailListVar = config.emailList
+    String gitUrlVar = config.gitUrl
 
-    def mavenToolName = config.get('toolName', 'maven-3')
-    def mavenCommand = config.buildCommand
+    String mavenToolNameVar = config.get('toolName', 'maven-3')
+    String mavenCommandVar = config.buildCommand
 
-    def detectCommand = config.detectCommand
+    String detectCommandVar = config.detectCommand
 
-    def runGitHubRelease = config.get('runGitHubRelease', true)
-    def mavenExe = config.mavenExe
-    def releaseVersion = config.releaseVersion
-    def owner = config.owner
-    def artifactFile = config.artifactFile
-    def artifactPattern = config.artifactPattern
-    def artifactDirectory = config.artifactDirectory
-    def project = config.project
-    def releaseDescription = config.releaseDescription
+    boolean runGitHubReleaseVar = config.get('runGitHubRelease', true)
+    String mavenExeVar = config.mavenExe
+    String releaseVersionVar = config.releaseVersion
+    String ownerVar = config.owner
+    String artifactFileVar = config.artifactFile
+    String artifactPatternVar = config.artifactPattern
+    String artifactDirectoryVar = config.artifactDirectory
+    String projectVar = config.project
+    String releaseDescriptionVar = config.releaseDescription
 
-    def runArchive = config.get('runArchive', true)
-    def archivePattern = config.archivePattern
+    boolean runArchiveVar = config.get('runArchive', true)
+    String archivePatternVar = config.archivePattern
 
-    def runJunit = config.get('runJunit', true)
-    def junitXmlPattern = config.junitXmlPattern
+    boolean runJunitVar = config.get('runJunit', true)
+    String junitXmlPatternVar = config.junitXmlPattern
 
-    def runJacoco = config.get('runJacoco', true)
+    boolean runJacocoVar = config.get('runJacoco', true)
 
     integrationNode {
-        def mvnHome = tool "${mavenToolName}"
-        if (null == mavenExe || mavenExe.trim().length() == 0) {
-            mavenExe = "${mvnHome}/bin/mvn"
+        String mvnHome = tool "${mavenToolNameVar}"
+        if (null == mavenExeVar || mavenExeVar.trim().length() == 0) {
+            mavenExeVar = "${mvnHome}/bin/mvn"
         }
 
-        emailWrapper(emailList) {
+        emailWrapper(emailListVar) {
             setupStage {
                 setJdk {}
             }
             gitStage {
-                url = gitUrl
+                url = gitUrlVar
             }
             mavenStage {
-                toolName = mavenToolName
-                buildCommand = mavenCommand
+                toolName = mavenToolNameVar
+                buildCommand = mavenCommandVar
             }
             detectStage {
-                detectCommand = detectCommand
+                detectCommand = detectCommandVar
             }
-            if (runGitHubRelease) {
+            if (runGitHubReleaseVar) {
                 newGarStage {
                     buildTool = 'maven'
-                    exe = mavenExe
-                    releaseVersion = releaseVersion
-                    owner = owner
-                    artifactFile = artifactFile
-                    artifactPattern = artifactPattern
-                    artifactDirectory = artifactDirectory
-                    project = project
-                    releaseDescription = releaseDescription
+                    exe = mavenExeVar
+                    releaseVersion = releaseVersionVar
+                    owner = ownerVar
+                    artifactFile = artifactFileVar
+                    artifactPattern = artifactPatternVar
+                    artifactDirectory = artifactDirectoryVar
+                    project = projectVar
+                    releaseDescription = releaseDescriptionVar
                 }
             }
-            if (runArchive) {
+            if (runArchiveVar) {
                 archiveStage {
-                    patterns = archivePattern
+                    patterns = archivePatternVar
                 }
             }
-            if (runJunit) {
+            if (runJunitVar) {
                 junitStage {
-                    xmlPattern = junitXmlPattern
+                    xmlPattern = junitXmlPatternVar
                 }
             }
-            if (runJacoco) {
+            if (runJacocoVar) {
                 jacocoStage {}
             }
         }

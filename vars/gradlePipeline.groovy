@@ -6,68 +6,68 @@ def call(Closure body) {
     body.delegate = config
     body()
 
-    def emailList = config.emailList
-    def gitUrl = config.gitUrl
-    def gradleCommand = config.buildCommand
+    String emailListVar = config.emailList
+    String gitUrlVar = config.gitUrl
+    String gradleCommandVar = config.buildCommand
 
-    def detectCommand = config.detectCommand
+    String detectCommandVar = config.detectCommand
 
-    def runGitHubRelease = config.get('runGitHubRelease', true)
-    def gradleExe = config.gradleExe
-    def releaseVersion = config.releaseVersion
-    def owner = config.owner
-    def artifactFile = config.artifactFile
-    def artifactPattern = config.artifactPattern
-    def artifactDirectory = config.artifactDirectory
-    def project = config.project
-    def releaseDescription = config.releaseDescription
+    boolean runGitHubReleaseVar = config.get('runGitHubRelease', true)
+    String gradleExeVar = config.gradleExe
+    String releaseVersionVar = config.releaseVersion
+    String ownerVar = config.owner
+    String artifactFileVar = config.artifactFile
+    String artifactPatternVar = config.artifactPattern
+    String artifactDirectoryVar = config.artifactDirectory
+    String projectVar = config.project
+    String releaseDescriptionVar = config.releaseDescription
 
-    def runArchive = config.get('runArchive', true)
-    def archivePattern = config.archivePattern
+    boolean runArchiveVar = config.get('runArchive', true)
+    String archivePatternVar = config.archivePattern
 
-    def runJunit = config.get('runJunit', true)
-    def junitXmlPattern = config.junitXmlPattern
+    boolean runJunitVar = config.get('runJunit', true)
+    String junitXmlPatternVar = config.junitXmlPattern
 
-    def runJacoco = config.get('runJacoco', true)
+    boolean runJacocoVar = config.get('runJacoco', true)
 
     integrationNode {
-        emailWrapper(emailList) {
+        emailWrapper(emailListVar) {
             setupStage {
                 setJdk {}
             }
             gitStage {
-                url = gitUrl
+                url = gitUrlVar
             }
             gradleStage {
-                buildCommand = gradleCommand
+                buildCommand = gradleCommandVar
             }
             detectStage {
-                detectCommand = detectCommand
+                detectCommand = detectCommandVar
             }
-            if (runGitHubRelease) {
+            if (runGitHubReleaseVar) {
                 newGarStage {
                     buildTool = 'gradle'
-                    exe = gradleExe
-                    releaseVersion = releaseVersion
-                    owner = owner
-                    artifactFile = artifactFile
-                    artifactPattern = artifactPattern
-                    artifactDirectory = artifactDirectory
-                    project = project
-                    releaseDescription = releaseDescription
+                    exe = gradleExeVar
+                    releaseVersion = releaseVersionVar
+                    owner = ownerVar
+                    artifactFile = artifactFileVar
+                    artifactPattern = artifactPatternVar
+                    artifactDirectory = artifactDirectoryVar
+                    project = projectVar
+                    releaseDescription = releaseDescriptionVar
                 }
             }
-            if (runArchive) {
+            if (runArchiveVar) {
                 archiveStage {
-                    patterns = archivePattern
+                    patterns = archivePatternVar
                 }
             }
-            if (runJunit) {
+            if (runJunitVar) {
                 junitStage {
-                    xmlPattern = junitXmlPattern
+                    xmlPattern = junitXmlPatternVar
                 }
             }
-            if (runJacoco) {
+            if (runJacocoVar) {
                 jacocoStage {}
             }
         }

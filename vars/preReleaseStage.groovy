@@ -8,11 +8,11 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
     body.delegate = config
     body()
 
-    def buildTool = config.buildTool
-    def exe = config.exe
-    def checkAllDependencies = config.get('checkAllDependencies', false)
+    String buildTool = config.buildTool
+    String exe = config.exe
+    boolean checkAllDependencies = config.get('checkAllDependencies', false)
 
-    def branch = config.get('branch', "${BRANCH}")
+    String branch = config.get('branch', "${BRANCH}")
 
 
 

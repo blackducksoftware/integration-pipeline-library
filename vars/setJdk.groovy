@@ -5,10 +5,10 @@ def call(Closure body) {
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
     body()
-    
-    def jdk = config.get('jdk', 'jdk8')
 
-    def jdkTool = tool "${jdk}"
+    String jdk = config.get('jdk', 'jdk8')
+
+    String jdkTool = tool "${jdk}"
     env.JAVA_HOME = "${jdkTool}"
     env.PATH = "${JAVA_HOME}/bin:${PATH}"
 

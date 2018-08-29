@@ -8,9 +8,9 @@ def call(String recipientList = 'justiceleague@synopsys.com', Closure body) {
         currentBuild.result = "FAILURE"
         throw e
     } finally {
-        def TO = "${recipientList}"
-        def SUBJECT = '$DEFAULT_SUBJECT'
-        def CONTENT = '$DEFAULT_CONTENT'
+        String TO = "${recipientList}"
+        String SUBJECT = '$DEFAULT_SUBJECT'
+        String CONTENT = '$DEFAULT_CONTENT'
         if (currentBuild.result == "FAILURE") {
             println "Sending out Build Failure email: ${SUBJECT}"
             emailext body: CONTENT, subject: SUBJECT, to: TO

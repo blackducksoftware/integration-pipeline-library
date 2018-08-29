@@ -6,8 +6,8 @@ def call(String stageName = 'Gradle Build', Closure body) {
     body.delegate = config
     body()
 
-    def gradleExe = config.get('gradleExe', './gradlew')
-    def gradleBuildCommand = config.get('buildCommand', 'clean build --refresh-dependencies')
+    String gradleExe = config.get('gradleExe', './gradlew')
+    String gradleBuildCommand = config.get('buildCommand', 'clean build --refresh-dependencies')
 
     stage(stageName) {
         sh "${gradleExe} ${gradleBuildCommand}"

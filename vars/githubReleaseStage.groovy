@@ -6,12 +6,12 @@ def call(String stageName = 'GitHub auto release', Closure body) {
     body.delegate = config
     body()
 
-    def shellURL = config.get('shellURL', 'https://github.com/blackducksoftware/github-auto-release/releases/download/1.0.0/github_auto_release.sh')
-    def commitMessage = config.get('commitMessage', "${COMMIT_MESSAGE}")
+    String shellURL = config.get('shellURL', 'https://github.com/blackducksoftware/github-auto-release/releases/download/1.0.0/github_auto_release.sh')
+    String commitMessage = config.get('commitMessage', "${COMMIT_MESSAGE}")
     if (null == commitMessage || commitMessage.trim().length() == 0) {
         commitMessage = 'Auto Release'
     }
-    def options = config.options
+    String options = config.options
 
     def commandLines = []
     commandLines.add("#!/bin/bash")

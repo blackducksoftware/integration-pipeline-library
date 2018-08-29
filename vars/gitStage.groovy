@@ -6,16 +6,16 @@ def call(String stageName = 'Git', Closure body) {
     body.delegate = config
     body()
 
-    def url = config.url
-    def branch = config.get('branch', "${BRANCH}")
+    String url = config.url
+    String branch = config.get('branch', "${BRANCH}")
     if (null == branch || branch.trim().length() == 0) {
         branch = 'master'
     }
 
-    def gitTool = config.get('git', 'Default')
-    def changelog = config.get('changelog', false)
-    def poll = config.get('poll', false)
-    def relativeTargetDir = config.get('relativeTargetDir', './')
+    String gitTool = config.get('git', 'Default')
+    boolean changelog = config.get('changelog', false)
+    boolean poll = config.get('poll', false)
+    String relativeTargetDir = config.get('relativeTargetDir', './')
 
     stage(stageName) {
         checkout changelog: changelog, poll: poll,
