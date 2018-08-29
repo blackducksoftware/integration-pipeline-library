@@ -1,4 +1,8 @@
-package com.synopsys.integration;
+package com.synopsys.integration
+
+import com.synopsys.integration.GradleUtils
+import com.synopsys.integration.MavenUtils
+import com.synopsys.integration.ToolUtils
 
 public class ProjectUtils {
     private ToolUtils toolUtils
