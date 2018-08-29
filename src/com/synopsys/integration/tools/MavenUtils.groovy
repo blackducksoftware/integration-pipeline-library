@@ -1,6 +1,6 @@
 package com.synopsys.integration.tools
 
-import com.synopsys.integration.ToolUtils
+import com.synopsys.integration.tools.ToolUtils
 
 public class MavenUtils implements ToolUtils, Serializable {
     def script
