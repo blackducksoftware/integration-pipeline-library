@@ -8,8 +8,7 @@ def call(String recipientList = 'justiceleague@synopsys.com', Closure body) {
         currentBuild.result = "FAILURE"
         throw e
     } finally {
-        //        String TO = "${recipientList}"
-        String TO = "jrichard@synopsys.com"
+        String TO = "${recipientList}"
         String SUBJECT = '$DEFAULT_SUBJECT'
         String CONTENT = '$DEFAULT_CONTENT'
         if (currentBuild.result == "FAILURE") {
