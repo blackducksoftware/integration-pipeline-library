@@ -7,7 +7,7 @@ def call(String stageName = 'Run Detect', Closure body) {
     body()
 
     String detectURL = config.detectURL ?: "${HUB_DETECT_URL}"
-    String detectCommand = config.detectCommand
+    String detectCommand = config.detectCommand ?: ''
 
     def commandLines = []
     commandLines.add("#!/bin/bash")
