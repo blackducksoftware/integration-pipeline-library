@@ -8,6 +8,7 @@ def call(Closure body) {
 
     String emailListVar = config.emailList
     String gitUrlVar = config.gitUrl
+    String gitRelativeTargetDirVar = config.gitRelativeTargetDir
 
     String mavenToolNameVar = config.toolName ?: 'maven-3'
     String mavenCommandVar = config.buildCommand
@@ -53,6 +54,7 @@ def call(Closure body) {
             }
             gitStage {
                 url = gitUrlVar
+                relativeTargetDir = gitRelativeTargetDirVar
             }
             if (runReleaseVar) {
                 preReleaseStage {

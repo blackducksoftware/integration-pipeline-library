@@ -8,6 +8,7 @@ def call(Closure body) {
 
     String emailListVar = config.emailList
     String gitUrlVar = config.gitUrl
+    String gitRelativeTargetDirVar = config.gitRelativeTargetDir
     String gradleCommandVar = config.buildCommand
 
     String detectCommandVar = config.detectCommand
@@ -46,6 +47,7 @@ def call(Closure body) {
             }
             gitStage {
                 url = gitUrlVar
+                relativeTargetDir = gitRelativeTargetDirVar
             }
             if (runReleaseVar) {
                 preReleaseStage {

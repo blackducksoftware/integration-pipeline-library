@@ -1,0 +1,46 @@
+#!/usr/bin/groovy
+
+def call(String stageName = 'Update gh-pages', Closure body) {
+    def config = [:]
+    body.resolveStrategy = Closure.DELEGATE_FIRST
+    body.delegate = config
+    body()
+
+    String url = config.url
+    String branch = config.branch ?: "${BRANCH}"
+    if (null == branch || branch.trim().length() == 0) {
+        branch = 'gh-pages'
+    }
+    String gitTool = config.get('git', 'Default')
+    String relativeTargetDir = config.relativeTargetDir ?: 'gh-pages'
+
+    stage(stageName) {
+        checkout changelog: false, poll: false,
+                scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
+                      extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: relativeTargetDir]], gitTool: gitTool, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
+        // Need to do this because Jenkins checks out a detached HEAD
+        sh "git checkout ${branch}"
+        // Do a hard reset in order to clear out any local changes/commits
+        sh "git reset --hard origin/${branch}"
+    }
+}
+
+
+//            // add the latest commit id to gh-pages to indicate a functionally new build (the next shell script will commit it)
+//            git rev-parse HEAD > ../latest-commit-id.txt
+//            cd ../gh-pages
+//
+//            // Must do that due to Jenkins being weird during checkout.
+//                    git checkout gh-pages
+//            git pull origin gh-pages
+//
+//            if diff latest-commit-id.txt ../latest-commit-id.txt >/dev/null ; then
+//            echo "No commits since last build so no need to make any further changes."
+//            else
+//            cp ../latest-commit-id.txt .
+//              cp ../master/hub-detect/build/hub-detect.sh .
+//                    cp ../master/hub-detect/build/hub-detect.ps1 .
+//
+//                    git add --all && git commit -am "Committing the latest update-site contents to gh-pages branch."
+//            git push origin gh-pages
+//            fi

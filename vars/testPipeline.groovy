@@ -6,14 +6,107 @@ def call(Closure body) {
     body.delegate = config
     body()
 
-    String message = config.get('message')
-    Closure testBody = config.testBody
+    String emailListVar = config.emailList
+    String gitUrlVar = config.gitUrl
+    String gitRelativeTargetDirVar = config.gitRelativeTargetDir
+
+    Closure preBuildBody = config.preBuild
+    String gradleCommandVar = config.buildCommand
+    Closure postBuildBody = config.postBuild
+
+    String detectCommandVar = config.detectCommand
+
+    boolean runGitHubReleaseVar = config.get('runGitHubRelease', true)
+    String gradleExeVar = config.gradleExe
+    String releaseVersionVar = config.releaseVersion
+    String ownerVar = config.owner
+    String artifactFileVar = config.artifactFile
+    String artifactPatternVar = config.artifactPattern
+    String artifactDirectoryVar = config.artifactDirectory
+    String projectVar = config.project
+    String releaseDescriptionVar = config.releaseDescription
+
+    boolean runArchiveVar = config.get('runArchive', true)
+    String archivePatternVar = config.archivePattern
+
+    boolean runJunitVar = config.get('runJunit', true)
+    String junitXmlPatternVar = config.junitXmlPattern
+
+    boolean runJacocoVar = config.get('runJacoco', true)
+
+    boolean runReleaseVar
+    try {
+        runReleaseVar = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+    } catch (MissingPropertyException e) {
+        runReleaseVar = false
+    }
+    boolean checkAllDependenciesVar = config.get('checkAllDependencies', false)
+    println "Going to run the Release ${runReleaseVar}"
 
     integrationNode {
-        stage('Test') {
-            println "${message}"
-            testBody()
+        emailWrapper(emailListVar) {
+            setupStage {
+                setJdk {}
+            }
+            gitStage {
+                url = gitUrlVar
+                gitRelativeTargetDir = gitRelativeTargetDirVar
+            }
+            if (runReleaseVar) {
+                preReleaseStage {
+                    buildTool = 'gradle'
+                    exe = gradleExeVar
+                    checkAllDependencies = checkAllDependenciesVar
+                }
+            }
+            if (null != preBuildBody) {
+                stage('Pre Build') {
+                    preBuildBody()
+                }
+            }
+            gradleStage {
+                buildCommand = gradleCommandVar
+            }
+            if (null != postBuildBody) {
+                stage('Post Build') {
+                    postBuildBody()
+                }
+            }
+            detectStage {
+                detectCommand = detectCommandVar
+            }
+            if (runGitHubReleaseVar) {
+                newGarStage {
+                    buildTool = 'gradle'
+                    exe = gradleExeVar
+                    releaseVersion = releaseVersionVar
+                    owner = ownerVar
+                    artifactFile = artifactFileVar
+                    artifactPattern = artifactPatternVar
+                    artifactDirectory = artifactDirectoryVar
+                    project = projectVar
+                    releaseDescription = releaseDescriptionVar
+                }
+            }
+            if (runReleaseVar) {
+                postReleaseStage {
+                    buildTool = 'gradle'
+                    exe = gradleExeVar
+                }
+            }
+            if (runArchiveVar) {
+                archiveStage {
+                    patterns = archivePatternVar
+                }
+            }
+            if (runJunitVar) {
+                junitStage {
+                    xmlPattern = junitXmlPatternVar
+                }
+            }
+            if (runJacocoVar) {
+                jacocoStage {}
+            }
         }
     }
-
 }
