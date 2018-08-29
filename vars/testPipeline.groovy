@@ -7,7 +7,7 @@ def call(Closure body) {
     body()
 
     String message = config.get('message')
-    Closure testBody = config.get(testBody)
+    Closure testBody = config.testBody
 
     integrationNode {
         stage('Test') {
