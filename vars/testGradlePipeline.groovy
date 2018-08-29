@@ -6,7 +6,6 @@ def call(Closure body) {
     body.delegate = config
     body()
 
-
     String emailListVar = config.emailList
     String gitUrlVar = config.gitUrl
     String gradleCommandVar = config.buildCommand

@@ -32,6 +32,10 @@ def call(Closure body) {
 
     boolean runJacocoVar = config.get('runJacoco', true)
 
+    boolean runReleaseVar = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+    boolean checkAllDependenciesVar = config.get('checkAllDependencies', false)
+    println "Going to run the Release ${runReleaseVar}"
+
     integrationNode {
         String mvnHome = tool "${mavenToolNameVar}"
         if (null == mavenExeVar || mavenExeVar.trim().length() == 0) {
@@ -44,6 +48,13 @@ def call(Closure body) {
             }
             gitStage {
                 url = gitUrlVar
+            }
+            if (runReleaseVar) {
+                preReleaseStage {
+                    buildTool = 'maven'
+                    exe = gradleExeVar
+                    checkAllDependencies = checkAllDependenciesVar
+                }
             }
             mavenStage {
                 toolName = mavenToolNameVar
@@ -63,6 +74,12 @@ def call(Closure body) {
                     artifactDirectory = artifactDirectoryVar
                     project = projectVar
                     releaseDescription = releaseDescriptionVar
+                }
+            }
+            if (runReleaseVar) {
+                postReleaseStage {
+                    buildTool = 'maven'
+                    exe = gradleExeVar
                 }
             }
             if (runArchiveVar) {

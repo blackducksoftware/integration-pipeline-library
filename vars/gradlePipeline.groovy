@@ -30,6 +30,10 @@ def call(Closure body) {
 
     boolean runJacocoVar = config.get('runJacoco', true)
 
+    boolean runReleaseVar = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+    boolean checkAllDependenciesVar = config.get('checkAllDependencies', false)
+    println "Going to run the Release ${runReleaseVar}"
+
     integrationNode {
         emailWrapper(emailListVar) {
             setupStage {
@@ -37,6 +41,13 @@ def call(Closure body) {
             }
             gitStage {
                 url = gitUrlVar
+            }
+            if (runReleaseVar) {
+                preReleaseStage {
+                    buildTool = 'gradle'
+                    exe = gradleExeVar
+                    checkAllDependencies = checkAllDependenciesVar
+                }
             }
             gradleStage {
                 buildCommand = gradleCommandVar
@@ -55,6 +66,12 @@ def call(Closure body) {
                     artifactDirectory = artifactDirectoryVar
                     project = projectVar
                     releaseDescription = releaseDescriptionVar
+                }
+            }
+            if (runReleaseVar) {
+                postReleaseStage {
+                    buildTool = 'gradle'
+                    exe = gradleExeVar
                 }
             }
             if (runArchiveVar) {
