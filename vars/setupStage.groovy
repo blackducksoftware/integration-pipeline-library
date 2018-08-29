@@ -11,6 +11,8 @@ def call(String stageName = 'Setup', Boolean cleanupWorkspace = true, Closure bo
             } else {
                 println "Skipping the workspace cleanup since the ${WORKSPACE} does not exist"
             }
+        } else {
+            println "Skipping the workspace cleanup at the Users request"
         }
         body()
     }
