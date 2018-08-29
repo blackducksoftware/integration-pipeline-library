@@ -1,4 +1,4 @@
-package com.synopsys.integration
+package com.synopsys.integration.tools
 
 import com.synopsys.integration.ToolUtils
 
