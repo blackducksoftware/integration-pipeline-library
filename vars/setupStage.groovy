@@ -6,8 +6,12 @@ def call(String stageName = 'Setup', Boolean cleanupWorkspace = true, Closure bo
             def workspaceExists = fileExists ''
             if (workspaceExists) {
                 println "Cleaning the workspace"
-                sh "rm -rf ${WORKSPACE}/*"
-                sh "rm -rf ${WORKSPACE}/.*"
+                try {
+                    sh "rm -rf *"
+                    sh "rm -rf .*"
+                } catch (Exception e) {
+                    //ignore exceptions
+                }
             } else {
                 println "Skipping the workspace cleanup since the ${WORKSPACE} does not exist"
             }
