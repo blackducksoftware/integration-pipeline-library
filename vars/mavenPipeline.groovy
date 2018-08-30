@@ -18,7 +18,7 @@ def call(Closure body) {
 
     String detectCommandVar = config.detectCommand
 
-    boolean runGitHubReleaseVar = config.get('runGitHubRelease', true)
+    boolean runGitHubReleaseVar = config.runGitHubRelease
     String mavenExeVar = config.mavenExe
     String releaseVersionVar = config.releaseVersion
     String ownerVar = config.owner
@@ -28,21 +28,21 @@ def call(Closure body) {
     String projectVar = config.project
     String releaseDescriptionVar = config.releaseDescription
 
-    boolean runArchiveVar = config.get('runArchive', true)
+    boolean runArchiveVar = config.runArchive
     String archivePatternVar = config.archivePattern
 
-    boolean runJunitVar = config.get('runJunit', true)
+    boolean runJunitVar = config.runJunit
     String junitXmlPatternVar = config.junitXmlPattern
 
-    boolean runJacocoVar = config.get('runJacoco', true)
+    boolean runJacocoVar = config.runJacoco
 
     boolean runReleaseVar
     try {
-        runReleaseVar = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+        runReleaseVar = config.runRelease
     } catch (MissingPropertyException e) {
         runReleaseVar = false
     }
-    boolean checkAllDependenciesVar = config.get('checkAllDependencies', false)
+    boolean checkAllDependenciesVar = config.checkAllDependencies
     println "Going to run the Release ${runReleaseVar}"
 
     integrationNode {
@@ -50,73 +50,47 @@ def call(Closure body) {
         if (null == mavenExeVar || mavenExeVar.trim().length() == 0) {
             mavenExeVar = "${mvnHome}/bin/mvn"
         }
+    }
 
-        emailWrapper(emailListVar) {
-            setupStage {
-                setJdk {}
-            }
-            def directoryToRunIn = gitStage {
-                url = gitUrlVar
-                relativeTargetDir = gitRelativeTargetDirVar
-            }
-            dir(directoryToRunIn) {
-                if (runReleaseVar) {
-                    preReleaseStage {
-                        buildTool = 'maven'
-                        exe = gradleExeVar
-                        checkAllDependencies = checkAllDependenciesVar
-                    }
-                }
-                if (null != preBuildBody) {
-                    stage('Pre Build') {
-                        preBuildBody()
-                    }
-                }
-                mavenStage {
-                    toolName = mavenToolNameVar
-                    buildCommand = mavenCommandVar
-                }
-                if (null != postBuildBody) {
-                    stage('Post Build') {
-                        postBuildBody()
-                    }
-                }
-                detectStage {
-                    detectCommand = detectCommandVar
-                }
-                if (runGitHubReleaseVar) {
-                    newGarStage {
-                        buildTool = 'maven'
-                        exe = mavenExeVar
-                        releaseVersion = releaseVersionVar
-                        owner = ownerVar
-                        artifactFile = artifactFileVar
-                        artifactPattern = artifactPatternVar
-                        artifactDirectory = artifactDirectoryVar
-                        project = projectVar
-                        releaseDescription = releaseDescriptionVar
-                    }
-                }
-                if (runReleaseVar) {
-                    postReleaseStage {
-                        buildTool = 'maven'
-                        exe = gradleExeVar
-                    }
-                }
-                if (runArchiveVar) {
-                    archiveStage {
-                        patterns = archivePatternVar
-                    }
-                }
-                if (runJunitVar) {
-                    junitStage {
-                        xmlPattern = junitXmlPatternVar
-                    }
-                }
-                if (runJacocoVar) {
-                    jacocoStage {}
-                }
+    integrationPipeline {
+        emailList = emailListVar
+        gitUrl = gitUrlVar
+        gitRelativeTargetDir = gitRelativeTargetDirVar
+
+        buildTool = 'maven'
+
+        preBuild = preBuildBody
+        buildBody = {
+            mavenStage {
+                toolName = mavenToolNameVar
+                buildCommand = mavenCommandVar
             }
         }
+        postBuild = postBuildBody
+
+        detectCommand = detectCommandVar
+
+        runGitHubRelease = runGitHubReleaseVar
+
+        exe = mavenExeVar
+        releaseVersion = releaseVersionVar
+        owner = ownerVar
+        artifactFile = artifactFileVar
+        artifactPattern = artifactPatternVar
+        artifactDirectory = artifactDirectoryVar
+        project = projectVar
+        releaseDescription = releaseDescriptionVar
+
+        runArchive = runArchiveVar
+        archivePattern = archivePatternVar
+
+        runJunit = runJunitVar
+        junitXmlPattern = junitXmlPatternVar
+
+        runJacoco = runJacocoVar
+
+        runRelease = runReleaseVar
+        checkAllDependencies = checkAllDependenciesVar
+
     }
 }
