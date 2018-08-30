@@ -9,6 +9,8 @@ def call(Closure body) {
     String nodeNameVar = config.nodeName
     String mavenExeVar = config.mavenExe
 
+    String buildCommandVar = config.buildCommand
+
     String mavenToolNameVar = config.toolName ?: 'maven-3'
     integrationNode(nodeNameVar) {
         String mvnHome = tool "${mavenToolNameVar}"
