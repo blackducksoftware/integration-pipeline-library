@@ -9,7 +9,10 @@ def call(Closure body) {
     String emailListVar = config.emailList
     String gitUrlVar = config.gitUrl
     String gitRelativeTargetDirVar = config.gitRelativeTargetDir
+
+    Closure preBuildBody = config.preBuild
     String gradleCommandVar = config.buildCommand
+    Closure postBuildBody = config.postBuild
 
     String detectCommandVar = config.detectCommand
 
@@ -45,54 +48,66 @@ def call(Closure body) {
             setupStage {
                 setJdk {}
             }
-            gitStage {
+            def directoryToRunIn = gitStage {
                 url = gitUrlVar
                 relativeTargetDir = gitRelativeTargetDirVar
             }
-            if (runReleaseVar) {
-                preReleaseStage {
-                    buildTool = 'gradle'
-                    exe = gradleExeVar
-                    checkAllDependencies = checkAllDependenciesVar
+            dir(directoryToRunIn) {
+                if (runReleaseVar) {
+                    preReleaseStage {
+                        buildTool = 'gradle'
+                        exe = gradleExeVar
+                        checkAllDependencies = checkAllDependenciesVar
+                    }
                 }
-            }
-            gradleStage {
-                buildCommand = gradleCommandVar
-            }
-            detectStage {
-                detectCommand = detectCommandVar
-            }
-            if (runGitHubReleaseVar) {
-                newGarStage {
-                    buildTool = 'gradle'
-                    exe = gradleExeVar
-                    releaseVersion = releaseVersionVar
-                    owner = ownerVar
-                    artifactFile = artifactFileVar
-                    artifactPattern = artifactPatternVar
-                    artifactDirectory = artifactDirectoryVar
-                    project = projectVar
-                    releaseDescription = releaseDescriptionVar
+                if (null != preBuildBody) {
+                    stage('Pre Build') {
+                        preBuildBody()
+                    }
                 }
-            }
-            if (runReleaseVar) {
-                postReleaseStage {
-                    buildTool = 'gradle'
-                    exe = gradleExeVar
+                gradleStage {
+                    buildCommand = gradleCommandVar
                 }
-            }
-            if (runArchiveVar) {
-                archiveStage {
-                    patterns = archivePatternVar
+                if (null != postBuildBody) {
+                    stage('Post Build') {
+                        postBuildBody()
+                    }
                 }
-            }
-            if (runJunitVar) {
-                junitStage {
-                    xmlPattern = junitXmlPatternVar
+                detectStage {
+                    detectCommand = detectCommandVar
                 }
-            }
-            if (runJacocoVar) {
-                jacocoStage {}
+                if (runGitHubReleaseVar) {
+                    newGarStage {
+                        buildTool = 'gradle'
+                        exe = gradleExeVar
+                        releaseVersion = releaseVersionVar
+                        owner = ownerVar
+                        artifactFile = artifactFileVar
+                        artifactPattern = artifactPatternVar
+                        artifactDirectory = artifactDirectoryVar
+                        project = projectVar
+                        releaseDescription = releaseDescriptionVar
+                    }
+                }
+                if (runReleaseVar) {
+                    postReleaseStage {
+                        buildTool = 'gradle'
+                        exe = gradleExeVar
+                    }
+                }
+                if (runArchiveVar) {
+                    archiveStage {
+                        patterns = archivePatternVar
+                    }
+                }
+                if (runJunitVar) {
+                    junitStage {
+                        xmlPattern = junitXmlPatternVar
+                    }
+                }
+                if (runJacocoVar) {
+                    jacocoStage {}
+                }
             }
         }
     }

@@ -17,13 +17,18 @@ def call(String stageName = 'Git', Closure body) {
     boolean poll = config.get('poll', false)
     String relativeTargetDir = config.relativeTargetDir
 
+    def directoryToRunIn = "${WORKSPACE}/${relativeTargetDir}"
+
     stage(stageName) {
         checkout changelog: changelog, poll: poll,
                 scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
                       extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: relativeTargetDir]], gitTool: gitTool, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
-        // Need to do this because Jenkins checks out a detached HEAD
-        sh "git checkout ${branch}"
-        // Do a hard reset in order to clear out any local changes/commits
-        sh "git reset --hard origin/${branch}"
+        dir(directoryToRunIn) {
+            // Need to do this because Jenkins checks out a detached HEAD
+            sh "git checkout ${branch}"
+            // Do a hard reset in order to clear out any local changes/commits
+            sh "git reset --hard origin/${branch}"
+        }
     }
+    return directoryToRunIn
 }

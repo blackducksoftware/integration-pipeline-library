@@ -50,28 +50,8 @@ def call(String stageName = 'Update gh-pages', Closure body) {
                     sh "cp ${fileToUpdate} ."
                 }
                 sh 'git commit -am "Committing the latest update-site contents to gh-pages branch."'
-                // sh "git push origin ${branch}"
+                sh "git push origin ${branch}"
             }
         }
     }
 }
-
-
-//            // add the latest commit id to gh-pages to indicate a functionally new build (the next shell script will commit it)
-//            git rev-parse HEAD > ../latest-commit-id.txt
-//            cd ../gh-pages
-//
-//            // Must do that due to Jenkins being weird during checkout.
-//                    git checkout gh-pages
-//            git pull origin gh-pages
-//
-//            if diff latest-commit-id.txt ../latest-commit-id.txt >/dev/null ; then
-//            echo "No commits since last build so no need to make any further changes."
-//            else
-//            cp ../latest-commit-id.txt .
-//            cp ../master/hub-detect/build/hub-detect.sh .
-//            cp ../master/hub-detect/build/hub-detect.ps1 .
-//
-//            git add --all && git commit -am "Committing the latest update-site contents to gh-pages branch."
-//            git push origin gh-pages
-//            fi

@@ -28,12 +28,3 @@ def call(String stageName = 'Generate Detect Help', Closure body) {
         }
     }
 }
-
-//
-//                    #!/bin/bash
-//                    mkdir html-help
-//                    cd html-help/
-//                            bash <(curl -s https://blackducksoftware.github.io/hub-detect/hub-detect.sh) -hdoc
-//                    chmod 777 *.html
-//                    # Add the help .html document (generated from the previously released build) to our gh-pages
-//                    cp *.html ../gh-pages/

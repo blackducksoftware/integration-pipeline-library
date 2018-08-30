@@ -11,7 +11,10 @@ def call(Closure body) {
     String gitRelativeTargetDirVar = config.gitRelativeTargetDir
 
     String mavenToolNameVar = config.toolName ?: 'maven-3'
+
+    Closure preBuildBody = config.preBuild
     String mavenCommandVar = config.buildCommand
+    Closure postBuildBody = config.postBuild
 
     String detectCommandVar = config.detectCommand
 
@@ -52,55 +55,67 @@ def call(Closure body) {
             setupStage {
                 setJdk {}
             }
-            gitStage {
+            def directoryToRunIn = gitStage {
                 url = gitUrlVar
                 relativeTargetDir = gitRelativeTargetDirVar
             }
-            if (runReleaseVar) {
-                preReleaseStage {
-                    buildTool = 'maven'
-                    exe = gradleExeVar
-                    checkAllDependencies = checkAllDependenciesVar
+            dir(directoryToRunIn) {
+                if (runReleaseVar) {
+                    preReleaseStage {
+                        buildTool = 'maven'
+                        exe = gradleExeVar
+                        checkAllDependencies = checkAllDependenciesVar
+                    }
                 }
-            }
-            mavenStage {
-                toolName = mavenToolNameVar
-                buildCommand = mavenCommandVar
-            }
-            detectStage {
-                detectCommand = detectCommandVar
-            }
-            if (runGitHubReleaseVar) {
-                newGarStage {
-                    buildTool = 'maven'
-                    exe = mavenExeVar
-                    releaseVersion = releaseVersionVar
-                    owner = ownerVar
-                    artifactFile = artifactFileVar
-                    artifactPattern = artifactPatternVar
-                    artifactDirectory = artifactDirectoryVar
-                    project = projectVar
-                    releaseDescription = releaseDescriptionVar
+                if (null != preBuildBody) {
+                    stage('Pre Build') {
+                        preBuildBody()
+                    }
                 }
-            }
-            if (runReleaseVar) {
-                postReleaseStage {
-                    buildTool = 'maven'
-                    exe = gradleExeVar
+                mavenStage {
+                    toolName = mavenToolNameVar
+                    buildCommand = mavenCommandVar
                 }
-            }
-            if (runArchiveVar) {
-                archiveStage {
-                    patterns = archivePatternVar
+                if (null != postBuildBody) {
+                    stage('Post Build') {
+                        postBuildBody()
+                    }
                 }
-            }
-            if (runJunitVar) {
-                junitStage {
-                    xmlPattern = junitXmlPatternVar
+                detectStage {
+                    detectCommand = detectCommandVar
                 }
-            }
-            if (runJacocoVar) {
-                jacocoStage {}
+                if (runGitHubReleaseVar) {
+                    newGarStage {
+                        buildTool = 'maven'
+                        exe = mavenExeVar
+                        releaseVersion = releaseVersionVar
+                        owner = ownerVar
+                        artifactFile = artifactFileVar
+                        artifactPattern = artifactPatternVar
+                        artifactDirectory = artifactDirectoryVar
+                        project = projectVar
+                        releaseDescription = releaseDescriptionVar
+                    }
+                }
+                if (runReleaseVar) {
+                    postReleaseStage {
+                        buildTool = 'maven'
+                        exe = gradleExeVar
+                    }
+                }
+                if (runArchiveVar) {
+                    archiveStage {
+                        patterns = archivePatternVar
+                    }
+                }
+                if (runJunitVar) {
+                    junitStage {
+                        xmlPattern = junitXmlPatternVar
+                    }
+                }
+                if (runJacocoVar) {
+                    jacocoStage {}
+                }
             }
         }
     }
