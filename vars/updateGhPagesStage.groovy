@@ -26,9 +26,6 @@ def call(String stageName = 'Update gh-pages', Closure body) {
 
     stage(stageName) {
         dir(workspace) {
-            // add the latest commit id to gh-pages to indicate a functionally new build (the next shell script will commit it)
-            sh 'git rev-parse HEAD > ../latest-commit-id.txt'
-
             checkout changelog: false, poll: false,
                     scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
                           extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: ghPageTargetDir]], gitTool: gitTool, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
@@ -38,6 +35,9 @@ def call(String stageName = 'Update gh-pages', Closure body) {
             sh "git checkout ${branch}"
             // Do a hard reset in order to clear out any local changes/commits
             sh "git reset --hard origin/${branch}"
+
+            // add the latest commit id to gh-pages to indicate a functionally new build (the next shell script will commit it)
+            sh 'git rev-parse HEAD > ../latest-commit-id.txt'
 
             String checkedInCommitId = script.readFile file: "latest-commit-id.txt"
             String currentCommitId = script.readFile file: "../latest-commit-id.txt"
