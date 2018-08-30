@@ -19,7 +19,7 @@ def call(String stageName = 'Generate Detect Help', Closure body) {
         dir(directoryToRunIn) {
             sh "mkdir ${ghPageTargetDir}"
             sh 'mkdir html-help'
-            dir(' html-help') {
+            dir('html-help') {
                 sh commandLines.join(" \n")
                 sh 'chmod 777 *.html'
                 // Add the help .html document (generated from the previously released build) to our gh-pages
