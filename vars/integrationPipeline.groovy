@@ -10,6 +10,7 @@ def call(Closure body) {
 
     ConfigUtils configUtils = new ConfigUtils(config)
 
+    String nodeName = config.nodeName
     String emailListVar = config.emailList
     String gitUrlVar = config.gitUrl
     String gitRelativeTargetDirVar = config.gitRelativeTargetDir
@@ -50,7 +51,7 @@ def call(Closure body) {
     boolean checkAllDependenciesVar = configUtils.get('checkAllDependencies', false)
     println "Going to run the Release ${runReleaseVar}"
 
-    integrationNode {
+    integrationNode(nodeName) {
         emailWrapper(emailListVar) {
             setupStage {
                 setJdk {}
