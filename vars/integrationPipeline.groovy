@@ -2,7 +2,7 @@
 
 import com.synopsys.integration.ConfigUtils
 
-def call(Closure body) {
+def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
     def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
@@ -15,17 +15,13 @@ def call(Closure body) {
     String gitUrlVar = config.gitUrl
     String gitRelativeTargetDirVar = config.gitRelativeTargetDir
 
-    String buildToolVar = config.buildTool
-
     Closure preBuildBody = config.preBuild
-    Closure buildBody = config.buildBody
     Closure postBuildBody = config.postBuild
 
     String detectCommandVar = config.detectCommand
 
     boolean runGitHubReleaseVar = configUtils.get('runGitHubRelease', true)
 
-    String exeVar = config.exe
     String releaseVersionVar = config.releaseVersion
     String ownerVar = config.owner
     String artifactFileVar = config.artifactFile
