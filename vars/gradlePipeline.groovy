@@ -18,7 +18,10 @@ def call(Closure body) {
     String detectCommandVar = config.detectCommand
 
     boolean runGitHubReleaseVar = config.runGitHubRelease
+    ////////// SPECIFIC TO THIS PIPELINE /////////////////////
     String gradleExeVar = config.gradleExe
+    //////////////////////////////////////////////////////////
+
     String releaseVersionVar = config.releaseVersion
     String ownerVar = config.owner
     String artifactFileVar = config.artifactFile
@@ -49,14 +52,15 @@ def call(Closure body) {
         gitUrl = gitUrlVar
         gitRelativeTargetDir = gitRelativeTargetDirVar
 
-        buildTool = 'gradle'
-
         preBuild = preBuildBody
+        ////////// SPECIFIC TO THIS PIPELINE /////////////////////
+        buildTool = 'gradle'
         buildBody = {
             gradleStage {
                 buildCommand = buildCommandVar
             }
         }
+        //////////////////////////////////////////////////////////
         postBuild = postBuildBody
 
         detectCommand = detectCommandVar

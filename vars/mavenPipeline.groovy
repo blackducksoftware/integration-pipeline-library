@@ -18,7 +18,10 @@ def call(Closure body) {
     String detectCommandVar = config.detectCommand
 
     boolean runGitHubReleaseVar = config.runGitHubRelease
+
+    ////////// SPECIFIC TO THIS PIPELINE /////////////////////
     String mavenExeVar = config.mavenExe
+    //////////////////////////////////////////////////////////
     String releaseVersionVar = config.releaseVersion
     String ownerVar = config.owner
     String artifactFileVar = config.artifactFile
@@ -38,6 +41,7 @@ def call(Closure body) {
     boolean runReleaseVar = config.runRelease
     boolean checkAllDependenciesVar = config.checkAllDependencies
 
+    ////////// SPECIFIC TO THIS PIPELINE /////////////////////
     String mavenToolNameVar = config.toolName ?: 'maven-3'
     integrationNode(nodeNameVar) {
         String mvnHome = tool "${mavenToolNameVar}"
@@ -45,22 +49,25 @@ def call(Closure body) {
             mavenExeVar = "${mvnHome}/bin/mvn"
         }
     }
+    //////////////////////////////////////////////////////////
 
     integrationPipeline {
         nodeName = nodeNameVar
         emailList = emailListVar
         gitUrl = gitUrlVar
         gitRelativeTargetDir = gitRelativeTargetDirVar
-
-        buildTool = 'maven'
-
         preBuild = preBuildBody
+
+        ////////// SPECIFIC TO THIS PIPELINE /////////////////////
+        buildTool = 'maven'
         buildBody = {
             mavenStage {
                 toolName = mavenToolNameVar
                 buildCommand = buildCommandVar
             }
         }
+        //////////////////////////////////////////////////////////
+
         postBuild = postBuildBody
 
         detectCommand = detectCommandVar
