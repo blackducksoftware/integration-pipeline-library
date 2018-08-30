@@ -7,7 +7,7 @@ def call(String stageName = 'Generate Detect Help', Closure body) {
     body()
 
     String detectURL = config.detectURL ?: "${HUB_DETECT_URL}"
-    String relativeTargetDir = config.relativeTargetDir ?: 'gh-pages'
+    String ghPageTargetDir = config.ghPageTargetDir ?: 'gh-pages'
 
     def directoryToRunIn = "${WORKSPACE}"
 
@@ -17,13 +17,13 @@ def call(String stageName = 'Generate Detect Help', Closure body) {
 
     stage(stageName) {
         dir(directoryToRunIn) {
-            sh "mkdir ${relativeTargetDir}"
+            sh "mkdir ${ghPageTargetDir}"
             sh 'mkdir html-help'
             sh 'cd html-help'
             sh commandLines.join(" \n")
             sh 'chmod 777 *.html'
             // Add the help .html document (generated from the previously released build) to our gh-pages
-            sh "cp *.html ../${relativeTargetDir}/"
+            sh "cp *.html ../${ghPageTargetDir}/"
         }
     }
 }

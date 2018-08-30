@@ -9,9 +9,9 @@ def call(String stageName = 'Update gh-pages', Closure body) {
     String url = config.url
     String branch = config.branch ?: 'gh-pages'
     String gitTool = config.get('git', 'Default')
-    String relativeTargetDir = config.relativeTargetDir ?: 'gh-pages'
+    String ghPageTargetDir = config.ghPageTargetDir ?: 'gh-pages'
 
-    def directoryToRunIn = "${WORKSPACE}/${relativeTargetDir}"
+    def directoryToRunIn = "${WORKSPACE}/${ghPageTargetDir}"
 
     String originalDirectory = sh(script: "pwd", returnStdout: true)
 
@@ -29,7 +29,7 @@ def call(String stageName = 'Update gh-pages', Closure body) {
 
         checkout changelog: false, poll: false,
                 scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
-                      extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: relativeTargetDir]], gitTool: gitTool, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
+                      extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: ghPageTargetDir]], gitTool: gitTool, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
         dir(directoryToRunIn) {
             // Need to do this because Jenkins checks out a detached HEAD
             sh "git checkout ${branch}"
