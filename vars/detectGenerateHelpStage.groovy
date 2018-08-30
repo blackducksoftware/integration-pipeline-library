@@ -17,6 +17,7 @@ def call(String stageName = 'Generate Detect Help', Closure body) {
 
     stage(stageName) {
         dir(directoryToRunIn) {
+            sh "mkdir ${relativeTargetDir}"
             sh 'mkdir html-help'
             sh 'cd html-help'
             sh commandLines.join(" \n")
