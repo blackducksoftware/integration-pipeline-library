@@ -46,7 +46,7 @@ def call(String stageName = 'Update gh-pages', Closure body) {
                     sh "cp ${fileToUpdate} ."
                 }
                 sh 'git commit -am "Committing the latest update-site contents to gh-pages branch."'
-                sh "git push origin ${branch}"
+                // sh "git push origin ${branch}"
             }
         }
     }
