@@ -14,7 +14,7 @@ def call(String stageName = 'Update gh-pages', Closure body) {
     String workspace = "${WORKSPACE}"
     String directoryToRunIn = "${WORKSPACE}/${ghPageTargetDir}"
 
-    String originalDirectory = sh(script: "pwd", returnStdout: true)
+    String originalDirectory = sh(script: "pwd", returnStdout: true).trim()
 
     List<String> filesToUpdate = config.filesToUpdate
 
