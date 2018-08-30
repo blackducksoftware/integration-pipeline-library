@@ -58,9 +58,6 @@ def call(Closure body) {
                         postBuildBody()
                     }
                 }
-                detectStage {
-                    detectCommand = detectCommandVar
-                }
                 if (runGitHubReleaseVar) {
                     newGarStage {
                         buildTool = 'gradle'
@@ -86,6 +83,9 @@ def call(Closure body) {
                 }
                 if (runJacocoVar) {
                     jacocoStage {}
+                }
+                detectStage {
+                    detectCommand = detectCommandVar
                 }
             }
         }

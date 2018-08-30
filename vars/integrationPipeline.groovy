@@ -75,9 +75,6 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
                         postBuildBody()
                     }
                 }
-                detectStage {
-                    detectCommand = detectCommandVar
-                }
                 if (runGitHubReleaseVar) {
                     newGarStage {
                         buildTool = buildToolVar
@@ -109,6 +106,9 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
                 }
                 if (runJacocoVar) {
                     jacocoStage {}
+                }
+                detectStage {
+                    detectCommand = detectCommandVar
                 }
             }
         }
