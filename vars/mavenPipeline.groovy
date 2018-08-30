@@ -39,7 +39,7 @@ def call(Closure body) {
     boolean checkAllDependenciesVar = config.checkAllDependencies
 
     String mavenToolNameVar = config.toolName ?: 'maven-3'
-    integrationNode {
+    integrationNode(nodeNameVar) {
         String mvnHome = tool "${mavenToolNameVar}"
         if (null == mavenExeVar || mavenExeVar.trim().length() == 0) {
             mavenExeVar = "${mvnHome}/bin/mvn"

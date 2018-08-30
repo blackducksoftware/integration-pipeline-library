@@ -6,6 +6,7 @@ def call(Closure body) {
     body.delegate = config
     body()
 
+    String nodeNameVar = config.nodeName
     String emailListVar = config.emailList
     String gitUrlVar = config.gitUrl
     String gitRelativeTargetDirVar = config.gitRelativeTargetDir
@@ -34,7 +35,7 @@ def call(Closure body) {
 
     boolean runJacocoVar = config.get('runJacoco', true)
 
-    integrationNode {
+    integrationNode(nodeNameVar) {
         emailWrapper(emailListVar) {
             setupStage {
                 setJdk {}
