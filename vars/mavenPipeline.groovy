@@ -6,6 +6,7 @@ def call(Closure body) {
     body.delegate = config
     body()
 
+    String nodeNameVar = config.nodeName
     String mavenExeVar = config.mavenExe
 
     String mavenToolNameVar = config.toolName ?: 'maven-3'
