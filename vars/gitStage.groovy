@@ -15,7 +15,7 @@ def call(String stageName = 'Git', Closure body) {
     String gitTool = config.get('git', 'Default')
     boolean changelog = config.get('changelog', false)
     boolean poll = config.get('poll', false)
-    String relativeTargetDir = config.relativeTargetDir
+    String relativeTargetDir = config.relativeTargetDir ?: branch
 
     def directoryToRunIn = "${WORKSPACE}/${relativeTargetDir}"
 
