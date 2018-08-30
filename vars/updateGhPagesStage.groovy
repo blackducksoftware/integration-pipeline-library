@@ -20,7 +20,8 @@ def call(String stageName = 'Update gh-pages', Closure body) {
 
     List<String> filePathsToUpdate = []
     for (String fileToUpdate : filesToUpdate) {
-        filePathsToUpdate.add(originalDirectory + '/' + filesToUpdate)
+        filePathsToUpdate.add(originalDirectory + '/' + fileToUpdate)
+        println "File to update = ${originalDirectory + '/' + fileToUpdate}"
     }
 
 
