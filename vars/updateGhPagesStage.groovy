@@ -39,8 +39,8 @@ def call(String stageName = 'Update gh-pages', Closure body) {
             // add the latest commit id to gh-pages to indicate a functionally new build (the next shell script will commit it)
             sh 'git rev-parse HEAD > ../latest-commit-id.txt'
 
-            String checkedInCommitId = script.readFile file: "latest-commit-id.txt"
-            String currentCommitId = script.readFile file: "../latest-commit-id.txt"
+            String checkedInCommitId = readFile file: "latest-commit-id.txt"
+            String currentCommitId = readFile file: "../latest-commit-id.txt"
             if (checkedInCommitId == currentCommitId) {
                 println "No commits since last build so no need to make any further changes."
             } else {
