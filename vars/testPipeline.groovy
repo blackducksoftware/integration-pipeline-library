@@ -48,64 +48,66 @@ def call(Closure body) {
             setupStage {
                 setJdk {}
             }
-            gitStage {
+            def directoryToRunIn = testGitStage {
                 url = gitUrlVar
                 gitRelativeTargetDir = gitRelativeTargetDirVar
             }
-            if (runReleaseVar) {
-                preReleaseStage {
-                    buildTool = 'gradle'
-                    exe = gradleExeVar
-                    checkAllDependencies = checkAllDependenciesVar
+            dir(directoryToRunIn) {
+                if (runReleaseVar) {
+                    preReleaseStage {
+                        buildTool = 'gradle'
+                        exe = gradleExeVar
+                        checkAllDependencies = checkAllDependenciesVar
+                    }
                 }
-            }
-            if (null != preBuildBody) {
-                stage('Pre Build') {
-                    preBuildBody()
+                if (null != preBuildBody) {
+                    stage('Pre Build') {
+                        preBuildBody()
+                    }
                 }
-            }
-            gradleStage {
-                buildCommand = gradleCommandVar
-            }
-            if (null != postBuildBody) {
-                stage('Post Build') {
-                    postBuildBody()
+                gradleStage {
+                    buildCommand = gradleCommandVar
                 }
-            }
-            detectStage {
-                detectCommand = detectCommandVar
-            }
-            if (runGitHubReleaseVar) {
-                newGarStage {
-                    buildTool = 'gradle'
-                    exe = gradleExeVar
-                    releaseVersion = releaseVersionVar
-                    owner = ownerVar
-                    artifactFile = artifactFileVar
-                    artifactPattern = artifactPatternVar
-                    artifactDirectory = artifactDirectoryVar
-                    project = projectVar
-                    releaseDescription = releaseDescriptionVar
+                if (null != postBuildBody) {
+                    stage('Post Build') {
+                        postBuildBody()
+                    }
                 }
-            }
-            if (runReleaseVar) {
-                postReleaseStage {
-                    buildTool = 'gradle'
-                    exe = gradleExeVar
+                detectStage {
+                    detectCommand = detectCommandVar
                 }
-            }
-            if (runArchiveVar) {
-                archiveStage {
-                    patterns = archivePatternVar
+                if (runGitHubReleaseVar) {
+                    newGarStage {
+                        buildTool = 'gradle'
+                        exe = gradleExeVar
+                        releaseVersion = releaseVersionVar
+                        owner = ownerVar
+                        artifactFile = artifactFileVar
+                        artifactPattern = artifactPatternVar
+                        artifactDirectory = artifactDirectoryVar
+                        project = projectVar
+                        releaseDescription = releaseDescriptionVar
+                    }
                 }
-            }
-            if (runJunitVar) {
-                junitStage {
-                    xmlPattern = junitXmlPatternVar
+                if (runReleaseVar) {
+                    postReleaseStage {
+                        buildTool = 'gradle'
+                        exe = gradleExeVar
+                    }
                 }
-            }
-            if (runJacocoVar) {
-                jacocoStage {}
+                if (runArchiveVar) {
+                    archiveStage {
+                        patterns = archivePatternVar
+                    }
+                }
+                if (runJunitVar) {
+                    junitStage {
+                        xmlPattern = junitXmlPatternVar
+                    }
+                }
+                if (runJacocoVar) {
+                    jacocoStage {}
+                }
             }
         }
     }

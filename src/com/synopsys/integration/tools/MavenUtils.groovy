@@ -49,13 +49,13 @@ public class MavenUtils implements ToolUtils, Serializable {
 
     @Override
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
-        def command = "${exe} dependency:tree -DoutputFile=${script.env.WORKSPACE}/dependency.txt"
+        def command = "${exe} dependency:tree -DoutputFile=dependency.txt"
         if (!checkAllDependencies) {
             command = "${command} -Dscope=compile"
         }
 
         script.sh "${command}"
-        def fileText = script.readFile file: "${script.env.WORKSPACE}/dependency.txt"
+        def fileText = script.readFile file: "dependency.txt"
         script.println "Maven dependencies"
         script.println "${fileText}"
         List<String> splitLines = fileText.split('\n')
@@ -63,7 +63,7 @@ public class MavenUtils implements ToolUtils, Serializable {
         splitLines.remove(0)
         fileText = splitLines.join('\n')
         def containsSnapshot = fileText.contains('-SNAPSHOT')
-        script.sh "rm ${script.env.WORKSPACE}/dependency.txt"
+        script.sh "rm dependency.txt"
         return containsSnapshot
     }
 

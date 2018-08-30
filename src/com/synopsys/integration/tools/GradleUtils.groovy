@@ -35,7 +35,7 @@ public class GradleUtils implements ToolUtils, Serializable {
     public String removeSnapshotFromProjectVersion() {
         String versionLine = ''
         String modifiedVersion = ''
-        def fileText = script.readFile file: "${script.env.WORKSPACE}/build.gradle"
+        def fileText = script.readFile file: "build.gradle"
         def splitLines = fileText.split('\n')
         int versionLineIndex = 0
         for (int i = 0; i < splitLines.size(); i++) {
@@ -52,7 +52,7 @@ public class GradleUtils implements ToolUtils, Serializable {
         splitLines[versionLineIndex] = versionLine
 
         def finalFileText = splitLines.join('\n')
-        script.writeFile file: "${script.env.WORKSPACE}/build.gradle", text: "${finalFileText}"
+        script.writeFile file: "build.gradle", text: "${finalFileText}"
         return modifiedVersion
     }
 
@@ -72,7 +72,7 @@ public class GradleUtils implements ToolUtils, Serializable {
     public String increaseSemver() {
         def versionLine = ''
         def modifiedVersion = ''
-        def fileText = script.readFile file: "${script.env.WORKSPACE}/build.gradle"
+        def fileText = script.readFile file: "build.gradle"
         def splitLines = fileText.split('\n')
         def versionLineIndex = 0
         for (int i = 0; i < splitLines.size(); i++) {
@@ -92,7 +92,7 @@ public class GradleUtils implements ToolUtils, Serializable {
         splitLines[versionLineIndex] = versionLine
 
         def finalFileText = splitLines.join('\n')
-        script.writeFile file: "${script.env.WORKSPACE}/build.gradle", text: "${finalFileText}"
+        script.writeFile file: "build.gradle", text: "${finalFileText}"
         return modifiedVersion
     }
 }

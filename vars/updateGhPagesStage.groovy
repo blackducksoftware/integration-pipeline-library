@@ -7,21 +7,48 @@ def call(String stageName = 'Update gh-pages', Closure body) {
     body()
 
     String url = config.url
-    String branch = config.branch ?: "${BRANCH}"
-    if (null == branch || branch.trim().length() == 0) {
-        branch = 'gh-pages'
-    }
+    String branch = config.branch ?: 'gh-pages'
     String gitTool = config.get('git', 'Default')
     String relativeTargetDir = config.relativeTargetDir ?: 'gh-pages'
 
+    def directoryToRunIn = "${WORKSPACE}/${relativeTargetDir}"
+
+    String originalDirectory = sh(script: "pwd", returnStdout: true)
+
+    List<String> filesToUpdate = config.filesToUpdate
+
+    List<String> filePathsToUpdate = []
+    for (String fileToUpdate : filesToUpdate) {
+        filePathsToUpdate.add(originalDirectory + '/' + filesToUpdate)
+    }
+
+
     stage(stageName) {
+        // add the latest commit id to gh-pages to indicate a functionally new build (the next shell script will commit it)
+        sh 'git rev-parse HEAD > ../latest-commit-id.txt'
+
         checkout changelog: false, poll: false,
                 scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
                       extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: relativeTargetDir]], gitTool: gitTool, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
-        // Need to do this because Jenkins checks out a detached HEAD
-        sh "git checkout ${branch}"
-        // Do a hard reset in order to clear out any local changes/commits
-        sh "git reset --hard origin/${branch}"
+        dir(directoryToRunIn) {
+            // Need to do this because Jenkins checks out a detached HEAD
+            sh "git checkout ${branch}"
+            // Do a hard reset in order to clear out any local changes/commits
+            sh "git reset --hard origin/${branch}"
+
+            String checkedInCommitId = script.readFile file: "latest-commit-id.txt"
+            String currentCommitId = script.readFile file: "../latest-commit-id.txt"
+            if (checkedInCommitId == currentCommitId) {
+                println "No commits since last build so no need to make any further changes."
+            } else {
+                sh 'cp ../latest-commit-id.txt .'
+                for (String fileToUpdate : filePathsToUpdate) {
+                    sh "cp ${fileToUpdate} ."
+                }
+                sh 'git commit -am "Committing the latest update-site contents to gh-pages branch."'
+                sh "git push origin ${branch}"
+            }
+        }
     }
 }
 
@@ -38,9 +65,9 @@ def call(String stageName = 'Update gh-pages', Closure body) {
 //            echo "No commits since last build so no need to make any further changes."
 //            else
 //            cp ../latest-commit-id.txt .
-//              cp ../master/hub-detect/build/hub-detect.sh .
-//                    cp ../master/hub-detect/build/hub-detect.ps1 .
+//            cp ../master/hub-detect/build/hub-detect.sh .
+//            cp ../master/hub-detect/build/hub-detect.ps1 .
 //
-//                    git add --all && git commit -am "Committing the latest update-site contents to gh-pages branch."
+//            git add --all && git commit -am "Committing the latest update-site contents to gh-pages branch."
 //            git push origin gh-pages
 //            fi
