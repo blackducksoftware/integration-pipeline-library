@@ -11,12 +11,12 @@ def call(Closure body) {
     String gitRelativeTargetDirVar = config.gitRelativeTargetDir
 
     Closure preBuildBody = config.preBuild
-    String gradleCommandVar = config.buildCommand
+    String buildCommandVar = config.buildCommand
     Closure postBuildBody = config.postBuild
 
     String detectCommandVar = config.detectCommand
 
-    boolean runGitHubReleaseVar = config.get('runGitHubRelease', true)
+    boolean runGitHubReleaseVar = config.runGitHubRelease
     String gradleExeVar = config.gradleExe
     String releaseVersionVar = config.releaseVersion
     String ownerVar = config.owner
@@ -26,89 +26,60 @@ def call(Closure body) {
     String projectVar = config.project
     String releaseDescriptionVar = config.releaseDescription
 
-    boolean runArchiveVar = config.get('runArchive', true)
+    boolean runArchiveVar = config.runArchive
     String archivePatternVar = config.archivePattern
 
-    boolean runJunitVar = config.get('runJunit', true)
+    boolean runJunitVar = config.runJunit
     String junitXmlPatternVar = config.junitXmlPattern
 
-    boolean runJacocoVar = config.get('runJacoco', true)
+    boolean runJacocoVar = config.runJacoco
 
     boolean runReleaseVar
     try {
-        runReleaseVar = config.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+        runReleaseVar = config.runRelease
     } catch (MissingPropertyException e) {
         runReleaseVar = false
     }
-    boolean checkAllDependenciesVar = config.get('checkAllDependencies', false)
-    println "Going to run the Release ${runReleaseVar}"
+    boolean checkAllDependenciesVar = config.checkAllDependencies
 
-    integrationNode {
-        emailWrapper(emailListVar) {
-            setupStage {
-                setJdk {}
-            }
-            def directoryToRunIn = gitStage {
-                url = gitUrlVar
-                relativeTargetDir = gitRelativeTargetDirVar
-            }
-            dir(directoryToRunIn) {
-                if (runReleaseVar) {
-                    preReleaseStage {
-                        buildTool = 'gradle'
-                        exe = gradleExeVar
-                        checkAllDependencies = checkAllDependenciesVar
-                    }
-                }
-                if (null != preBuildBody) {
-                    stage('Pre Build') {
-                        preBuildBody()
-                    }
-                }
-                gradleStage {
-                    buildCommand = gradleCommandVar
-                }
-                if (null != postBuildBody) {
-                    stage('Post Build') {
-                        postBuildBody()
-                    }
-                }
-                detectStage {
-                    detectCommand = detectCommandVar
-                }
-                if (runGitHubReleaseVar) {
-                    newGarStage {
-                        buildTool = 'gradle'
-                        exe = gradleExeVar
-                        releaseVersion = releaseVersionVar
-                        owner = ownerVar
-                        artifactFile = artifactFileVar
-                        artifactPattern = artifactPatternVar
-                        artifactDirectory = artifactDirectoryVar
-                        project = projectVar
-                        releaseDescription = releaseDescriptionVar
-                    }
-                }
-                if (runReleaseVar) {
-                    postReleaseStage {
-                        buildTool = 'gradle'
-                        exe = gradleExeVar
-                    }
-                }
-                if (runArchiveVar) {
-                    archiveStage {
-                        patterns = archivePatternVar
-                    }
-                }
-                if (runJunitVar) {
-                    junitStage {
-                        xmlPattern = junitXmlPatternVar
-                    }
-                }
-                if (runJacocoVar) {
-                    jacocoStage {}
-                }
+    integrationPipeline {
+        emailList = emailListVar
+        gitUrl = gitUrlVar
+        gitRelativeTargetDir = gitRelativeTargetDirVar
+
+        buildTool = 'gradle'
+
+        preBuild = preBuildBody
+        buildBody = {
+            gradleStage {
+                buildCommand = buildCommandVar
             }
         }
+        postBuild = postBuildBody
+
+        detectCommand = detectCommandVar
+
+        runGitHubRelease = runGitHubReleaseVar
+
+        exe = gradleExeVar
+        releaseVersion = releaseVersionVar
+        owner = ownerVar
+        artifactFile = artifactFileVar
+        artifactPattern = artifactPatternVar
+        artifactDirectory = artifactDirectoryVar
+        project = projectVar
+        releaseDescription = releaseDescriptionVar
+
+        runArchive = runArchiveVar
+        archivePattern = archivePatternVar
+
+        runJunit = runJunitVar
+        junitXmlPattern = junitXmlPatternVar
+
+        runJacoco = runJacocoVar
+
+        runRelease = runReleaseVar
+        checkAllDependencies = checkAllDependenciesVar
+
     }
 }

@@ -10,10 +10,8 @@ def call(Closure body) {
     String gitUrlVar = config.gitUrl
     String gitRelativeTargetDirVar = config.gitRelativeTargetDir
 
-    String mavenToolNameVar = config.toolName ?: 'maven-3'
-
     Closure preBuildBody = config.preBuild
-    String mavenCommandVar = config.buildCommand
+    String buildCommandVar = config.buildCommand
     Closure postBuildBody = config.postBuild
 
     String detectCommandVar = config.detectCommand
@@ -36,15 +34,10 @@ def call(Closure body) {
 
     boolean runJacocoVar = config.runJacoco
 
-    boolean runReleaseVar
-    try {
-        runReleaseVar = config.runRelease
-    } catch (MissingPropertyException e) {
-        runReleaseVar = false
-    }
+    boolean runReleaseVar = config.runRelease
     boolean checkAllDependenciesVar = config.checkAllDependencies
-    println "Going to run the Release ${runReleaseVar}"
 
+    String mavenToolNameVar = config.toolName ?: 'maven-3'
     integrationNode {
         String mvnHome = tool "${mavenToolNameVar}"
         if (null == mavenExeVar || mavenExeVar.trim().length() == 0) {
@@ -63,7 +56,7 @@ def call(Closure body) {
         buildBody = {
             mavenStage {
                 toolName = mavenToolNameVar
-                buildCommand = mavenCommandVar
+                buildCommand = buildCommandVar
             }
         }
         postBuild = postBuildBody
