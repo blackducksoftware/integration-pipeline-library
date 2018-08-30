@@ -6,6 +6,7 @@ def call(Closure body) {
     body.delegate = config
     body()
 
+    String nodeNameVar = config.nodeName
     String emailListVar = config.emailList
     String gitUrlVar = config.gitUrl
     String gitRelativeTargetDirVar = config.gitRelativeTargetDir
@@ -43,6 +44,7 @@ def call(Closure body) {
     boolean checkAllDependenciesVar = config.checkAllDependencies
 
     integrationPipeline {
+        nodeName = nodeNameVar
         emailList = emailListVar
         gitUrl = gitUrlVar
         gitRelativeTargetDir = gitRelativeTargetDirVar
