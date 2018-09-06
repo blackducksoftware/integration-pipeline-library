@@ -23,7 +23,7 @@ def call(String stageName = 'Generate Detect Help', Closure body) {
                 sh commandLines.join(" \n")
                 sh 'chmod 777 *.html'
                 // Add the help .html document (generated from the previously released build) to our gh-pages
-                sh "cp *.html ../${ghPageTargetDir}/"
+                sh "mv *.html ../${ghPageTargetDir}/"
             }
         }
     }
