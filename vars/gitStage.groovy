@@ -6,8 +6,6 @@ def call(String stageName = 'Git', Closure body) {
     body.delegate = config
     body()
 
-    String workspaceDir = "${WORKSPACE}"
-
     String url = config.url
     String branch = config.branch ?: "${BRANCH}"
     if (null == branch || branch.trim().length() == 0) {
@@ -22,7 +20,7 @@ def call(String stageName = 'Git', Closure body) {
     def directoryToRunIn = "${WORKSPACE}/${relativeTargetDir}"
 
     stage(stageName) {
-        dir(workspaceDir) {
+        dir("${WORKSPACE}") {
             checkout changelog: changelog, poll: poll,
                     scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
                           extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: relativeTargetDir]], gitTool: gitTool, submoduleCfg: [], userRemoteConfigs: [[url: url]]]

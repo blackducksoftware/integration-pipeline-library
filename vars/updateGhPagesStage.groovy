@@ -15,9 +15,11 @@ def call(String stageName = 'Update gh-pages', Closure body) {
     List<String> filesToUpdate = config.filesToUpdate
 
     List<String> filePathsToUpdate = []
-    for (String fileToUpdate : filesToUpdate) {
-        filePathsToUpdate.add(originalDirectory + '/' + fileToUpdate)
-        println "File to update = ${originalDirectory + '/' + fileToUpdate}"
+    dir("${WORKSPACE}") {
+        for (String fileToUpdate : filesToUpdate) {
+            filePathsToUpdate.add(originalDirectory + '/' + fileToUpdate)
+            println "File to update = ${originalDirectory + '/' + fileToUpdate}"
+        }
     }
 
 

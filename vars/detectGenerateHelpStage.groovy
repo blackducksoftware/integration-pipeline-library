@@ -8,15 +8,13 @@ def call(String stageName = 'Generate Detect Help', Closure body) {
 
     String detectURL = config.detectURL ?: "${HUB_DETECT_URL}"
     String ghPageTargetDir = config.ghPageTargetDir ?: 'gh-pages'
-
-    def directoryToRunIn = "${WORKSPACE}"
-
+    
     def commandLines = []
     commandLines.add("#!/bin/bash")
     commandLines.add("bash <(curl -s ${detectURL}) -hdoc")
 
     stage(stageName) {
-        dir(directoryToRunIn) {
+        dir("${WORKSPACE}") {
             sh 'mkdir html-help'
             dir('html-help') {
                 sh commandLines.join(" \n")
