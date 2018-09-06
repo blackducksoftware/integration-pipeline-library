@@ -8,7 +8,6 @@ def call(String stageName = 'Update gh-pages', Closure body) {
 
     String ghPageTargetDir = config.ghPageTargetDir ?: 'gh-pages'
 
-    String workspace = "${WORKSPACE}"
     String directoryToRunIn = "${WORKSPACE}/${ghPageTargetDir}"
 
     String originalDirectory = sh(script: "pwd", returnStdout: true).trim()
