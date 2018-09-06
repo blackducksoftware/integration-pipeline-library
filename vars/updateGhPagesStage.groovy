@@ -8,6 +8,7 @@ def call(String stageName = 'Update gh-pages', Closure body) {
 
     String targetDir = config.targetDir ?: "${BRANCH}"
 
+    String branch = config.branch ?: 'gh-pages'
     String ghPageTargetDir = config.ghPageTargetDir ?: 'gh-pages'
 
     String directoryToRunIn = "${WORKSPACE}/${ghPageTargetDir}"
