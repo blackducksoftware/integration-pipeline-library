@@ -13,6 +13,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
     String nodeName = config.nodeName
     String emailListVar = config.emailList
     String gitUrlVar = config.gitUrl
+    String gitBranchVar = config.gitBranch
     String gitRelativeTargetDirVar = config.gitRelativeTargetDir
 
     Closure preBuildBody = config.preBuild
@@ -54,6 +55,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
             }
             def directoryToRunIn = gitStage {
                 url = gitUrlVar
+                branch = gitBranchVar
                 relativeTargetDir = gitRelativeTargetDirVar
             }
             dir(directoryToRunIn) {
