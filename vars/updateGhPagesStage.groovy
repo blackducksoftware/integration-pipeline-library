@@ -41,6 +41,7 @@ def call(String stageName = 'Update gh-pages', Closure body) {
                 for (String fileToUpdate : filePathsToUpdate) {
                     sh "cp ${fileToUpdate} ."
                 }
+                sh 'git add --all'
                 sh 'git commit -am "Committing the latest update-site contents to gh-pages branch."'
                 sh "git push origin ${branch}"
             }
