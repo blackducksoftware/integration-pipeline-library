@@ -6,9 +6,6 @@ def call(String stageName = 'Update gh-pages', Closure body) {
     body.delegate = config
     body()
 
-    String url = config.url
-    String branch = config.branch ?: 'gh-pages'
-    String gitTool = config.get('git', 'Default')
     String ghPageTargetDir = config.ghPageTargetDir ?: 'gh-pages'
 
     String workspace = "${WORKSPACE}"
@@ -28,16 +25,7 @@ def call(String stageName = 'Update gh-pages', Closure body) {
     stage(stageName) {
         // add the latest commit id to gh-pages to indicate a functionally new build (the next shell script will commit it)
         sh 'git rev-parse HEAD > ../latest-commit-id.txt'
-
-        dir(workspace) {
-            checkout changelog: false, poll: false,
-                    scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
-                          extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: ghPageTargetDir]], gitTool: gitTool, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
-        }
         dir(directoryToRunIn) {
-            // Need to do this because Jenkins checks out a detached HEAD
-            sh "git checkout ${branch}"
-
             String checkedInCommitId = readFile file: "latest-commit-id.txt"
             String currentCommitId = readFile file: "../latest-commit-id.txt"
             println "Checked in commit Id ${checkedInCommitId}"
