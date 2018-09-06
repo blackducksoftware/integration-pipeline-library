@@ -10,15 +10,13 @@ def call(String stageName = 'Update gh-pages', Closure body) {
 
     String directoryToRunIn = "${WORKSPACE}/${ghPageTargetDir}"
 
-    String originalDirectory = sh(script: "pwd", returnStdout: true).trim()
-
     List<String> filesToUpdate = config.filesToUpdate
 
     List<String> filePathsToUpdate = []
     dir("${WORKSPACE}") {
         for (String fileToUpdate : filesToUpdate) {
-            filePathsToUpdate.add(originalDirectory + '/' + fileToUpdate)
-            println "File to update = ${originalDirectory + '/' + fileToUpdate}"
+            filePathsToUpdate.add("${WORKSPACE}/${filesToUpdate}")
+            println "File to update = ${WORKSPACE}/${filesToUpdate}"
         }
     }
 
