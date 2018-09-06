@@ -37,8 +37,6 @@ def call(String stageName = 'Update gh-pages', Closure body) {
         dir(directoryToRunIn) {
             // Need to do this because Jenkins checks out a detached HEAD
             sh "git checkout ${branch}"
-            // Do a hard reset in order to clear out any local changes/commits
-            sh "git reset --hard origin/${branch}"
 
             String checkedInCommitId = readFile file: "latest-commit-id.txt"
             String currentCommitId = readFile file: "../latest-commit-id.txt"
