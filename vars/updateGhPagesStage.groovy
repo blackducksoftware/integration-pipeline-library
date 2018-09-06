@@ -6,6 +6,7 @@ def call(String stageName = 'Update gh-pages', Closure body) {
     body.delegate = config
     body()
 
+    String filesDir = config.filesDir
     String ghPageTargetDir = config.ghPageTargetDir ?: 'gh-pages'
 
     String directoryToRunIn = "${WORKSPACE}/${ghPageTargetDir}"
@@ -15,8 +16,8 @@ def call(String stageName = 'Update gh-pages', Closure body) {
     List<String> filePathsToUpdate = []
     dir("${WORKSPACE}") {
         for (String fileToUpdate : filesToUpdate) {
-            filePathsToUpdate.add("${WORKSPACE}/${fileToUpdate}")
-            println "File to update = ${WORKSPACE}/${fileToUpdate}"
+            filePathsToUpdate.add("${filesDir}/${fileToUpdate}")
+            println "File to update = ${filesDir}/${fileToUpdate}"
         }
     }
 
