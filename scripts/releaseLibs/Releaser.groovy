@@ -30,8 +30,8 @@ class Releaser {
 	static void showUsage() {
 		println "Usage: groovy Releaser <workspace-dir-path> <operation>"
 		println "       operation:"
-		println "           ${OPERATION_UPDATEVERSIONS}:\tAdjust all versions"
-        println "           ${OPERATION_COMMIT}:\tDo a 'git commit' on each library"
+		println "           ${OPERATION_UPDATEVERSIONS}:\tAdjust versions in build.gradle files"
+        println "           ${OPERATION_COMMIT}:\tDo a 'git add/commit/push' on each library"
 		println "           ${OPERATION_RESET}:\tDo a 'git reset --hard' on each library"
 		println "           ${OPERATION_DIFF}:\tDo a 'git diff' on each library"
 	}
