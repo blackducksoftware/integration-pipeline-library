@@ -52,11 +52,11 @@ class ToolRunner {
         return dependencies
     }
 
-    List<String> getDiffOutput(File libraryDir) {
+    List<String> diff(File libraryDir) {
         return execute(libraryDir, "git", "diff")
     }
 
-    List<String> getCommitOutput(File libraryDir, String commitMessage) {
+    List<String> commit(File libraryDir, String commitMessage) {
         List<String> gitAddOutput = execute(libraryDir, "git", "add", "build.gradle")
         println "gitAddOutput: ${gitAddOutput}"
 
@@ -66,6 +66,13 @@ class ToolRunner {
         List<String> gitPushOutput = execute(libraryDir, "git", "push")
         println "gitPushOutput: ${gitPushOutput}"
         return gitPushOutput
+    }
+    
+    List<String> build(File libraryDir) {
+        println "Building ${libraryDir.getName()}"
+        List<String> buildOutput = execute(libraryDir, "./gradlew", "clean", "build", "install")
+        println "buildOutput: ${buildOutput}"
+        return buildOutput
     }
 
     void reset(File libraryDir) {

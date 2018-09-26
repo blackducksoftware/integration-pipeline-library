@@ -5,6 +5,7 @@ import NumberedLine
 class Releaser {
     static final String OPERATION_PRINTLIBRARIES = "print-libraries"
     static final String OPERATION_UPDATEVERSIONS = "update-versions"
+    static final String OPERATION_BUILD = "build"
     static final String OPERATION_COMMIT = "commit"
     static final String OPERATION_RESET = "reset"
     static final String OPERATION_DIFF = "diff"
@@ -17,8 +18,9 @@ class Releaser {
         }
         String workspaceDirPath = args[0]
         String operation = args[1]
+        // TODO: shouldn't have to edit here and below each time a command is added
         if (!OPERATION_UPDATEVERSIONS.equals(operation) && !OPERATION_RESET.equals(operation) && !OPERATION_DIFF.equals(operation)
-        && !OPERATION_COMMIT.equals(operation) && !OPERATION_PRINTLIBRARIES.equals(operation)) {
+        && !OPERATION_COMMIT.equals(operation) && !OPERATION_PRINTLIBRARIES.equals(operation) && !OPERATION_BUILD.equals(operation)) {
             println "Error: Invalid arguments"
             showUsage()
             return
@@ -33,6 +35,7 @@ class Releaser {
         println "       operation:"
         println "           ${OPERATION_PRINTLIBRARIES}:\tPrint a list of the libraries that will be operated on"
         println "           ${OPERATION_UPDATEVERSIONS}:\tAdjust versions in libraries' build.gradle files"
+        println "           ${OPERATION_BUILD}:\t\tDo a './gradlew clean build install' on each library"
         println "           ${OPERATION_COMMIT}:\t\tDo a 'git add/commit/push' on each library"
         println "           ${OPERATION_RESET}:\t\tDo a 'git reset --hard' on each library"
         println "           ${OPERATION_DIFF}:\t\tDo a 'git diff' on each library"
@@ -56,16 +59,18 @@ class Releaser {
     void run() {
         println "Releaser called with arguments: dir: ${workspaceDir.getAbsolutePath()}, operation: ${operation}"
 
-        if (OPERATION_UPDATEVERSIONS.equals(operation)) {
-            release()
-        } else if (OPERATION_RESET.equals(operation)) {
-            reset()
-        } else if (OPERATION_DIFF.equals(operation)) {
-            diff()
+        if (OPERATION_PRINTLIBRARIES.equals(operation)) {
+            printLibraries()
+        } else if (OPERATION_UPDATEVERSIONS.equals(operation)) {
+            updateVersions()
+        } else if (OPERATION_BUILD.equals(operation)) {
+            build()
         } else if (OPERATION_COMMIT.equals(operation)) {
             commit()
-        } else if (OPERATION_PRINTLIBRARIES.equals(operation)) {
-            printLibraries()
+        } else if (OPERATION_DIFF.equals(operation)) {
+            diff()
+        } else if (OPERATION_RESET.equals(operation)) {
+            reset()
         }
     }
     
@@ -73,7 +78,7 @@ class Releaser {
         printLines(libraries.all)
     }
 
-    void release() {
+    void updateVersions() {
 
         // Collect finalLibraryVersions
         for (String libraryDirName : libraries.all) {
@@ -131,6 +136,15 @@ class Releaser {
         println "Done\n\n"
         return
     }
+    
+    void build() {
+        for (String libraryDirName : libraries.all) {
+            File libraryDir = new File(workspaceDir, libraryDirName)
+            List<String> buildOutput = toolRunner.build(libraryDir)
+            printLines(buildOutput)
+            println ""
+        }
+    }
 
     void commit() {
 
@@ -156,7 +170,7 @@ class Releaser {
             File libraryDir = new File(workspaceDir, libraryDirName)
             String currentVersion = currentLibraryVersions.get(libraryDirName)
             println "Committing ${libraryDirName} v${currentVersion}"
-            List<String> commitOutput = toolRunner.getCommitOutput(libraryDir, currentVersion)
+            List<String> commitOutput = toolRunner.commit(libraryDir, currentVersion)
             printLines(commitOutput)
             println ""
         }
@@ -175,7 +189,7 @@ class Releaser {
         for (String libraryDirName : libraries.all) {
             File libraryDir = new File(workspaceDir, libraryDirName)
             println "Diffing ${libraryDir.getName()}"
-            List<String> outputLines = toolRunner.getDiffOutput(libraryDir)
+            List<String> outputLines = toolRunner.diff(libraryDir)
             println ""
             printLines(outputLines)
             println "------"
