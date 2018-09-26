@@ -3,6 +3,7 @@ import ToolRunner
 import NumberedLine
 
 class Releaser {
+    static final String OPERATION_PRINTLIBRARIES = "print-libraries"
     static final String OPERATION_UPDATEVERSIONS = "update-versions"
     static final String OPERATION_COMMIT = "commit"
     static final String OPERATION_RESET = "reset"
@@ -17,7 +18,7 @@ class Releaser {
         String workspaceDirPath = args[0]
         String operation = args[1]
         if (!OPERATION_UPDATEVERSIONS.equals(operation) && !OPERATION_RESET.equals(operation) && !OPERATION_DIFF.equals(operation)
-        && !OPERATION_COMMIT.equals(operation)) {
+        && !OPERATION_COMMIT.equals(operation) && !OPERATION_PRINTLIBRARIES.equals(operation)) {
             println "Error: Invalid arguments"
             showUsage()
             return
@@ -30,10 +31,11 @@ class Releaser {
     static void showUsage() {
         println "Usage: groovy Releaser <workspace-dir-path> <operation>"
         println "       operation:"
-        println "           ${OPERATION_UPDATEVERSIONS}:\tAdjust versions in build.gradle files"
-        println "           ${OPERATION_COMMIT}:\tDo a 'git add/commit/push' on each library"
-        println "           ${OPERATION_RESET}:\tDo a 'git reset --hard' on each library"
-        println "           ${OPERATION_DIFF}:\tDo a 'git diff' on each library"
+        println "           ${OPERATION_PRINTLIBRARIES}:\tPrint a list of the libraries that will be operated on"
+        println "           ${OPERATION_UPDATEVERSIONS}:\tAdjust versions in libraries' build.gradle files"
+        println "           ${OPERATION_COMMIT}:\t\tDo a 'git add/commit/push' on each library"
+        println "           ${OPERATION_RESET}:\t\tDo a 'git reset --hard' on each library"
+        println "           ${OPERATION_DIFF}:\t\tDo a 'git diff' on each library"
     }
 
     // Non-static
@@ -62,7 +64,13 @@ class Releaser {
             diff()
         } else if (OPERATION_COMMIT.equals(operation)) {
             commit()
+        } else if (OPERATION_PRINTLIBRARIES.equals(operation)) {
+            printLibraries()
         }
+    }
+    
+    void printLibraries() {
+        printLines(libraries.all)
     }
 
     void release() {
