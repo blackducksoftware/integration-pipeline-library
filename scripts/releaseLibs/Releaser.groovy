@@ -80,7 +80,7 @@ class Releaser {
 
     void updateVersions() {
 
-        // Collect finalLibraryVersions
+        // Calculate new library versions
         for (String libraryDirName : libraries.all) {
             File libraryDir = new File(workspaceDir, libraryDirName)
 
@@ -98,7 +98,7 @@ class Releaser {
             println "${libraryDirName}: starting version: ${currentVersion}; new version: ${finalVersion}"
         }
 
-        // Adjust version and dependency library versions
+        // Adjust library versions and dependency versions
         for (String libraryDirName : libraries.all) {
             println "Setting version and library dependency versions in: ${libraryDirName}:"
             File libraryDir = new File(workspaceDir, libraryDirName)
@@ -126,11 +126,11 @@ class Releaser {
             }
         }
 
-        // Check new dependency library versions
+        // Check new dependency library versions via "gradle dependencies"
         for (String libraryDirName : libraries.all) {
             println "Checking library dependency versions in: ${libraryDirName}:"
             File libraryDir = new File(workspaceDir, libraryDirName)
-            checkNewDependencyLibraryVersionsInBuildDotGradleFile(libraryDir)
+            checkNewDependencies(libraryDir)
         }
 
         println "Done\n\n"
@@ -200,7 +200,7 @@ class Releaser {
         }
     }
 
-    void checkNewDependencyLibraryVersionsInBuildDotGradleFile(File libraryDir) {
+    void checkNewDependencies(File libraryDir) {
         List<String> actualDependencies = toolRunner.getCompileDependencies(libraryDir)
 
         for (String possibleDependencyLibraryName : finalLibraryVersions.keySet()) {
