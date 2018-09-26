@@ -3,7 +3,8 @@ import ToolRunner
 import NumberedLine
 
 class Releaser {
-	static final String OPERATION_RELEASE = "release"
+	static final String OPERATION_UPDATEVERSIONS = "update-versions"
+    static final String OPERATION_COMMIT = "commit"
 	static final String OPERATION_RESET = "reset"
 	static final String OPERATION_DIFF = "diff"
 
@@ -15,7 +16,8 @@ class Releaser {
 		}
 		String workspaceDirPath = args[0]
 		String operation = args[1]
-		if (!OPERATION_RELEASE.equals(operation) && !OPERATION_RESET.equals(operation) && !OPERATION_DIFF.equals(operation)) {
+		if (!OPERATION_UPDATEVERSIONS.equals(operation) && !OPERATION_RESET.equals(operation) && !OPERATION_DIFF.equals(operation)
+            && !OPERATION_COMMIT.equals(operation)) {
 			println "Error: Invalid arguments"
 			showUsage()
 			return
@@ -28,7 +30,8 @@ class Releaser {
 	static void showUsage() {
 		println "Usage: groovy Releaser <workspace-dir-path> <operation>"
 		println "       operation:"
-		println "           ${OPERATION_RELEASE}:\tRelease the libraries (for now: just adjust all versions)"
+		println "           ${OPERATION_UPDATEVERSIONS}:\tAdjust all versions"
+        println "           ${OPERATION_COMMIT}:\tDo a 'git commit' on each library"
 		println "           ${OPERATION_RESET}:\tDo a 'git reset --hard' on each library"
 		println "           ${OPERATION_DIFF}:\tDo a 'git diff' on each library"
 	}
@@ -38,6 +41,7 @@ class Releaser {
 	final ToolRunner toolRunner
 	File workspaceDir
 	final String operation
+    Map<String, String> currentLibraryVersions = new HashMap<>()
 	Map<String, String> finalLibraryVersions = new HashMap<>()
 
 	Releaser(Libraries libraries, ToolRunner toolRunner, String workspaceDirPath, operation) {
@@ -50,19 +54,20 @@ class Releaser {
 	void run() {
 		println "Releaser called with arguments: dir: ${workspaceDir.getAbsolutePath()}, operation: ${operation}"
 
-		if (OPERATION_RELEASE.equals(operation)) {
+		if (OPERATION_UPDATEVERSIONS.equals(operation)) {
 			release()
 		} else if (OPERATION_RESET.equals(operation)) {
 			reset()
 		} else if (OPERATION_DIFF.equals(operation)) {
 			diff()
-		}
+		} else if (OPERATION_COMMIT.equals(operation)) {
+            commit()
+        }
 	}
 
 	void release() {
 
 		// Collect finalLibraryVersions
-		// Does not change anything
 		for (String libraryDirName : libraries.all) {
 			File libraryDir = new File(workspaceDir, libraryDirName)
 
@@ -72,7 +77,9 @@ class Releaser {
 			// Calculate final version
 			String finalVersion = getFinalVersion(currentVersion)
 
-			// Store final version for this library
+			// Store current and final version for this library
+            // TODO: we don't actually use this current version map
+            currentLibraryVersions.put(libraryDirName, currentVersion)
 			finalLibraryVersions.put(libraryDirName, finalVersion)
 
 			println "${libraryDirName}: starting version: ${currentVersion}; new version: ${finalVersion}"
@@ -116,6 +123,36 @@ class Releaser {
 		println "Done\n\n"
 		return
 	}
+    
+    void commit() {
+        
+        // Collect currentLibraryVersions
+        for (String libraryDirName : libraries.all) {
+            File libraryDir = new File(workspaceDir, libraryDirName)
+
+            // Get current version
+            String currentVersion = toolRunner.getProjectVersionString(libraryDir)
+            if (currentVersion.endsWith('-SNAPSHOT')) {
+                String msg = "Error: library ${} version ${} is a snapshot"
+                throw new RuntimeException(msg)
+            }
+
+            // Store current version for this library
+            currentLibraryVersions.put(libraryDirName, currentVersion)
+
+            println "${libraryDirName}: will commit version: ${currentVersion}"
+        }
+        
+            // Commit all changes
+            for (String libraryDirName : libraries.all) {
+                File libraryDir = new File(workspaceDir, libraryDirName)
+                String currentVersion = currentLibraryVersions.get(libraryDirName)
+                println "Committing ${libraryDirName} v${currentVersion}"
+                List<String> commitOutput = toolRunner.getCommitOutput(libraryDir, currentVersion)
+                printLines(commitOutput)
+                println ""
+            }
+    }
 
 	void reset() {
 		for (String libraryDirName : libraries.all) {
@@ -131,13 +168,13 @@ class Releaser {
 			File libraryDir = new File(workspaceDir, libraryDirName)
 			println "Diffing ${libraryDir.getName()}"
 			List<String> outputLines = toolRunner.getDiffOutput(libraryDir)
+            println ""
 			printLines(outputLines)
 			println "------"
 		}
 	}
 
 	void printLines(List<String> lines) {
-		println ""
 		for (String line : lines) {
 			println line
 		}
@@ -155,7 +192,6 @@ class Releaser {
 					String expectedDependencyVersion = finalLibraryVersions.get(possibleDependencyLibraryName)
 					if (!expectedDependencyVersion.equals(actualVersion)) {
 						String msg = "ERROR: For ${libraryDir.getName()} dependency on ${possibleDependencyLibraryName}: Expected version ${expectedDependencyVersion}; found version ${actualVersion}"
-						println msg
 						throw new RuntimeException(msg)
 					} else {
 						println "\tChecked library ${libraryDir.getName()}'s dependency on ${possibleDependencyLibraryName} and found the expected version ${actualVersion}"

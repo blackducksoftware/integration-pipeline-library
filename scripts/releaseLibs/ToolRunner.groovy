@@ -17,44 +17,55 @@ class ToolRunner {
             println "Failed to find the project version in the gradle properties command"
         } catch (Exception e) {
             String msg = "Error running the gradle properties command to get the project version, or interpreting its output: ${e.getMessage()}"
-	    println msg
 	    throw new RuntimeException(msg, e)
         }
         return null
     }
 
     List<String> getCompileDependencies(File dir) {
-	List<String> dependencies = new ArrayList<>()
-	    List<String> dependenciesOutputLines = execute(dir, "./gradlew", "dependencies", "--configuration", "compile")
- 	    boolean inDependenciesList = false
-            for (String dependenciesOutputLine : dependenciesOutputLines) {
-		if (!inDependenciesList) {
-			// we haven't reached dependencies yet
-			if (dependenciesOutputLine.startsWith("compile - Dependencies")) {
-				inDependenciesList = true
-			}
-			continue
-		}
-		// we're in, or done with, dependencies
-		if (dependenciesOutputLine.contains(TOKEN_PRECEDING_DEPENDENCY)) {
-			int tokenPrecedingDependencyIndex = dependenciesOutputLine.indexOf(TOKEN_PRECEDING_DEPENDENCY);
-			String dep = dependenciesOutputLine.substring(tokenPrecedingDependencyIndex+(TOKEN_PRECEDING_DEPENDENCY.length()))
-			dep = dep.trim()
-			int delimeterFollowingDependency = dep.indexOf(DEPENDENCY_TRAILING_DELIMITER);
-			if (delimeterFollowingDependency >= 0) {
-				dep = dep.substring(0, delimeterFollowingDependency)
-			}
-			dependencies.add(dep)
-			continue
-		}
-		// we've reached the line after end of dependencies
-		break
+        List<String> dependencies = new ArrayList<>()
+        List<String> dependenciesOutputLines = execute(dir, "./gradlew", "dependencies", "--configuration", "compile")
+        boolean inDependenciesList = false
+        for (String dependenciesOutputLine : dependenciesOutputLines) {
+            if (!inDependenciesList) {
+                // we haven't reached dependencies yet
+                if (dependenciesOutputLine.startsWith("compile - Dependencies")) {
+                    inDependenciesList = true
+                }
+                continue
             }
+            // we're in, or done with, dependencies
+            if (dependenciesOutputLine.contains(TOKEN_PRECEDING_DEPENDENCY)) {
+                int tokenPrecedingDependencyIndex = dependenciesOutputLine.indexOf(TOKEN_PRECEDING_DEPENDENCY);
+                String dep = dependenciesOutputLine.substring(tokenPrecedingDependencyIndex+(TOKEN_PRECEDING_DEPENDENCY.length()))
+                dep = dep.trim()
+                int delimeterFollowingDependency = dep.indexOf(DEPENDENCY_TRAILING_DELIMITER);
+                if (delimeterFollowingDependency >= 0) {
+                    dep = dep.substring(0, delimeterFollowingDependency)
+                }
+                dependencies.add(dep)
+                continue
+            }
+            // we've reached the line after end of dependencies
+            break
+        }
         return dependencies
     }
 
     List<String> getDiffOutput(File libraryDir) {
-	return execute(libraryDir, "git", "diff")
+        return execute(libraryDir, "git", "diff")
+    }
+    
+    List<String> getCommitOutput(File libraryDir, String commitMessage) {
+        List<String> gitAddOutput = execute(libraryDir, "git", "add", "build.gradle")
+	println "gitAddOutput: ${gitAddOutput}"
+
+        List<String> gitCommitOutput = execute(libraryDir, "git", "commit", "-m", commitMessage)
+	println "gitCommitOutput: ${gitCommitOutput}"
+
+        List<String> gitPushOutput = execute(libraryDir, "git", "push")
+	println "gitPushOutput: ${gitPushOutput}"
+	return gitPushOutput
     }
 
     void reset(File libraryDir) {
