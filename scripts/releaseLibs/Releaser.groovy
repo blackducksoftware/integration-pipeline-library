@@ -9,6 +9,8 @@ class Releaser {
     static final String OPERATION_COMMIT = "commit"
     static final String OPERATION_RESET = "reset"
     static final String OPERATION_DIFF = "diff"
+    static final List<String> OPERATIONS = Arrays.asList(OPERATION_PRINTLIBRARIES, OPERATION_UPDATEVERSIONS, OPERATION_BUILD, OPERATION_COMMIT, 
+        OPERATION_RESET, OPERATION_DIFF)
 
     static void main(String[] args) {
         if (args.size() < 2) {
@@ -18,9 +20,7 @@ class Releaser {
         }
         String workspaceDirPath = args[0]
         String operation = args[1]
-        // TODO: shouldn't have to edit here and below each time a command is added
-        if (!OPERATION_UPDATEVERSIONS.equals(operation) && !OPERATION_RESET.equals(operation) && !OPERATION_DIFF.equals(operation)
-        && !OPERATION_COMMIT.equals(operation) && !OPERATION_PRINTLIBRARIES.equals(operation) && !OPERATION_BUILD.equals(operation)) {
+        if (!OPERATIONS.contains(operation)) {
             println "Error: Invalid arguments"
             showUsage()
             return
@@ -37,8 +37,8 @@ class Releaser {
         println "           ${OPERATION_UPDATEVERSIONS}:\tAdjust versions in libraries' build.gradle files"
         println "           ${OPERATION_BUILD}:\t\tDo a './gradlew clean build install' on each library"
         println "           ${OPERATION_COMMIT}:\t\tDo a 'git add/commit/push' on each library"
-        println "           ${OPERATION_RESET}:\t\tDo a 'git reset --hard' on each library"
         println "           ${OPERATION_DIFF}:\t\tDo a 'git diff' on each library"
+        println "           ${OPERATION_RESET}:\t\tDo a 'git reset --hard' on each library"
     }
 
     // Non-static
@@ -140,9 +140,7 @@ class Releaser {
     void build() {
         for (String libraryDirName : libraries.all) {
             File libraryDir = new File(workspaceDir, libraryDirName)
-            List<String> buildOutput = toolRunner.build(libraryDir)
-            printLines(buildOutput)
-            println ""
+            toolRunner.build(libraryDir)
         }
     }
 

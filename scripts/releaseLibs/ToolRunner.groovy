@@ -68,15 +68,29 @@ class ToolRunner {
         return gitPushOutput
     }
     
-    List<String> build(File libraryDir) {
-        println "Building ${libraryDir.getName()}"
+    boolean build(File libraryDir) {
+        printf "Building ${libraryDir.getName()}... "
         List<String> buildOutput = execute(libraryDir, "./gradlew", "clean", "build", "install")
-        println "buildOutput: ${buildOutput}"
-        return buildOutput
+        boolean succeeded = evaluateBuildOutput(buildOutput)
+        if (succeeded) {
+            println "Succeeded"
+        } else {
+            println "FAILED"
+        }
+        return succeeded
     }
 
     void reset(File libraryDir) {
         execute(libraryDir, "git", "reset", "--hard")
+    }
+    
+    boolean evaluateBuildOutput(List<String> buildOutput) {
+        for (String line : buildOutput) {
+            if (line.contains("BUILD SUCCESSFUL")) {
+                return true
+            }
+        }
+        return false
     }
 
     List<String> execute(File dir, String ...args) {

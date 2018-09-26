@@ -12,4 +12,4 @@ curl -O https://raw.githubusercontent.com/blackducksoftware/integration-pipeline
 curl -O https://raw.githubusercontent.com/blackducksoftware/integration-pipeline-library/master/scripts/releaseLibs/ToolRunner.groovy
 curl -O https://raw.githubusercontent.com/blackducksoftware/integration-pipeline-library/master/scripts/releaseLibs/Releaser.groovy
 
-echo "To see usage information: groovy Releaser.groovy"
+echo "To see usage information: groovy Releaser"
