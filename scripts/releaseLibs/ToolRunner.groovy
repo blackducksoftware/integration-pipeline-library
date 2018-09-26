@@ -1,10 +1,10 @@
 class ToolRunner {
-	static String TOKEN_PRECEDING_DEPENDENCY = '---'
-	static String DEPENDENCY_TRAILING_DELIMITER = ' '
+    static String TOKEN_PRECEDING_DEPENDENCY = '---'
+    static String DEPENDENCY_TRAILING_DELIMITER = ' '
 
     String getProjectVersionString(File dir) {
         try {
-	    List<String> propsOutputLines = execute(dir, "./gradlew", "properties", "-q")
+            List<String> propsOutputLines = execute(dir, "./gradlew", "properties", "-q")
             int versionLineIndex = 0
             for (int i = 0; i < propsOutputLines.size(); i++) {
                 String trimmedLine = propsOutputLines[i].trim()
@@ -17,7 +17,7 @@ class ToolRunner {
             println "Failed to find the project version in the gradle properties command"
         } catch (Exception e) {
             String msg = "Error running the gradle properties command to get the project version, or interpreting its output: ${e.getMessage()}"
-	    throw new RuntimeException(msg, e)
+            throw new RuntimeException(msg, e)
         }
         return null
     }
@@ -55,46 +55,46 @@ class ToolRunner {
     List<String> getDiffOutput(File libraryDir) {
         return execute(libraryDir, "git", "diff")
     }
-    
+
     List<String> getCommitOutput(File libraryDir, String commitMessage) {
         List<String> gitAddOutput = execute(libraryDir, "git", "add", "build.gradle")
-	println "gitAddOutput: ${gitAddOutput}"
+        println "gitAddOutput: ${gitAddOutput}"
 
         List<String> gitCommitOutput = execute(libraryDir, "git", "commit", "-m", commitMessage)
-	println "gitCommitOutput: ${gitCommitOutput}"
+        println "gitCommitOutput: ${gitCommitOutput}"
 
         List<String> gitPushOutput = execute(libraryDir, "git", "push")
-	println "gitPushOutput: ${gitPushOutput}"
-	return gitPushOutput
+        println "gitPushOutput: ${gitPushOutput}"
+        return gitPushOutput
     }
 
     void reset(File libraryDir) {
-	execute(libraryDir, "git", "reset", "--hard")
+        execute(libraryDir, "git", "reset", "--hard")
     }
 
     List<String> execute(File dir, String ...args) {
-	if (!dir.isDirectory()) {
-		String msg = "ERROR: directory ${dir.getAbsolutePath()} does not exist or is not a directory"
-		throw new RuntimeException(msg)
-	}
+        if (!dir.isDirectory()) {
+            String msg = "ERROR: directory ${dir.getAbsolutePath()} does not exist or is not a directory"
+            throw new RuntimeException(msg)
+        }
         ProcessBuilder pb = new ProcessBuilder(args)
         pb = pb.directory(dir)
-	Process process = pb.start()
-	process.waitFor()
-	InputStream is = process.getInputStream()
-	List<String> outputLines = new ArrayList<>()
-	String line = null;
-	BufferedReader bufferedReader = null
-	try {
-		bufferedReader = new BufferedReader(new InputStreamReader(is, java.nio.charset.StandardCharsets.UTF_8))
-		while ((line = bufferedReader.readLine()) != null) {
-			outputLines.add(line);
-		}
-	} finally {
-		if (bufferedReader != null) {
-			bufferedReader.close()
-		}
-	}
-	return outputLines
+        Process process = pb.start()
+        process.waitFor()
+        InputStream is = process.getInputStream()
+        List<String> outputLines = new ArrayList<>()
+        String line = null;
+        BufferedReader bufferedReader = null
+        try {
+            bufferedReader = new BufferedReader(new InputStreamReader(is, java.nio.charset.StandardCharsets.UTF_8))
+            while ((line = bufferedReader.readLine()) != null) {
+                outputLines.add(line);
+            }
+        } finally {
+            if (bufferedReader != null) {
+                bufferedReader.close()
+            }
+        }
+        return outputLines
     }
 }

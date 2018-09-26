@@ -1,4 +1,4 @@
 class NumberedLine {
-	int lineNumber;
-	String line;
+    int lineNumber;
+    String line;
 }
