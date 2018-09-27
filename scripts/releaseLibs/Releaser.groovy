@@ -1,6 +1,4 @@
-import Libraries
 import ToolRunner
-import NumberedLine
 
 class Releaser {
     static final String OPERATION_PRINTLIBRARIES = "print-libraries"
@@ -21,6 +19,10 @@ class Releaser {
         operationArgumentCounts.put(OPERATION_RESET, 1)
         operationArgumentCounts.put(OPERATION_DIFF, 1)
     }
+    
+    static List<String> libraries = Arrays.asList("integration-common", "integration-reporting", "integration-rest", "integration-bdio",
+            "phone-home-client",
+            "hub-common-api", "hub-common-rest", "hub-common-reporting", "hub-common")
 
     static void main(String[] args) {
         if (args.size() < 1) {
@@ -47,7 +49,7 @@ class Releaser {
             workspaceDirPath = args[1]
         }
 
-        Releaser releaser = new Releaser(new Libraries(), new ToolRunner(), operation, workspaceDirPath)
+        Releaser releaser = new Releaser(new ToolRunner(), operation, workspaceDirPath)
         releaser.run()
     }
 
@@ -64,15 +66,13 @@ class Releaser {
     }
 
     // Non-static
-    final Libraries libraries
     final ToolRunner toolRunner
     File workspaceDir
     final String operation
     Map<String, String> currentLibraryVersions = new HashMap<>()
     Map<String, String> finalLibraryVersions = new HashMap<>()
 
-    Releaser(Libraries libraries, ToolRunner toolRunner, String operation, String workspaceDirPath) {
-        this.libraries = libraries
+    Releaser(ToolRunner toolRunner, String operation, String workspaceDirPath) {
         this.toolRunner = toolRunner
         this.operation = operation
         if (workspaceDirPath != null) {
@@ -106,13 +106,13 @@ class Releaser {
     }
     
     void printLibraries() {
-        printLines(libraries.all)
+        printLines(libraries)
     }
     
     void cloneLibraries() {
 
         // Clone the libraries to the given workspace dir
-        for (String libraryDirName : libraries.all) {
+        for (String libraryDirName : libraries) {
             println "Cloning ${libraryDirName}"
             toolRunner.cloneLibraries(workspaceDir, "git@github.com:blackducksoftware/${libraryDirName}.git")
         }
@@ -121,7 +121,7 @@ class Releaser {
     void updateVersions() {
 
         // Calculate new library versions
-        for (String libraryDirName : libraries.all) {
+        for (String libraryDirName : libraries) {
             File libraryDir = new File(workspaceDir, libraryDirName)
 
             // Get orig version
@@ -139,7 +139,7 @@ class Releaser {
         }
 
         // Adjust library versions and dependency versions
-        for (String libraryDirName : libraries.all) {
+        for (String libraryDirName : libraries) {
             println "Setting version and library dependency versions in: ${libraryDirName}:"
             File libraryDir = new File(workspaceDir, libraryDirName)
 
@@ -167,7 +167,7 @@ class Releaser {
         }
 
         // Check new dependency library versions via "gradle dependencies"
-        for (String libraryDirName : libraries.all) {
+        for (String libraryDirName : libraries) {
             println "Checking library dependency versions in: ${libraryDirName}:"
             File libraryDir = new File(workspaceDir, libraryDirName)
             checkNewDependencies(libraryDir)
@@ -178,7 +178,7 @@ class Releaser {
     }
     
     void build() {
-        for (String libraryDirName : libraries.all) {
+        for (String libraryDirName : libraries) {
             File libraryDir = new File(workspaceDir, libraryDirName)
             toolRunner.build(libraryDir)
         }
@@ -187,7 +187,7 @@ class Releaser {
     void commit() {
 
         // Collect currentLibraryVersions
-        for (String libraryDirName : libraries.all) {
+        for (String libraryDirName : libraries) {
             File libraryDir = new File(workspaceDir, libraryDirName)
 
             // Get current version
@@ -204,7 +204,7 @@ class Releaser {
         }
 
         // Commit all changes
-        for (String libraryDirName : libraries.all) {
+        for (String libraryDirName : libraries) {
             File libraryDir = new File(workspaceDir, libraryDirName)
             String currentVersion = currentLibraryVersions.get(libraryDirName)
             println "Committing ${libraryDirName} v${currentVersion}"
@@ -215,7 +215,7 @@ class Releaser {
     }
 
     void reset() {
-        for (String libraryDirName : libraries.all) {
+        for (String libraryDirName : libraries) {
             File libraryDir = new File(workspaceDir, libraryDirName)
             println "Resetting ${libraryDir.getName()}"
             toolRunner.reset(libraryDir)
@@ -224,7 +224,7 @@ class Releaser {
     }
 
     void diff() {
-        for (String libraryDirName : libraries.all) {
+        for (String libraryDirName : libraries) {
             File libraryDir = new File(workspaceDir, libraryDirName)
             println "Diffing ${libraryDir.getName()}"
             List<String> outputLines = toolRunner.diff(libraryDir)
@@ -338,5 +338,10 @@ class Releaser {
             }
         }
         return null
+    }
+    
+    class NumberedLine {
+        int lineNumber;
+        String line;
     }
 }

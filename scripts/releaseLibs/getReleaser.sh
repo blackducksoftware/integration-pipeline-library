@@ -7,8 +7,6 @@
 #
 # The Releaser script requires that groovy be on your path.
 #
-curl -O https://raw.githubusercontent.com/blackducksoftware/integration-pipeline-library/master/scripts/releaseLibs/Libraries.groovy
-curl -O https://raw.githubusercontent.com/blackducksoftware/integration-pipeline-library/master/scripts/releaseLibs/NumberedLine.groovy
 curl -O https://raw.githubusercontent.com/blackducksoftware/integration-pipeline-library/master/scripts/releaseLibs/ToolRunner.groovy
 curl -O https://raw.githubusercontent.com/blackducksoftware/integration-pipeline-library/master/scripts/releaseLibs/Releaser.groovy
 
