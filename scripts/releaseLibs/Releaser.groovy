@@ -4,17 +4,17 @@ import NumberedLine
 
 class Releaser {
     static final String OPERATION_PRINTLIBRARIES = "print-libraries"
+    static final String OPERATION_CLONE = "clone"
     static final String OPERATION_UPDATEVERSIONS = "update-versions"
     static final String OPERATION_BUILD = "build"
     static final String OPERATION_COMMIT = "commit"
     static final String OPERATION_RESET = "reset"
     static final String OPERATION_DIFF = "diff"
-    static final List<String> OPERATIONS = Arrays.asList(OPERATION_PRINTLIBRARIES, OPERATION_UPDATEVERSIONS, OPERATION_BUILD, OPERATION_COMMIT, 
-        OPERATION_RESET, OPERATION_DIFF)
     static final Map<String, Integer> operationArgumentCounts
     static {
         operationArgumentCounts = new HashMap<>()
         operationArgumentCounts.put(OPERATION_PRINTLIBRARIES, 0)
+        operationArgumentCounts.put(OPERATION_CLONE, 1)
         operationArgumentCounts.put(OPERATION_UPDATEVERSIONS, 1)
         operationArgumentCounts.put(OPERATION_BUILD, 1)
         operationArgumentCounts.put(OPERATION_COMMIT, 1)
@@ -30,8 +30,8 @@ class Releaser {
         }
 
         String operation = args[0]
-        if (!OPERATIONS.contains(operation)) {
-            println "Error: Invalid arguments"
+        if (!operationArgumentCounts.keySet().contains(operation)) {
+            println "Error: Invalid operation"
             showUsage()
             return
         }
@@ -55,6 +55,7 @@ class Releaser {
         println "Usage: groovy Releaser <operation>"
         println "       operation:"
         println "           ${OPERATION_PRINTLIBRARIES}:\t\t\t\tPrint a list of the libraries that will be operated on"
+        println "           ${OPERATION_CLONE} <workspace-dir-path>:\tClone the libraries from github to the given workspace"
         println "           ${OPERATION_UPDATEVERSIONS} <workspace-dir-path>:\tAdjust versions in libraries' build.gradle files"
         println "           ${OPERATION_BUILD} <workspace-dir-path>:\t\t\tDo a './gradlew clean build install' on each library"
         println "           ${OPERATION_COMMIT} <workspace-dir-path>:\t\t\tDo a 'git add/commit/push' on each library"
@@ -75,14 +76,21 @@ class Releaser {
         this.toolRunner = toolRunner
         this.operation = operation
         if (workspaceDirPath != null) {
-            this.workspaceDir = new File(workspaceDirPath)
+            workspaceDir = new File(workspaceDirPath)
+            workspaceDir.mkdirs()
         }
     }
 
     void run() {
-        println "Releaser operation: ${operation}"
+        printf "Releaser operation: ${operation}"
+        if (workspaceDir != null) {
+            printf ", workspace: ${workspaceDir.getAbsolutePath()}"
+        }
+        println ""
 
-        if (OPERATION_PRINTLIBRARIES.equals(operation)) {
+        if (OPERATION_CLONE.equals(operation)) {
+            cloneLibraries()
+        } else if (OPERATION_PRINTLIBRARIES.equals(operation)) {
             printLibraries()
         } else if (OPERATION_UPDATEVERSIONS.equals(operation)) {
             updateVersions()
@@ -99,6 +107,15 @@ class Releaser {
     
     void printLibraries() {
         printLines(libraries.all)
+    }
+    
+    void cloneLibraries() {
+
+        // Clone the libraries to the given workspace dir
+        for (String libraryDirName : libraries.all) {
+            println "Cloning ${libraryDirName}"
+            toolRunner.cloneLibraries(workspaceDir, "git@github.com:blackducksoftware/${libraryDirName}.git")
+        }
     }
 
     void updateVersions() {

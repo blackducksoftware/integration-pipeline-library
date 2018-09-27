@@ -4,7 +4,7 @@ class ToolRunner {
 
     String getProjectVersionString(File dir) {
         try {
-            List<String> propsOutputLines = execute(dir, "./gradlew", "properties", "-q")
+            List<String> propsOutputLines = execute(dir, Arrays.asList("./gradlew", "properties", "-q"), null)
             int versionLineIndex = 0
             for (int i = 0; i < propsOutputLines.size(); i++) {
                 String trimmedLine = propsOutputLines[i].trim()
@@ -24,7 +24,7 @@ class ToolRunner {
 
     List<String> getCompileDependencies(File dir) {
         List<String> dependencies = new ArrayList<>()
-        List<String> dependenciesOutputLines = execute(dir, "./gradlew", "dependencies", "--configuration", "compile")
+        List<String> dependenciesOutputLines = execute(dir, Arrays.asList("./gradlew", "dependencies", "--configuration", "compile"), null)
         boolean inDependenciesList = false
         for (String dependenciesOutputLine : dependenciesOutputLines) {
             if (!inDependenciesList) {
@@ -53,24 +53,28 @@ class ToolRunner {
     }
 
     List<String> diff(File libraryDir) {
-        return execute(libraryDir, "git", "diff")
+        return execute(libraryDir, Arrays.asList("git", "diff"), null)
+    }
+    
+    void cloneLibraries(File workspaceDir, String url) {
+        List<String> gitCloneOutput = execute(workspaceDir, Arrays.asList("git", "clone", url), "fatal:")
     }
 
     List<String> commit(File libraryDir, String commitMessage) {
-        List<String> gitAddOutput = execute(libraryDir, "git", "add", "build.gradle")
+        List<String> gitAddOutput = execute(libraryDir, Arrays.asList("git", "add", "build.gradle"), null)
         println "gitAddOutput: ${gitAddOutput}"
 
-        List<String> gitCommitOutput = execute(libraryDir, "git", "commit", "-m", commitMessage)
+        List<String> gitCommitOutput = execute(libraryDir, Arrays.asList("git", "commit", "-m", commitMessage), null)
         println "gitCommitOutput: ${gitCommitOutput}"
 
-        List<String> gitPushOutput = execute(libraryDir, "git", "push")
+        List<String> gitPushOutput = execute(libraryDir, Arrays.asList("git", "push"), null)
         println "gitPushOutput: ${gitPushOutput}"
         return gitPushOutput
     }
     
     boolean build(File libraryDir) {
         printf "Building ${libraryDir.getName()}... "
-        List<String> buildOutput = execute(libraryDir, "./gradlew", "clean", "build", "install")
+        List<String> buildOutput = execute(libraryDir, Arrays.asList("./gradlew", "clean", "build", "install"), null)
         boolean succeeded = evaluateBuildOutput(buildOutput)
         if (succeeded) {
             println "Succeeded"
@@ -81,7 +85,7 @@ class ToolRunner {
     }
 
     void reset(File libraryDir) {
-        execute(libraryDir, "git", "reset", "--hard")
+        execute(libraryDir, Arrays.asList("git", "reset", "--hard"), null)
     }
     
     boolean evaluateBuildOutput(List<String> buildOutput) {
@@ -93,7 +97,7 @@ class ToolRunner {
         return false
     }
 
-    List<String> execute(File dir, String ...args) {
+    List<String> execute(File dir, List<String> args, errorIndicatorStringStdErr) {
         if (!dir.isDirectory()) {
             String msg = "ERROR: directory ${dir.getAbsolutePath()} does not exist or is not a directory"
             throw new RuntimeException(msg)
@@ -115,6 +119,25 @@ class ToolRunner {
             if (bufferedReader != null) {
                 bufferedReader.close()
             }
+        }
+        
+        if (errorIndicatorStringStdErr != null) {
+            InputStream isStdErr = process.getErrorStream()
+            String lineStdErr = null;
+            BufferedReader bufferedReaderStdErr = null
+            try {
+                bufferedReaderStdErr = new BufferedReader(new InputStreamReader(isStdErr, java.nio.charset.StandardCharsets.UTF_8))
+                while ((lineStdErr = bufferedReaderStdErr.readLine()) != null) {
+                    if (lineStdErr.contains(errorIndicatorStringStdErr)) {
+                        throw new RuntimeException("Error: ${args.get(0)} failed: ${lineStdErr}")
+                    }
+                }
+            } finally {
+                if (bufferedReaderStdErr != null) {
+                    bufferedReaderStdErr.close()
+                }
+            }
+
         }
         return outputLines
     }
