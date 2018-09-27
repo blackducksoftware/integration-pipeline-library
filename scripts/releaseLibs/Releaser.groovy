@@ -11,34 +11,55 @@ class Releaser {
     static final String OPERATION_DIFF = "diff"
     static final List<String> OPERATIONS = Arrays.asList(OPERATION_PRINTLIBRARIES, OPERATION_UPDATEVERSIONS, OPERATION_BUILD, OPERATION_COMMIT, 
         OPERATION_RESET, OPERATION_DIFF)
+    static final Map<String, Integer> operationArgumentCounts
+    static {
+        operationArgumentCounts = new HashMap<>()
+        operationArgumentCounts.put(OPERATION_PRINTLIBRARIES, 0)
+        operationArgumentCounts.put(OPERATION_UPDATEVERSIONS, 1)
+        operationArgumentCounts.put(OPERATION_BUILD, 1)
+        operationArgumentCounts.put(OPERATION_COMMIT, 1)
+        operationArgumentCounts.put(OPERATION_RESET, 1)
+        operationArgumentCounts.put(OPERATION_DIFF, 1)
+    }
 
     static void main(String[] args) {
-        if (args.size() < 2) {
+        if (args.size() < 1) {
             println "Error: Too few arguments"
             showUsage()
             return
         }
-        String workspaceDirPath = args[0]
-        String operation = args[1]
+
+        String operation = args[0]
         if (!OPERATIONS.contains(operation)) {
             println "Error: Invalid arguments"
             showUsage()
             return
         }
+        
+        if (args.size() < (operationArgumentCounts.get(operation)+1)) {
+            println "Error: This operation requires ${operationArgumentCounts.get(operation)} arguments"
+            showUsage()
+            return
+        } 
+        
+        String workspaceDirPath = null
+        if (operationArgumentCounts.get(operation) > 0) {
+            workspaceDirPath = args[1]
+        }
 
-        Releaser releaser = new Releaser(new Libraries(), new ToolRunner(), workspaceDirPath, operation)
+        Releaser releaser = new Releaser(new Libraries(), new ToolRunner(), operation, workspaceDirPath)
         releaser.run()
     }
 
     static void showUsage() {
-        println "Usage: groovy Releaser <workspace-dir-path> <operation>"
+        println "Usage: groovy Releaser <operation>"
         println "       operation:"
-        println "           ${OPERATION_PRINTLIBRARIES}:\tPrint a list of the libraries that will be operated on"
-        println "           ${OPERATION_UPDATEVERSIONS}:\tAdjust versions in libraries' build.gradle files"
-        println "           ${OPERATION_BUILD}:\t\tDo a './gradlew clean build install' on each library"
-        println "           ${OPERATION_COMMIT}:\t\tDo a 'git add/commit/push' on each library"
-        println "           ${OPERATION_DIFF}:\t\tDo a 'git diff' on each library"
-        println "           ${OPERATION_RESET}:\t\tDo a 'git reset --hard' on each library"
+        println "           ${OPERATION_PRINTLIBRARIES}:\t\t\t\tPrint a list of the libraries that will be operated on"
+        println "           ${OPERATION_UPDATEVERSIONS} <workspace-dir-path>:\tAdjust versions in libraries' build.gradle files"
+        println "           ${OPERATION_BUILD} <workspace-dir-path>:\t\t\tDo a './gradlew clean build install' on each library"
+        println "           ${OPERATION_COMMIT} <workspace-dir-path>:\t\t\tDo a 'git add/commit/push' on each library"
+        println "           ${OPERATION_DIFF} <workspace-dir-path>:\t\t\tDo a 'git diff' on each library"
+        println "           ${OPERATION_RESET} <workspace-dir-path>:\t\t\tDo a 'git reset --hard' on each library"
     }
 
     // Non-static
@@ -49,15 +70,17 @@ class Releaser {
     Map<String, String> currentLibraryVersions = new HashMap<>()
     Map<String, String> finalLibraryVersions = new HashMap<>()
 
-    Releaser(Libraries libraries, ToolRunner toolRunner, String workspaceDirPath, operation) {
+    Releaser(Libraries libraries, ToolRunner toolRunner, String operation, String workspaceDirPath) {
         this.libraries = libraries
         this.toolRunner = toolRunner
-        this.workspaceDir = new File(workspaceDirPath)
         this.operation = operation
+        if (workspaceDirPath != null) {
+            this.workspaceDir = new File(workspaceDirPath)
+        }
     }
 
     void run() {
-        println "Releaser called with arguments: dir: ${workspaceDir.getAbsolutePath()}, operation: ${operation}"
+        println "Releaser operation: ${operation}"
 
         if (OPERATION_PRINTLIBRARIES.equals(operation)) {
             printLibraries()
