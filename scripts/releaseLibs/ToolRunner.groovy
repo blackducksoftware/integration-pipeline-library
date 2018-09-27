@@ -22,36 +22,6 @@ class ToolRunner {
         return null
     }
 
-    List<String> getCompileDependencies(File dir) {
-        List<String> dependencies = new ArrayList<>()
-        List<String> dependenciesOutputLines = execute(dir, Arrays.asList("./gradlew", "dependencies", "--configuration", "compile"), null)
-        boolean inDependenciesList = false
-        for (String dependenciesOutputLine : dependenciesOutputLines) {
-            if (!inDependenciesList) {
-                // we haven't reached dependencies yet
-                if (dependenciesOutputLine.startsWith("compile - Dependencies")) {
-                    inDependenciesList = true
-                }
-                continue
-            }
-            // we're in, or done with, dependencies
-            if (dependenciesOutputLine.contains(TOKEN_PRECEDING_DEPENDENCY)) {
-                int tokenPrecedingDependencyIndex = dependenciesOutputLine.indexOf(TOKEN_PRECEDING_DEPENDENCY);
-                String dep = dependenciesOutputLine.substring(tokenPrecedingDependencyIndex+(TOKEN_PRECEDING_DEPENDENCY.length()))
-                dep = dep.trim()
-                int delimeterFollowingDependency = dep.indexOf(DEPENDENCY_TRAILING_DELIMITER);
-                if (delimeterFollowingDependency >= 0) {
-                    dep = dep.substring(0, delimeterFollowingDependency)
-                }
-                dependencies.add(dep)
-                continue
-            }
-            // we've reached the line after end of dependencies
-            break
-        }
-        return dependencies
-    }
-
     List<String> diff(File libraryDir) {
         return execute(libraryDir, Arrays.asList("git", "diff"), null)
     }
@@ -63,10 +33,8 @@ class ToolRunner {
     List<String> commit(File libraryDir, String commitMessage) {
         List<String> gitAddOutput = execute(libraryDir, Arrays.asList("git", "add", "build.gradle"), null)
         println "gitAddOutput: ${gitAddOutput}"
-
         List<String> gitCommitOutput = execute(libraryDir, Arrays.asList("git", "commit", "-m", commitMessage), null)
         println "gitCommitOutput: ${gitCommitOutput}"
-
         List<String> gitPushOutput = execute(libraryDir, Arrays.asList("git", "push"), null)
         println "gitPushOutput: ${gitPushOutput}"
         return gitPushOutput
@@ -120,7 +88,6 @@ class ToolRunner {
                 bufferedReader.close()
             }
         }
-        
         if (errorIndicatorStringStdErr != null) {
             InputStream isStdErr = process.getErrorStream()
             String lineStdErr = null;
@@ -137,7 +104,6 @@ class ToolRunner {
                     bufferedReaderStdErr.close()
                 }
             }
-
         }
         return outputLines
     }

@@ -19,7 +19,6 @@ class Releaser {
         operationArgumentCounts.put(OPERATION_RESET, 1)
         operationArgumentCounts.put(OPERATION_DIFF, 1)
     }
-    
     static List<String> libraries = Arrays.asList("integration-common", "integration-reporting", "integration-rest", "integration-bdio",
             "phone-home-client",
             "hub-common-api", "hub-common-rest", "hub-common-reporting", "hub-common")
@@ -30,25 +29,21 @@ class Releaser {
             showUsage()
             return
         }
-
         String operation = args[0]
         if (!operationArgumentCounts.keySet().contains(operation)) {
             println "Error: Invalid operation"
             showUsage()
             return
         }
-        
         if (args.size() < (operationArgumentCounts.get(operation)+1)) {
             println "Error: This operation requires ${operationArgumentCounts.get(operation)} arguments"
             showUsage()
             return
         } 
-        
         String workspaceDirPath = null
         if (operationArgumentCounts.get(operation) > 0) {
             workspaceDirPath = args[1]
         }
-
         Releaser releaser = new Releaser(new ToolRunner(), operation, workspaceDirPath)
         releaser.run()
     }
@@ -69,7 +64,6 @@ class Releaser {
     final ToolRunner toolRunner
     File workspaceDir
     final String operation
-    Map<String, String> currentLibraryVersions = new HashMap<>()
     Map<String, String> finalLibraryVersions = new HashMap<>()
 
     Releaser(ToolRunner toolRunner, String operation, String workspaceDirPath) {
@@ -87,7 +81,6 @@ class Releaser {
             printf ", workspace: ${workspaceDir.getAbsolutePath()}"
         }
         println ""
-
         if (OPERATION_CLONE.equals(operation)) {
             cloneLibraries()
         } else if (OPERATION_PRINTLIBRARIES.equals(operation)) {
@@ -110,8 +103,6 @@ class Releaser {
     }
     
     void cloneLibraries() {
-
-        // Clone the libraries to the given workspace dir
         for (String libraryDirName : libraries) {
             println "Cloning ${libraryDirName}"
             toolRunner.cloneLibraries(workspaceDir, "git@github.com:blackducksoftware/${libraryDirName}.git")
@@ -119,22 +110,12 @@ class Releaser {
     }
 
     void updateVersions() {
-
         // Calculate new library versions
         for (String libraryDirName : libraries) {
             File libraryDir = new File(workspaceDir, libraryDirName)
-
-            // Get orig version
             String currentVersion = toolRunner.getProjectVersionString(libraryDir)
-
-            // Calculate final version
             String finalVersion = getFinalVersion(currentVersion)
-
-            // Store current and final version for this library
-            // TODO: we don't actually use this current version map
-            currentLibraryVersions.put(libraryDirName, currentVersion)
             finalLibraryVersions.put(libraryDirName, finalVersion)
-
             println "${libraryDirName}: starting version: ${currentVersion}; new version: ${finalVersion}"
         }
 
@@ -166,14 +147,7 @@ class Releaser {
             }
         }
 
-        // Check new dependency library versions via "gradle dependencies"
-        for (String libraryDirName : libraries) {
-            println "Checking library dependency versions in: ${libraryDirName}:"
-            File libraryDir = new File(workspaceDir, libraryDirName)
-            checkNewDependencies(libraryDir)
-        }
-
-        println "Done\n\n"
+        println "Done"
         return
     }
     
@@ -185,24 +159,18 @@ class Releaser {
     }
 
     void commit() {
-
         // Collect currentLibraryVersions
+        Map<String, String> currentLibraryVersions = new HashMap<>()
         for (String libraryDirName : libraries) {
             File libraryDir = new File(workspaceDir, libraryDirName)
-
-            // Get current version
             String currentVersion = toolRunner.getProjectVersionString(libraryDir)
             if (currentVersion.endsWith('-SNAPSHOT')) {
                 String msg = "Error: library ${} version ${} is a snapshot"
                 throw new RuntimeException(msg)
             }
-
-            // Store current version for this library
             currentLibraryVersions.put(libraryDirName, currentVersion)
-
             println "${libraryDirName}: will commit version: ${currentVersion}"
         }
-
         // Commit all changes
         for (String libraryDirName : libraries) {
             File libraryDir = new File(workspaceDir, libraryDirName)
@@ -240,27 +208,6 @@ class Releaser {
         }
     }
 
-    void checkNewDependencies(File libraryDir) {
-        List<String> actualDependencies = toolRunner.getCompileDependencies(libraryDir)
-
-        for (String possibleDependencyLibraryName : finalLibraryVersions.keySet()) {
-            String possibleDependencyPattern = getPatternForGradleReportedDependencyLine(possibleDependencyLibraryName)
-            for (String actualDependency : actualDependencies) {
-                if (actualDependency.matches(possibleDependencyPattern)) {
-                    int versionIndex = actualDependency.lastIndexOf(':') + 1
-                    String actualVersion = actualDependency.substring(versionIndex)
-                    String expectedDependencyVersion = finalLibraryVersions.get(possibleDependencyLibraryName)
-                    if (!expectedDependencyVersion.equals(actualVersion)) {
-                        String msg = "ERROR: For ${libraryDir.getName()} dependency on ${possibleDependencyLibraryName}: Expected version ${expectedDependencyVersion}; found version ${actualVersion}"
-                        throw new RuntimeException(msg)
-                    } else {
-                        println "\tChecked library ${libraryDir.getName()}'s dependency on ${possibleDependencyLibraryName} and found the expected version ${actualVersion}"
-                    }
-                }
-            }
-        }
-    }
-
     String getFinalVersion(String currentVersion) {
         int versionIncrement = 1
         String currentReleaseVersion = currentVersion
@@ -274,8 +221,8 @@ class Releaser {
         String modifiedVersion = currentReleaseVersion.substring(0, finalVersionPieceIndex)
         modifiedVersion = "${modifiedVersion}${Integer.valueOf(finalVersionPiece) + versionIncrement}"
     }
+    
     void setNewLibraryVersionInBuildDotGradleFile(String libraryName, String[] buildDotGradleFileLines, String newVersion) {
-
         def numberedMatchedLine = findLine(buildDotGradleFileLines, '^version =.*')
         if (numberedMatchedLine == null) {
             println "Did NOT set new library version"
@@ -283,14 +230,8 @@ class Releaser {
         }
         String versionLine = numberedMatchedLine.line
         int versionLineIndex = numberedMatchedLine.lineNumber
-
-        // parse old version out of version line
         String version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').trim()
-
-        // plug the new version into version line
         versionLine = versionLine.replace(version, newVersion)
-
-        // replace old version line with new
         buildDotGradleFileLines[versionLineIndex] = versionLine
     }
 
@@ -299,20 +240,13 @@ class Releaser {
             if (dependencyLibraryName.equals(currentLibraryName)) {
                 continue
             }
-
             String dependencyLinePattern = getPatternForBuildDotGradleDependencyLine(dependencyLibraryName)
             def numberedMatchedLine = findLine(buildDotGradleFileLines, dependencyLinePattern)
             if (numberedMatchedLine == null) {
                 continue
             }
-
-            // parse old version out of dependency line
             String oldVersion = numberedMatchedLine.line.substring(numberedMatchedLine.line.lastIndexOf(':') + 1).replace("'", '').trim()
-
-            // plug the new version into dependency line
             String newDependencyLine = "    ${numberedMatchedLine.line.replace(oldVersion, finalLibraryVersions.get(dependencyLibraryName))}"
-
-            // replace old version line with new
             buildDotGradleFileLines[numberedMatchedLine.lineNumber] = newDependencyLine
         }
     }
