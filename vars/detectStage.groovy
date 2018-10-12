@@ -8,7 +8,7 @@ def call(String stageName = 'Run Detect', Closure body) {
 
     String detectURL = config.detectURL ?: "${HUB_DETECT_URL}"
     String detectCommand = config.detectCommand ?: ''
-    detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true'
+    detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.blackduck.signature.scanner.disabled=true'
 
     def commandLines = []
     commandLines.add("#!/bin/bash")
