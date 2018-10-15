@@ -14,8 +14,6 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
 
     String branch = config.branch ?: "${BRANCH}"
 
-
-
     stage(stageName) {
         ProjectUtils projectUtils = new ProjectUtils()
         projectUtils.initialize(this, buildTool, exe)

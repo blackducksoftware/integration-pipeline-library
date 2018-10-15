@@ -48,6 +48,8 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
     boolean checkAllDependenciesVar = configUtils.get('checkAllDependencies', false)
     println "Going to run the Release ${runReleaseVar}"
 
+    boolean runDetectVar = configUtils.get('runDetect', true)
+
     integrationNode(nodeName) {
         emailWrapper(emailListVar) {
             setupStage {
@@ -109,8 +111,10 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
                 if (runJacocoVar) {
                     jacocoStage {}
                 }
-                detectStage {
-                    detectCommand = detectCommandVar
+                if (runDetectVar) {
+                    detectStage {
+                        detectCommand = detectCommandVar
+                    }
                 }
             }
         }
