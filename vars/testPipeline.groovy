@@ -35,57 +35,73 @@ def call(Closure body) {
 
     boolean runJacocoVar = config.get('runJacoco', true)
 
-    integrationNode(nodeNameVar) {
-        emailWrapper(emailListVar) {
-            setupStage {
-                setJdk {}
-            }
-            def directoryToRunIn = testGitStage {
-                url = gitUrlVar
-                gitRelativeTargetDir = gitRelativeTargetDirVar
-            }
-            dir(directoryToRunIn) {
-                if (null != preBuildBody) {
-                    stage('Pre Build') {
-                        preBuildBody()
+    pipeline {
+        agent none
+        parameters {
+            booleanParam(defaultValue: true, description: 'If you want to release the project, set this to true', name: 'RUN_RELEASE')
+            string(defaultValue: 'Auto Release', description: 'The release note that you want the Auto Release tool to display.', name: 'COMMIT_MESSAGE')
+            string(defaultValue: 'master', description: 'The branch you want to build', name: 'BRANCH')
+        }
+        stages {
+            stage('Example') {
+                steps {
+                    script {
+                        integrationNode(nodeNameVar) {
+                            emailWrapper(emailListVar) {
+                                setupStage {
+                                    setJdk {}
+                                }
+                                def directoryToRunIn = testGitStage {
+                                    url = gitUrlVar
+                                    gitRelativeTargetDir = gitRelativeTargetDirVar
+                                }
+                                dir(directoryToRunIn) {
+                                    if (null != preBuildBody) {
+                                        stage('Pre Build') {
+                                            preBuildBody()
+                                        }
+                                    }
+                                    gradleStage {
+                                        buildCommand = gradleCommandVar
+                                    }
+                                    if (null != postBuildBody) {
+                                        stage('Post Build') {
+                                            postBuildBody()
+                                        }
+                                    }
+                                    if (runGitHubReleaseVar) {
+                                        newGarStage {
+                                            buildTool = 'gradle'
+                                            exe = gradleExeVar
+                                            releaseVersion = releaseVersionVar
+                                            owner = ownerVar
+                                            artifactFile = artifactFileVar
+                                            artifactPattern = artifactPatternVar
+                                            artifactDirectory = artifactDirectoryVar
+                                            project = projectVar
+                                            releaseDescription = releaseDescriptionVar
+                                        }
+                                    }
+                                    if (runArchiveVar) {
+                                        archiveStage {
+                                            patterns = archivePatternVar
+                                        }
+                                    }
+                                    if (runJunitVar) {
+                                        junitStage {
+                                            xmlPattern = junitXmlPatternVar
+                                        }
+                                    }
+                                    if (runJacocoVar) {
+                                        jacocoStage {}
+                                    }
+                                    detectStage {
+                                        detectCommand = detectCommandVar
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
-                gradleStage {
-                    buildCommand = gradleCommandVar
-                }
-                if (null != postBuildBody) {
-                    stage('Post Build') {
-                        postBuildBody()
-                    }
-                }
-                if (runGitHubReleaseVar) {
-                    newGarStage {
-                        buildTool = 'gradle'
-                        exe = gradleExeVar
-                        releaseVersion = releaseVersionVar
-                        owner = ownerVar
-                        artifactFile = artifactFileVar
-                        artifactPattern = artifactPatternVar
-                        artifactDirectory = artifactDirectoryVar
-                        project = projectVar
-                        releaseDescription = releaseDescriptionVar
-                    }
-                }
-                if (runArchiveVar) {
-                    archiveStage {
-                        patterns = archivePatternVar
-                    }
-                }
-                if (runJunitVar) {
-                    junitStage {
-                        xmlPattern = junitXmlPatternVar
-                    }
-                }
-                if (runJacocoVar) {
-                    jacocoStage {}
-                }
-                detectStage {
-                    detectCommand = detectCommandVar
                 }
             }
         }
