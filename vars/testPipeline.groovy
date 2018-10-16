@@ -42,6 +42,9 @@ def call(Closure body) {
             string(defaultValue: 'Auto Release', description: 'The release note that you want the Auto Release tool to display.', name: 'COMMIT_MESSAGE')
             string(defaultValue: 'master', description: 'The branch you want to build', name: 'BRANCH')
         }
+        parameters {
+            string(defaultValue: 'Stuff', description: 'Things', name: 'TEST')
+        }
         stages {
             stage('Example') {
                 steps {
