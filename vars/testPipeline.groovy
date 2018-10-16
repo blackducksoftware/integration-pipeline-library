@@ -6,6 +6,8 @@ def call(Closure body) {
     body.delegate = config
     body()
 
+    def additionalParameters = config.get('additionalParameters', null)
+
     String nodeNameVar = config.nodeName
     String emailListVar = config.emailList
     String gitUrlVar = config.gitUrl
@@ -39,8 +41,9 @@ def call(Closure body) {
         agent none
         parameters {
             booleanParam(defaultValue: false, description: 'If you want to release the project, set this to true', name: 'RUN_RELEASE')
-            string(defaultValue: 'Auto Release', description: 'The release note that you want the Auto Release tool to display.', name: 'COMMIT_MESSAGE')
-            string(defaultValue: 'master', description: 'The branch you want to build', name: 'BRANCH')
+            string(defaultValue: 'Auto Release', description: 'The release note that you want the Auto Release tool to display.', name: 'COMMIT_MESSAGE', trim: true)
+            string(defaultValue: 'master', description: 'The branch you want to build', name: 'BRANCH', trim: true)
+            additionalParameters
         }
         parameters {
             string(defaultValue: 'Stuff', description: 'Things', name: 'TEST')
