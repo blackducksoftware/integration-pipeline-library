@@ -45,9 +45,6 @@ def call(Closure body) {
             string(defaultValue: 'master', description: 'The branch you want to build', name: 'BRANCH', trim: true)
             additionalParameters
         }
-        parameters {
-            string(defaultValue: 'Stuff', description: 'Things', name: 'TEST')
-        }
         stages {
             stage('Example') {
                 steps {
