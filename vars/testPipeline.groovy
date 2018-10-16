@@ -15,9 +15,9 @@ def call(Closure body) {
 
     String gradleCommandVar = config.buildCommand
 
-    def params = []
+    def params = new ArrayList()
     if (additionalParameters) {
-        params = [additionalParameters]
+        params = new ArrayList(additionalParameters)
     }
     params.add(booleanParam(defaultValue: false, description: 'If you want to release the project, set this to true', name: 'RUN_RELEASE'))
     params.add(string(defaultValue: 'Auto Release', description: 'The release note that you want the Auto Release tool to display.', name: 'COMMIT_MESSAGE', trim: true))
