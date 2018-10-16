@@ -51,7 +51,7 @@ def call(Closure body) {
                                 setupStage {
                                     setJdk {}
                                 }
-                                def directoryToRunIn = testGitStage {
+                                def directoryToRunIn = gitStage {
                                     url = gitUrlVar
                                     gitRelativeTargetDir = gitRelativeTargetDirVar
                                 }
