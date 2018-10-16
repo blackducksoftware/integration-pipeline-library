@@ -24,7 +24,9 @@ def call(Closure body) {
     params.add(string(defaultValue: 'master', description: 'The branch you want to build', name: 'BRANCH', trim: true))
 
     properties([parameters(params),
-                disableConcurrentBuilds()])
+                disableConcurrentBuilds(),
+                buildDiscarder(logRotator(artifactDaysToKeepStr: '90', artifactNumToKeepStr: '2', daysToKeepStr: '14', numToKeepStr: '10')),
+                pipelineTriggers([cron('@daily')])])
 
     integrationNode(nodeNameVar) {
         emailWrapper(emailListVar) {
