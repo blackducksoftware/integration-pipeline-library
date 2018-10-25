@@ -6,10 +6,25 @@ def call(String stageName = 'Update gh-pages', Closure body) {
     body.delegate = config
     body()
 
-    String targetDir = config.targetDir ?: "${BRANCH}"
+    String targetDir = config.targetDir
+    if (null == targetDir || targetDir.trim().length() == 0) {
+        String branch = "${BRANCH}"
+        if (branch.contains('/')) {
+            targetDir = branch.substring(branch.lastIndexOf('/') + 1)
+        } else {
+            targetDir = branch
+        }
+    }
 
     String branch = config.branch ?: 'gh-pages'
-    String ghPageTargetDir = config.ghPageTargetDir ?: 'gh-pages'
+    String ghPageTargetDir = config.ghPageTargetDir
+    if (null == ghPageTargetDir || ghPageTargetDir.trim().length() == 0) {
+        if (branch.contains('/')) {
+            ghPageTargetDir = branch.substring(branch.lastIndexOf('/') + 1)
+        } else {
+            ghPageTargetDir = branch
+        }
+    }
 
     String directoryToRunIn = "${WORKSPACE}/${ghPageTargetDir}"
 
