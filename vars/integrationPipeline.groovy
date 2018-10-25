@@ -69,7 +69,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
             sortMode: 'NONE',
             tagFilter: '',
             type: 'PT_BRANCH_TAG',
-            useRepository: 'https://github.com/blackducksoftware/integration-common.git'))
+            useRepository: gitUrlVar))
 
     properties([parameters(params),
                 disableConcurrentBuilds(),
