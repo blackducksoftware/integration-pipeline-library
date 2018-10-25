@@ -12,8 +12,6 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
     String exe = config.exe
     boolean checkAllDependencies = config.checkAllDependencies ?: false
 
-    String branch = config.branch ?: "${BRANCH}"
-
     stage(stageName) {
         ProjectUtils projectUtils = new ProjectUtils()
         projectUtils.initialize(this, buildTool, exe)
@@ -29,7 +27,6 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
             println "Commiting the release ${newVersion}"
             sh "git commit -am \"Release ${newVersion}\""
             println "Pushing release to branch ${branch}"
-            sh "git push origin ${branch}"
         }
     }
 }

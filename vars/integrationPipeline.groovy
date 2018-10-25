@@ -57,7 +57,19 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
     }
     params.add(booleanParam(defaultValue: false, description: 'If you want to release the project, set this to true', name: 'RUN_RELEASE'))
     params.add(string(defaultValue: 'Auto Release', description: 'The release note that you want the Auto Release tool to display.', name: 'COMMIT_MESSAGE', trim: true))
-    params.add(string(defaultValue: 'master', description: 'The branch you want to build', name: 'BRANCH', trim: true))
+
+    params.add(gitParameter(branch: '',
+            branchFilter: '',
+            defaultValue: 'origin/master',
+            description: 'The branch you want to build',
+            listSize: '5',
+            name: 'BRANCH',
+            quickFilterEnabled: true,
+            selectedValue: 'NONE',
+            sortMode: 'NONE',
+            tagFilter: '',
+            type: 'PT_BRANCH_TAG',
+            useRepository: 'https://github.com/blackducksoftware/integration-common.git'))
 
     properties([parameters(params),
                 disableConcurrentBuilds(),

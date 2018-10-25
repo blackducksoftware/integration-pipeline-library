@@ -10,7 +10,6 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
 
     String buildTool = config.buildTool
     String exe = config.exe
-    String branch = config.branch ?: "${BRANCH}"
 
     stage(stageName) {
         ProjectUtils projectUtils = new ProjectUtils()
@@ -18,6 +17,6 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
         println "Using the next snapshot post release"
         def newVersion = projectUtils.increaseSemver()
         sh "git commit -a -m \"Using the next snapshot post release ${newVersion}\""
-        sh "git push origin ${branch}"
+        sh "git push"
     }
 }

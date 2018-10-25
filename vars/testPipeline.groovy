@@ -22,7 +22,7 @@ def call(Closure body) {
     params.add(booleanParam(defaultValue: false, description: 'If you want to release the project, set this to true', name: 'RUN_RELEASE'))
     params.add(string(defaultValue: 'Auto Release', description: 'The release note that you want the Auto Release tool to display.', name: 'COMMIT_MESSAGE', trim: true))
     params.add(string(defaultValue: 'master', description: 'The branch you want to build', name: 'BRANCH', trim: true))
-    // Stuff
+
     properties([parameters(params),
                 disableConcurrentBuilds(),
                 buildDiscarder(logRotator(artifactDaysToKeepStr: '90', artifactNumToKeepStr: '2', daysToKeepStr: '14', numToKeepStr: '10')),

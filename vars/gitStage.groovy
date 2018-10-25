@@ -9,7 +9,7 @@ def call(String stageName = 'Git', Closure body) {
     String url = config.url
     String branch = config.branch ?: "${BRANCH}"
     if (null == branch || branch.trim().length() == 0) {
-        branch = 'master'
+        branch = 'origin/master'
     }
 
     String gitTool = config.get('git', 'Default')
@@ -28,7 +28,7 @@ def call(String stageName = 'Git', Closure body) {
                 // Need to do this because Jenkins checks out a detached HEAD
                 sh "git checkout ${branch}"
                 // Do a hard reset in order to clear out any local changes/commits
-                sh "git reset --hard origin/${branch}"
+                sh "git reset --hard ${branch}"
             }
         }
     }
