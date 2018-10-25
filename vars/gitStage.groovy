@@ -18,7 +18,7 @@ def call(String stageName = 'Git', Closure body) {
     String relativeTargetDir = config.relativeTargetDir
     if (null == relativeTargetDir || relativeTargetDir.trim().length() == 0) {
         if (branch.contains('/')) {
-            relativeTargetDir = branch.substring(branch.lastIndexOf('/'))
+            relativeTargetDir = branch.substring(branch.lastIndexOf('/') + 1)
         } else {
             relativeTargetDir = branch
         }
