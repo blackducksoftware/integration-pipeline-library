@@ -6,14 +6,16 @@ def call(String stageName = 'Update gh-pages', Closure body) {
     body.delegate = config
     body()
 
+    String originalBranch = config.originalBranch ?: "${BRANCH}"
+    if (null == originalBranch || originalBranch.trim().length() == 0) {
+        gitBranchVar = 'master'
+    } else if (originalBranch.contains('/')) {
+        branch = originalBranch.substring(originalBranch.lastIndexOf('/') + 1).trim()
+    }
+
     String targetDir = config.targetDir
     if (null == targetDir || targetDir.trim().length() == 0) {
-        String branch = "${BRANCH}"
-        if (branch.contains('/')) {
-            targetDir = branch.substring(branch.lastIndexOf('/') + 1)
-        } else {
-            targetDir = branch
-        }
+        targetDir = originalBranch
     }
 
     String branch = config.branch ?: 'gh-pages'

@@ -7,21 +7,14 @@ def call(String stageName = 'Git', Closure body) {
     body()
 
     String url = config.url
-    String branch = config.branch ?: "${BRANCH}"
-    if (null == branch || branch.trim().length() == 0) {
-        branch = 'origin/master'
-    }
+    String branch = config.branch
 
     String gitTool = config.get('git', 'Default')
     boolean changelog = config.get('changelog', false)
     boolean poll = config.get('poll', false)
     String relativeTargetDir = config.relativeTargetDir
     if (null == relativeTargetDir || relativeTargetDir.trim().length() == 0) {
-        if (branch.contains('/')) {
-            relativeTargetDir = branch.substring(branch.lastIndexOf('/') + 1)
-        } else {
-            relativeTargetDir = branch
-        }
+        relativeTargetDir = branch
     }
 
 

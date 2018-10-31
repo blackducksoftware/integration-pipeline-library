@@ -12,10 +12,7 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
     String exe = config.exe
     boolean checkAllDependencies = config.checkAllDependencies ?: false
 
-    String branch = config.branch ?: "${BRANCH}"
-    if (branch.contains('/')) {
-        branch = branch.substring(branch.lastIndexOf('/') + 1).trim()
-    }
+    String branch = config.branch
 
     stage(stageName) {
         ProjectUtils projectUtils = new ProjectUtils()
@@ -31,6 +28,7 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
             def newVersion = projectUtils.removeSnapshotFromProjectVersion()
             println "Commiting the release ${newVersion}"
             sh "git commit -am \"Release ${newVersion}\""
+            sh "git push origin ${branch}"
             println "Pushing release to branch ${branch}"
         }
     }

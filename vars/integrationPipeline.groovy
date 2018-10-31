@@ -13,7 +13,14 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
     String nodeName = config.nodeName
     String emailListVar = config.emailList
     String gitUrlVar = config.gitUrl
-    String gitBranchVar = config.gitBranch
+    String gitBranchVar = config.gitBranch ?: "${BRANCH}"
+    if (null == gitBranchVar || gitBranchVar.trim().length() == 0) {
+        gitBranchVar = 'master'
+    } else if (gitBranchVar.contains('/')) {
+        branch = gitBranchVar.substring(gitBranchVar.lastIndexOf('/') + 1).trim()
+    }
+    println "Using branch ${gitBranchVar}"
+
     String gitRelativeTargetDirVar = config.gitRelativeTargetDir
 
     Closure preBuildBody = config.preBuild
@@ -91,6 +98,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
                     preReleaseStage {
                         buildTool = buildToolVar
                         exe = exeVar
+                        branch = gitBranchVar
                         checkAllDependencies = checkAllDependenciesVar
                     }
                 }
@@ -122,6 +130,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
                     postReleaseStage {
                         buildTool = buildToolVar
                         exe = exeVar
+                        branch = gitBranchVar
                     }
                 }
                 if (runArchiveVar) {
