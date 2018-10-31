@@ -17,7 +17,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
     if (null == gitBranchVar || gitBranchVar.trim().length() == 0) {
         gitBranchVar = 'master'
     } else if (gitBranchVar.contains('/')) {
-        branch = gitBranchVar.substring(gitBranchVar.lastIndexOf('/') + 1).trim()
+        gitBranchVar = gitBranchVar.substring(gitBranchVar.lastIndexOf('/') + 1).trim()
     }
     println "Using branch ${gitBranchVar}"
 
