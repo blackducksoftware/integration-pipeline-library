@@ -61,7 +61,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
     params.add(gitParameter(branch: '',
             branchFilter: '',
             defaultValue: 'origin/master',
-            description: 'The branch you want to build',
+            description: 'The branch you want to build. If none are selected, origin/master will be chosen',
             listSize: '5',
             name: 'BRANCH',
             quickFilterEnabled: true,
