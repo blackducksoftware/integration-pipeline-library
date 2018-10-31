@@ -12,6 +12,9 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
     String exe = config.exe
 
     String branch = config.branch ?: "${BRANCH}"
+    if (branch.contains('/')) {
+        branch = branch.substring(branch.lastIndexOf('/') + 1).trim()
+    }
 
     stage(stageName) {
         ProjectUtils projectUtils = new ProjectUtils()
