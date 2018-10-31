@@ -13,16 +13,16 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
 
     String branch = config.branch ?: "${BRANCH}"
     if (branch.contains('/')) {
-        branch = branch.substring(branch.lastIndexOf('/') + 1)
+        branch = branch.substring(branch.lastIndexOf('/') + 1).trim()
     }
-
 
     stage(stageName) {
         ProjectUtils projectUtils = new ProjectUtils()
         projectUtils.initialize(this, buildTool, exe)
         println "Using the next snapshot post release"
         def newVersion = projectUtils.increaseSemver()
-        sh "git commit -a -m \"Using the next snapshot post release ${newVersion}\""
+        def commitMessage = "Using the next snapshot post release ${newVersion}"
+        sh "git commit -a -m \"${commitMessage}\""
         sh "git push origin ${branch}"
     }
 }
