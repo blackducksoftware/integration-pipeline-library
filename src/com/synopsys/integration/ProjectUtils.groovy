@@ -12,26 +12,42 @@ public class ProjectUtils {
     public void initialize(script, String tool, String exe) {
         if (tool.equalsIgnoreCase('maven')) {
             toolUtils = new MavenUtils(script, exe)
-        } else {
+        } else if (tool.equalsIgnoreCase('gradle')) {
             toolUtils = new GradleUtils(script, exe)
         }
-        toolUtils.initialize()
+        if (null != toolUtils) {
+            toolUtils.initialize()
+        }
     }
 
     public String getProjectVersion() {
-        def version = toolUtils.getProjectVersionProcess()
+        def version = ""
+        if (null != toolUtils) {
+            version = toolUtils.getProjectVersionProcess()
+        }
         return version
     }
 
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
-        return toolUtils.checkForSnapshotDependencies(checkAllDependencies)
+        if (null != toolUtils) {
+            return toolUtils.checkForSnapshotDependencies(checkAllDependencies)
+        }
+        return false
     }
 
     public String removeSnapshotFromProjectVersion() {
-        return toolUtils.removeSnapshotFromProjectVersion()
+        def version = ""
+        if (null != toolUtils) {
+            version = toolUtils.removeSnapshotFromProjectVersion()
+        }
+        return version
     }
 
-    public void increaseSemver() {
-        toolUtils.increaseSemver()
+    public String increaseSemver() {
+        def version = ""
+        if (null != toolUtils) {
+            version = toolUtils.increaseSemver()
+        }
+        return version
     }
 }

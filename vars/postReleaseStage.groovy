@@ -16,10 +16,12 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
     stage(stageName) {
         ProjectUtils projectUtils = new ProjectUtils()
         projectUtils.initialize(this, buildTool, exe)
-        println "Using the next snapshot post release"
         def newVersion = projectUtils.increaseSemver()
-        def commitMessage = "Using the next snapshot post release ${newVersion}"
-        sh "git commit -a -m \"${commitMessage}\""
-        sh "git push origin ${branch}"
+        if (newVersion.contains('-SNAPSHOT')) {
+            println "Using the next snapshot post release. ${newVersion}"
+            def commitMessage = "Using the next snapshot post release ${newVersion}"
+            sh "git commit -a -m \"${commitMessage}\""
+            sh "git push origin ${branch}"
+        }
     }
 }
