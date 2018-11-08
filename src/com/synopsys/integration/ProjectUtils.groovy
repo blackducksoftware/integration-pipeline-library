@@ -10,6 +10,7 @@ public class ProjectUtils {
     public ProjectUtils() {}
 
     public void initialize(script, String tool, String exe) {
+        println "Using tool ${tool}"
         if (tool.equalsIgnoreCase('maven')) {
             toolUtils = new MavenUtils(script, exe)
         } else if (tool.equalsIgnoreCase('gradle')) {
