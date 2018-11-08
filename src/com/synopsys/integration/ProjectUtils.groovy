@@ -5,18 +5,19 @@ import com.synopsys.integration.tools.MavenUtils
 import com.synopsys.integration.tools.ToolUtils
 
 public class ProjectUtils {
-    private ToolUtils toolUtils
+    private ToolUtils toolUtils = null
 
     public ProjectUtils() {}
 
     public void initialize(script, String tool, String exe) {
-        println "Using tool ${tool}"
+        script.println "Using tool ${tool}"
         if (tool.equalsIgnoreCase('maven')) {
             toolUtils = new MavenUtils(script, exe)
         } else if (tool.equalsIgnoreCase('gradle')) {
             toolUtils = new GradleUtils(script, exe)
         }
         if (null != toolUtils) {
+            script.println "Initializing tool ${tool}"
             toolUtils.initialize()
         }
     }
