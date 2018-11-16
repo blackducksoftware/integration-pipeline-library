@@ -19,7 +19,7 @@ def call(Closure body) {
         }
     }
 
-    integrationPipeline('maven', mavenExeVar, {
+    return integrationPipeline('maven', mavenExeVar, {
         mavenStage {
             toolName = mavenToolNameVar
             buildCommand = buildCommandVar

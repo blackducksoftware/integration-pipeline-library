@@ -83,12 +83,14 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
                 buildDiscarder(logRotator(artifactDaysToKeepStr: '90', artifactNumToKeepStr: '2', daysToKeepStr: '14', numToKeepStr: '10')),
                 pipelineTriggers([cron('@daily')])])
 
+    def directoryToRunIn = ""
+
     integrationNode(nodeName) {
         emailWrapper(emailListVar) {
             setupStage {
                 setJdk {}
             }
-            def directoryToRunIn = gitStage {
+            directoryToRunIn = gitStage {
                 url = gitUrlVar
                 branch = gitBranchVar
                 relativeTargetDir = gitRelativeTargetDirVar
@@ -154,4 +156,5 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
             }
         }
     }
+    return directoryToRunIn
 }

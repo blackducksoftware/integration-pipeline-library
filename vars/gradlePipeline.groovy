@@ -12,7 +12,7 @@ def call(Closure body) {
 
     boolean checkAllDependenciesVar = config.checkAllDependencies
 
-    integrationPipeline('gradle', gradleExeVar, {
+    return integrationPipeline('gradle', gradleExeVar, {
         gradleStage {
             buildCommand = buildCommandVar
         }
