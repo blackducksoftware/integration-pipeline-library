@@ -126,6 +126,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
                         artifactDirectory = artifactDirectoryVar
                         project = projectVar
                         releaseDescription = releaseDescriptionVar
+                        branch = gitBranchVar
                     }
                 }
                 if (runReleaseVar) {

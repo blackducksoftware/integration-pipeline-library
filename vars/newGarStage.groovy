@@ -16,6 +16,7 @@ def call(String stageName = 'GitHub auto release', Closure body) {
     String artifactDirectory = config.artifactDirectory
     String project = config.project
     String releaseDescription = config.releaseDescription ?: "${COMMIT_MESSAGE}"
+    String branch = config.branch
     if (null == releaseDescription || releaseDescription.trim().length() == 0) {
         releaseDescription = 'Auto Release'
     }
@@ -26,7 +27,7 @@ def call(String stageName = 'GitHub auto release', Closure body) {
         releaseVersion = projectUtils.getProjectVersion()
     }
 
-    String shellURL = config.shellURL ?: 'https://github.com/blackducksoftware/github-auto-release/releases/download/1.1.0/github_auto_release.sh'
+    String shellURL = config.shellURL ?: 'https://github.com/blackducksoftware/github-auto-release/releases/download/1.2.0/github_auto_release.sh'
 
     def options = []
     options.add('-o')
@@ -51,6 +52,8 @@ def call(String stageName = 'GitHub auto release', Closure body) {
     }
     options.add('-m')
     options.add("\"${releaseDescription}\"")
+    options.add('-br')
+    options.add(branch)
 
     String commandOptions = options.join(' ')
 
