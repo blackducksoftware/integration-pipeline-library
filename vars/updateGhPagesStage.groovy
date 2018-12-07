@@ -8,9 +8,9 @@ def call(String stageName = 'Update gh-pages', Closure body) {
 
     String originalBranch = config.originalBranch ?: "${BRANCH}"
     if (null == originalBranch || originalBranch.trim().length() == 0) {
-        gitBranchVar = 'master'
+        originalBranch = 'master'
     } else if (originalBranch.contains('/')) {
-        branch = originalBranch.substring(originalBranch.lastIndexOf('/') + 1).trim()
+        originalBranch = originalBranch.substring(originalBranch.lastIndexOf('/') + 1).trim()
     }
 
     String targetDir = config.targetDir
