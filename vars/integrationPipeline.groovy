@@ -23,6 +23,8 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
 
     String gitRelativeTargetDirVar = config.gitRelativeTargetDir
 
+    String jdkVar = config.jdk
+
     Closure preBuildBody = config.preBuild
     Closure postBuildBody = config.postBuild
 
@@ -88,7 +90,9 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
     integrationNode(nodeName) {
         emailWrapper(emailListVar) {
             setupStage {
-                setJdk {}
+                setJdk {
+                    jdk = jdkVar
+                }
             }
             directoryToRunIn = gitStage {
                 url = gitUrlVar
