@@ -113,7 +113,19 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
                         preBuildBody()
                     }
                 }
-                buildBody()
+                try {
+                    buildBody()
+                } catch (e) {
+                    // If there was an exception thrown, the build failed
+                    currentBuild.result = "FAILURE"
+                    throw e
+                } finally {
+                    if (runJunitVar) {
+                        junitStage {
+                            xmlPattern = junitXmlPatternVar
+                        }
+                    }
+                }
                 if (null != postBuildBody) {
                     stage('Post Build') {
                         postBuildBody()
@@ -143,11 +155,6 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
                 if (runArchiveVar) {
                     archiveStage {
                         patterns = archivePatternVar
-                    }
-                }
-                if (runJunitVar) {
-                    junitStage {
-                        xmlPattern = junitXmlPatternVar
                     }
                 }
                 if (runJacocoVar) {
