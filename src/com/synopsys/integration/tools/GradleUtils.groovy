@@ -35,25 +35,48 @@ public class GradleUtils implements ToolUtils, Serializable {
     public String removeSnapshotFromProjectVersion() {
         String versionLine = ''
         String modifiedVersion = ''
+        String commonGradlePluginLine = ''
         def fileText = script.readFile file: "build.gradle"
         def splitLines = fileText.split('\n')
         int versionLineIndex = 0
+        int commonGradlePluginLineIndex = -1
         for (int i = 0; i < splitLines.size(); i++) {
             def trimmedLine = splitLines[i].trim()
-            if (trimmedLine.startsWith('version ')) {
+            if (versionLine.length() == 0 && trimmedLine.startsWith('version ')) {
                 versionLineIndex = i
                 versionLine = trimmedLine
                 def version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').trim()
                 modifiedVersion = version.replace('-SNAPSHOT', '')
                 versionLine = versionLine.replace(version, modifiedVersion)
-                break
+            } else if (commonGradlePluginLine.length() == 0 && trimmedLine.contains('common-gradle-plugin:0.0.+')) {
+                commonGradlePluginLineIndex = i
+                String latestVersion = getLatestCommonGradlePluginVersion()
+                commonGradlePluginLine = trimmedLine.replace('0.0.+', latestVersion)
             }
         }
         splitLines[versionLineIndex] = versionLine
+        if (commonGradlePluginLineIndex >= 0) {
+            splitLines[commonGradlePluginLineIndex] = commonGradlePluginLine
+        }
 
         def finalFileText = splitLines.join('\n')
         script.writeFile file: "build.gradle", text: "${finalFileText}"
         return modifiedVersion
+    }
+
+    private String getLatestCommonGradlePluginVersion() {
+        def url = new URL("https://repo1.maven.org/maven2/com/blackducksoftware/integration/common-gradle-plugin/maven-metadata.xml")
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection()
+        connection.setRequestMethod("GET")
+        connection.setConnectTimeout(30000)
+        connection.connect()
+        if (connection.responseCode == 200 || connection.responseCode == 201) {
+            def returnMessage = connection.content
+            def rootNode = new XmlSlurper().parseText(returnMessage)
+            return rootNode.versioning.latest.text()
+        } else {
+            throw new Exception("Could not get the version data for the common-gradle-plugin. Response code: ${connection.responseCode}. Message: ${connection.content}")
+        }
     }
 
     @Override
@@ -72,12 +95,14 @@ public class GradleUtils implements ToolUtils, Serializable {
     public String increaseSemver() {
         def versionLine = ''
         def modifiedVersion = ''
+        String commonGradlePluginLine = ''
         def fileText = script.readFile file: "build.gradle"
         def splitLines = fileText.split('\n')
         def versionLineIndex = 0
+        int commonGradlePluginLineIndex = -1
         for (int i = 0; i < splitLines.size(); i++) {
             def trimmedLine = splitLines[i].trim()
-            if (trimmedLine.startsWith('version ')) {
+            if (versionLine.length() == 0 && trimmedLine.startsWith('version ')) {
                 versionLineIndex = i
                 versionLine = trimmedLine
                 def version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').trim()
@@ -86,10 +111,21 @@ public class GradleUtils implements ToolUtils, Serializable {
                 modifiedVersion = version.substring(0, finalVersionPieceIndex)
                 modifiedVersion = "${modifiedVersion}${Integer.valueOf(finalVersionPiece) + 1}-SNAPSHOT"
                 versionLine = versionLine.replace(version, modifiedVersion)
-                break
+            } else if (commonGradlePluginLine.length() == 0 && trimmedLine.contains('common-gradle-plugin:')) {
+                commonGradlePluginLineIndex = i
+                String temp = trimmedLine.substring(trimmedLine.lastIndexOf(':'))
+                if (temp.contains("'")){
+                    temp = trimmedLine.substring(0, trimmedLine.indexOf("'"))
+                } else if (temp.contains('"')){
+                    temp = trimmedLine.substring(0, trimmedLine.indexOf('"'))
+                }
+                commonGradlePluginLine = trimmedLine.replace(temp, '0.0.+')
             }
         }
         splitLines[versionLineIndex] = versionLine
+        if (commonGradlePluginLineIndex >= 0) {
+            splitLines[commonGradlePluginLineIndex] = commonGradlePluginLine
+        }
 
         def finalFileText = splitLines.join('\n')
         script.writeFile file: "build.gradle", text: "${finalFileText}"
