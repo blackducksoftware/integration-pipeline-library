@@ -65,18 +65,10 @@ public class GradleUtils implements ToolUtils, Serializable {
     }
 
     private String getLatestCommonGradlePluginVersion() {
-        def url = new URL("https://repo1.maven.org/maven2/com/blackducksoftware/integration/common-gradle-plugin/maven-metadata.xml")
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection()
-        connection.setRequestMethod("GET")
-        connection.setConnectTimeout(30000)
-        connection.connect()
-        if (connection.responseCode == 200 || connection.responseCode == 201) {
-            def returnMessage = connection.content
-            def rootNode = new XmlSlurper().parseText(returnMessage)
-            return rootNode.versioning.latest.text()
-        } else {
-            throw new Exception("Could not get the version data for the common-gradle-plugin. Response code: ${connection.responseCode}. Message: ${connection.content}")
-        }
+        URL url = new URL("https://repo1.maven.org/maven2/com/blackducksoftware/integration/common-gradle-plugin/maven-metadata.xml")
+        def returnMessage = url.getText()
+        def rootNode = new XmlSlurper().parseText(returnMessage)
+        return rootNode.versioning.latest.text()
     }
 
     @Override
@@ -114,9 +106,9 @@ public class GradleUtils implements ToolUtils, Serializable {
             } else if (commonGradlePluginLine.length() == 0 && trimmedLine.contains('common-gradle-plugin:')) {
                 commonGradlePluginLineIndex = i
                 String temp = trimmedLine.substring(trimmedLine.lastIndexOf(':'))
-                if (temp.contains("'")){
+                if (temp.contains("'")) {
                     temp = trimmedLine.substring(0, trimmedLine.indexOf("'"))
-                } else if (temp.contains('"')){
+                } else if (temp.contains('"')) {
                     temp = trimmedLine.substring(0, trimmedLine.indexOf('"'))
                 }
                 commonGradlePluginLine = trimmedLine.replace(temp, '0.0.+')
