@@ -51,7 +51,7 @@ public class GradleUtils implements ToolUtils, Serializable {
             } else if (commonGradlePluginLine.length() == 0 && trimmedLine.contains('common-gradle-plugin:0.0.+')) {
                 commonGradlePluginLineIndex = i
                 String latestVersion = getLatestCommonGradlePluginVersion()
-                commonGradlePluginLine = trimmedLine.replace('0.0.+', latestVersion)
+                commonGradlePluginLine = splitLines[i].replace('0.0.+', latestVersion)
             }
         }
         splitLines[versionLineIndex] = versionLine
@@ -111,7 +111,7 @@ public class GradleUtils implements ToolUtils, Serializable {
                 } else if (temp.contains('"')) {
                     temp = temp.substring(0, temp.indexOf('"'))
                 }
-                commonGradlePluginLine = trimmedLine.replace(temp, '0.0.+')
+                commonGradlePluginLine = splitLines[i].replace(temp, '0.0.+')
             }
         }
         splitLines[versionLineIndex] = versionLine
