@@ -107,9 +107,9 @@ public class GradleUtils implements ToolUtils, Serializable {
                 commonGradlePluginLineIndex = i
                 String temp = trimmedLine.substring(trimmedLine.lastIndexOf(':'))
                 if (temp.contains("'")) {
-                    temp = trimmedLine.substring(0, trimmedLine.indexOf("'"))
+                    temp = temp.substring(0, temp.indexOf("'"))
                 } else if (temp.contains('"')) {
-                    temp = trimmedLine.substring(0, trimmedLine.indexOf('"'))
+                    temp = temp.substring(0, temp.indexOf('"'))
                 }
                 commonGradlePluginLine = trimmedLine.replace(temp, '0.0.+')
             }
