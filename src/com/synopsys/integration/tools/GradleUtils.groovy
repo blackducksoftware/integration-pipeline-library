@@ -105,7 +105,7 @@ public class GradleUtils implements ToolUtils, Serializable {
                 versionLine = versionLine.replace(version, modifiedVersion)
             } else if (commonGradlePluginLine.length() == 0 && trimmedLine.contains('common-gradle-plugin:')) {
                 commonGradlePluginLineIndex = i
-                String temp = trimmedLine.substring(trimmedLine.lastIndexOf(':'))
+                String temp = trimmedLine.substring(trimmedLine.lastIndexOf(':' + 1))
                 if (temp.contains("'")) {
                     temp = temp.substring(0, temp.indexOf("'"))
                 } else if (temp.contains('"')) {
