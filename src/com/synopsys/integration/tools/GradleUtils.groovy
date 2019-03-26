@@ -41,7 +41,8 @@ public class GradleUtils implements ToolUtils, Serializable {
         int versionLineIndex = 0
         int commonGradlePluginLineIndex = -1
         for (int i = 0; i < splitLines.size(); i++) {
-            def trimmedLine = splitLines[i].trim()
+            def line = splitLines[i]
+            def trimmedLine = line.trim()
             if (versionLine.length() == 0 && trimmedLine.startsWith('version ')) {
                 versionLineIndex = i
                 versionLine = trimmedLine
@@ -51,7 +52,7 @@ public class GradleUtils implements ToolUtils, Serializable {
             } else if (commonGradlePluginLine.length() == 0 && trimmedLine.contains('common-gradle-plugin:0.0.+')) {
                 commonGradlePluginLineIndex = i
                 String latestVersion = getLatestCommonGradlePluginVersion()
-                commonGradlePluginLine = splitLines[i].replace('0.0.+', latestVersion)
+                commonGradlePluginLine = line.replace('0.0.+', latestVersion)
             }
         }
         splitLines[versionLineIndex] = versionLine
@@ -93,7 +94,8 @@ public class GradleUtils implements ToolUtils, Serializable {
         def versionLineIndex = 0
         int commonGradlePluginLineIndex = -1
         for (int i = 0; i < splitLines.size(); i++) {
-            def trimmedLine = splitLines[i].trim()
+            def line = splitLines[i]
+            def trimmedLine = line.trim()
             if (versionLine.length() == 0 && trimmedLine.startsWith('version ')) {
                 versionLineIndex = i
                 versionLine = trimmedLine
@@ -105,13 +107,13 @@ public class GradleUtils implements ToolUtils, Serializable {
                 versionLine = versionLine.replace(version, modifiedVersion)
             } else if (commonGradlePluginLine.length() == 0 && trimmedLine.contains('common-gradle-plugin:')) {
                 commonGradlePluginLineIndex = i
-                String temp = trimmedLine.substring(trimmedLine.lastIndexOf(':' + 1))
+                String temp = trimmedLine.substring(trimmedLine.lastIndexOf(':') + 1)
                 if (temp.contains("'")) {
                     temp = temp.substring(0, temp.indexOf("'"))
                 } else if (temp.contains('"')) {
                     temp = temp.substring(0, temp.indexOf('"'))
                 }
-                commonGradlePluginLine = splitLines[i].replace(temp, '0.0.+')
+                commonGradlePluginLine = line.replace(temp, '0.0.+')
             }
         }
         splitLines[versionLineIndex] = versionLine
