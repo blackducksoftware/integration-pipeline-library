@@ -34,7 +34,7 @@ def call(Closure body) {
     GradleUtils gradleUtils = new GradleUtils(this, exe)
     Closure fullPreBuild = {
         if (!dontChangeCGP) {
-            println("Running the update CGP")
+            println("Running the update CGP, release ${runReleaseVar}")
             gradleUtils.updateCommonGradlePluginVersion(runReleaseVar)
         }
         if (null != userPreBuildBody) {
