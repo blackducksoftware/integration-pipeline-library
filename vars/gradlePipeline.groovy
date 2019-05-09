@@ -27,12 +27,10 @@ def call(Closure body) {
     } catch (MissingPropertyException e) {
         dontChangeCGP = false
     }
-    println("DONT CHANGE CGP ${dontChangeCGP}")
 
     GradleUtils gradleUtils = new GradleUtils(this, exe)
     Closure initialBody = {
         if (!dontChangeCGP) {
-            println("Running the update CGP, release ${runReleaseVar}")
             gradleUtils.updateCommonGradlePluginVersion(runReleaseVar)
         }
     }

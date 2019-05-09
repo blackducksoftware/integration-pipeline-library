@@ -40,14 +40,11 @@ public class GradleUtils implements ToolUtils, Serializable {
             def line = splitLines[i]
             def trimmedLine = line.trim()
             if (commonGradlePluginLine.length() == 0 && isRelease && trimmedLine.contains('common-gradle-plugin:0.0.+')) {
-                script.println "Updating the CGP to a fixed version"
                 commonGradlePluginLineIndex = i
                 String latestVersion = getLatestCommonGradlePluginVersion()
                 commonGradlePluginLine = line.replace('0.0.+', latestVersion)
-                script.println "Updated the CGP to the fixed version ${latestVersion}"
                 break
             } else if (commonGradlePluginLine.length() == 0 && !isRelease && trimmedLine.contains('common-gradle-plugin:') && !trimmedLine.contains('common-gradle-plugin:0.0.+')) {
-                script.println "Updating the CGP to a range version"
                 commonGradlePluginLineIndex = i
                 String temp = trimmedLine.substring(trimmedLine.lastIndexOf(':') + 1)
                 if (temp.contains("'")) {
@@ -56,18 +53,14 @@ public class GradleUtils implements ToolUtils, Serializable {
                     temp = temp.substring(0, temp.indexOf('"'))
                 }
                 commonGradlePluginLine = line.replace(temp, '0.0.+')
-                script.println "Updated the CGP to the range version 0.0.+"
                 break
             }
         }
-        script.println "Updating the CGP with this line ${commonGradlePluginLine}"
         if (commonGradlePluginLine.length() != 0) {
-            script.println "Doing the update ${commonGradlePluginLine}"
             splitLines[commonGradlePluginLineIndex] = commonGradlePluginLine
         }
 
         def finalFileText = splitLines.join('\n')
-        script.println "Final file ${finalFileText}"
         script.writeFile file: "build.gradle", text: "${finalFileText}"
     }
 
