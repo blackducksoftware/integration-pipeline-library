@@ -40,6 +40,7 @@ def call(Closure body) {
     if (additionalParameters) {
         params = new ArrayList(additionalParameters)
     }
+    params.each { param -> println(param) }
     params.add(booleanParam(defaultValue: false, description: 'If you do NOT want the build to change the version of the common-gradle-plugin, set this to true', name: 'DO_NOT_CHANGE_CGP'))
 
     config.additionalParameters = params

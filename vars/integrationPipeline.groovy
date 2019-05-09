@@ -80,6 +80,8 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body, Ma
             type: 'PT_BRANCH_TAG',
             useRepository: gitUrlVar))
 
+    params.each { param -> println(param) }
+
     properties([parameters(params),
                 disableConcurrentBuilds(),
                 buildDiscarder(logRotator(artifactDaysToKeepStr: '90', artifactNumToKeepStr: '2', daysToKeepStr: '14', numToKeepStr: '10')),
