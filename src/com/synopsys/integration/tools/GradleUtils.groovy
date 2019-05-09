@@ -39,7 +39,6 @@ public class GradleUtils implements ToolUtils, Serializable {
         for (int i = 0; i < splitLines.size(); i++) {
             def line = splitLines[i]
             def trimmedLine = line.trim()
-            println("${trimmedLine}")
             if (commonGradlePluginLine.length() == 0 && isRelease && trimmedLine.contains('common-gradle-plugin:0.0.+')) {
                 script.println "Updating the CGP to a fixed version"
                 commonGradlePluginLineIndex = i
@@ -61,11 +60,14 @@ public class GradleUtils implements ToolUtils, Serializable {
                 break
             }
         }
+        script.println "Updating the CGP with this line ${commonGradlePluginLine}"
         if (commonGradlePluginLine.length() != 0) {
+            script.println "Doing the update ${commonGradlePluginLine}"
             splitLines[commonGradlePluginLineIndex] = commonGradlePluginLine
         }
 
         def finalFileText = splitLines.join('\n')
+        script.println "Final file ${finalFileText}"
         script.writeFile file: "build.gradle", text: "${finalFileText}"
     }
 
