@@ -45,15 +45,17 @@ def call(Closure body) {
     }
     params.add(booleanParam(defaultValue: false, description: 'If you do NOT want the build to change the version of the common-gradle-plugin, set this to true', name: 'DO_NOT_CHANGE_CGP'))
 
-    config.additionalParameters = params
-    config.preBuild = fullPreBuild
 
-    boolean checkAllDependenciesVar = config.checkAllDependencies
+    Closure newBody = {
+        body()
+        additionalParameters = params
+        preBuild = fullPreBuild
+    }
 
     return integrationPipeline('gradle', gradleExeVar, {
         gradleStage {
             buildCommand = buildCommandVar
         }
 
-    }, body)
+    }, newBody)
 }
