@@ -42,25 +42,15 @@ public class GradleUtils implements ToolUtils, Serializable {
             if (commonGradlePluginLine.length() == 0 && isRelease && trimmedLine.contains('common-gradle-plugin:')) {
                 commonGradlePluginLineIndex = i
                 String latestVersion = getLatestCommonGradlePluginVersion()
-                String temp = trimmedLine.substring(trimmedLine.lastIndexOf(':') + 1)
-                if (temp.contains("'")) {
-                    temp = temp.substring(0, temp.indexOf("'"))
-                } else if (temp.contains('"')) {
-                    temp = temp.substring(0, temp.indexOf('"'))
-                }
-                if (!temp.equals(latestVersion)) {
-                    commonGradlePluginLine = line.replace(temp, latestVersion)
+                String currentVersion = parseLineForCGPVersion(trimmedLine)
+                if (!currentVersion.equals(latestVersion)) {
+                    commonGradlePluginLine = line.replace(currentVersion, latestVersion)
                 }
                 break
             } else if (commonGradlePluginLine.length() == 0 && !isRelease && trimmedLine.contains('common-gradle-plugin:') && !trimmedLine.contains('common-gradle-plugin:0.0.+')) {
                 commonGradlePluginLineIndex = i
-                String temp = trimmedLine.substring(trimmedLine.lastIndexOf(':') + 1)
-                if (temp.contains("'")) {
-                    temp = temp.substring(0, temp.indexOf("'"))
-                } else if (temp.contains('"')) {
-                    temp = temp.substring(0, temp.indexOf('"'))
-                }
-                commonGradlePluginLine = line.replace(temp, '0.0.+')
+                String currentVersion = parseLineForCGPVersion(trimmedLine)
+                commonGradlePluginLine = line.replace(currentVersion, '0.0.+')
                 break
             }
         }
@@ -140,13 +130,8 @@ public class GradleUtils implements ToolUtils, Serializable {
                 versionLine = versionLine.replace(version, modifiedVersion)
             } else if (commonGradlePluginLine.length() == 0 && trimmedLine.contains('common-gradle-plugin:')) {
                 commonGradlePluginLineIndex = i
-                String temp = trimmedLine.substring(trimmedLine.lastIndexOf(':') + 1)
-                if (temp.contains("'")) {
-                    temp = temp.substring(0, temp.indexOf("'"))
-                } else if (temp.contains('"')) {
-                    temp = temp.substring(0, temp.indexOf('"'))
-                }
-                commonGradlePluginLine = line.replace(temp, '0.0.+')
+                String currentVersion = parseLineForCGPVersion(trimmedLine)
+                commonGradlePluginLine = line.replace(currentVersion, '0.0.+')
             }
         }
         splitLines[versionLineIndex] = versionLine
@@ -157,5 +142,15 @@ public class GradleUtils implements ToolUtils, Serializable {
         def finalFileText = splitLines.join('\n')
         script.writeFile file: "build.gradle", text: "${finalFileText}"
         return modifiedVersion
+    }
+
+    private String parseLineForCGPVersion(String line) {
+        String temp = line.substring(line.lastIndexOf(':') + 1)
+        if (temp.contains("'")) {
+            temp = temp.substring(0, temp.indexOf("'"))
+        } else if (temp.contains('"')) {
+            temp = temp.substring(0, temp.indexOf('"'))
+        }
+        return temp
     }
 }
