@@ -31,15 +31,46 @@ public class GradleUtils implements ToolUtils, Serializable {
         return null
     }
 
+    public void updateCommonGradlePluginVersion(boolean isRelease) {
+        String commonGradlePluginLine = ''
+        def fileText = script.readFile file: "build.gradle"
+        def splitLines = fileText.split('\n')
+        int commonGradlePluginLineIndex = -1
+        for (int i = 0; i < splitLines.size(); i++) {
+            def line = splitLines[i]
+            def trimmedLine = line.trim()
+            if (commonGradlePluginLine.length() == 0 && isRelease && trimmedLine.contains('common-gradle-plugin:0.0.+')) {
+                commonGradlePluginLineIndex = i
+                String latestVersion = getLatestCommonGradlePluginVersion()
+                commonGradlePluginLine = line.replace('0.0.+', latestVersion)
+                break
+            } else if (commonGradlePluginLine.length() == 0 && !isRelease && trimmedLine.contains('common-gradle-plugin:') && !trimmedLine.contains('common-gradle-plugin:0.0.+')) {
+                commonGradlePluginLineIndex = i
+                String temp = trimmedLine.substring(trimmedLine.lastIndexOf(':') + 1)
+                if (temp.contains("'")) {
+                    temp = temp.substring(0, temp.indexOf("'"))
+                } else if (temp.contains('"')) {
+                    temp = temp.substring(0, temp.indexOf('"'))
+                }
+                commonGradlePluginLine = line.replace(temp, '0.0.+')
+                break
+            }
+        }
+        if (commonGradlePluginLine.length() != 0) {
+            splitLines[commonGradlePluginLineIndex] = commonGradlePluginLine
+        }
+
+        def finalFileText = splitLines.join('\n')
+        script.writeFile file: "build.gradle", text: "${finalFileText}"
+    }
+
     @Override
     public String removeSnapshotFromProjectVersion() {
         String versionLine = ''
         String modifiedVersion = ''
-        String commonGradlePluginLine = ''
         def fileText = script.readFile file: "build.gradle"
         def splitLines = fileText.split('\n')
         int versionLineIndex = 0
-        int commonGradlePluginLineIndex = -1
         for (int i = 0; i < splitLines.size(); i++) {
             def line = splitLines[i]
             def trimmedLine = line.trim()
@@ -49,16 +80,10 @@ public class GradleUtils implements ToolUtils, Serializable {
                 def version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').trim()
                 modifiedVersion = version.replace('-SNAPSHOT', '')
                 versionLine = versionLine.replace(version, modifiedVersion)
-            } else if (commonGradlePluginLine.length() == 0 && trimmedLine.contains('common-gradle-plugin:0.0.+')) {
-                commonGradlePluginLineIndex = i
-                String latestVersion = getLatestCommonGradlePluginVersion()
-                commonGradlePluginLine = line.replace('0.0.+', latestVersion)
+                break;
             }
         }
         splitLines[versionLineIndex] = versionLine
-        if (commonGradlePluginLineIndex >= 0) {
-            splitLines[commonGradlePluginLineIndex] = commonGradlePluginLine
-        }
 
         def finalFileText = splitLines.join('\n')
         script.writeFile file: "build.gradle", text: "${finalFileText}"
