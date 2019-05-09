@@ -11,7 +11,6 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
 }
 
 def call(String buildToolVar, String exeVar, Closure buildBody, Map config) {
-    println(config)
     ConfigUtils configUtils = new ConfigUtils(config)
 
     String nodeName = config.nodeName

@@ -45,8 +45,6 @@ def call(Closure body) {
     config.additionalParameters = params
     config.initialStage = initialBody
 
-    println(config)
-
     return integrationPipeline('gradle', gradleExeVar, {
         gradleStage {
             buildCommand = buildCommandVar
