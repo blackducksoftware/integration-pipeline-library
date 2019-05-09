@@ -1,4 +1,5 @@
 #!/usr/bin/groovy
+import com.synopsys.integration.ConfigUtils
 import com.synopsys.integration.tools.GradleUtils
 
 def call(Closure body) {
@@ -14,6 +15,7 @@ def call(Closure body) {
 
     String exe = config.exe
 
+    ConfigUtils configUtils = new ConfigUtils(config)
     boolean runReleaseVar
     try {
         runReleaseVar = configUtils.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
@@ -21,7 +23,12 @@ def call(Closure body) {
         runReleaseVar = false
     }
 
-    boolean dontChangeCGP = Boolean.valueOf("${DO_NOT_CHANGE_CGP}")
+    boolean dontChangeCGP
+    try {
+        dontChangeCGP = Boolean.valueOf("${DO_NOT_CHANGE_CGP}")
+    } catch (MissingPropertyException e) {
+        dontChangeCGP = false
+    }
 
     GradleUtils gradleUtils = new GradleUtils(this, exe)
     Closure fullPreBuild = {
