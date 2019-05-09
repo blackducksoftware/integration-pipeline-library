@@ -7,6 +7,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body, Ma
     body.delegate = config
     body()
 
+    println(config)
     ConfigUtils configUtils = new ConfigUtils(config)
 
     String nodeName = config.nodeName
@@ -79,8 +80,6 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body, Ma
             tagFilter: '',
             type: 'PT_BRANCH_TAG',
             useRepository: gitUrlVar))
-
-    params.each { param -> println(param) }
 
     properties([parameters(params),
                 disableConcurrentBuilds(),
