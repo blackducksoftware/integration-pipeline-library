@@ -52,5 +52,5 @@ def call(Closure body) {
             buildCommand = buildCommandVar
         }
 
-    }, body, config)
+    }, config)
 }

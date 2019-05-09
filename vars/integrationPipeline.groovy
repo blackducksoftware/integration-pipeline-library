@@ -2,11 +2,15 @@
 
 import com.synopsys.integration.ConfigUtils
 
-def call(String buildToolVar, String exeVar, Closure buildBody, Closure body, Map config) {
+def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
+    def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
     body()
+    call(buildToolVar, exeVar, buildBody, config)
+}
 
+def call(String buildToolVar, String exeVar, Closure buildBody, Map config) {
     println(config)
     ConfigUtils configUtils = new ConfigUtils(config)
 

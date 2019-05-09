@@ -24,5 +24,5 @@ def call(Closure body) {
             toolName = mavenToolNameVar
             buildCommand = buildCommandVar
         }
-    }, body, config)
+    }, config)
 }
