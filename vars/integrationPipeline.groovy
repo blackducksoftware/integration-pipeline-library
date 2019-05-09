@@ -24,6 +24,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body, Ma
 
     String jdkVar = config.jdk
 
+    Closure initialStageBody = config.initialStage
     Closure preBuildBody = config.preBuild
     Closure postBuildBody = config.postBuild
 
@@ -99,6 +100,11 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Closure body, Ma
                 relativeTargetDir = gitRelativeTargetDirVar
             }
             dir(directoryToRunIn) {
+                if (null != initialStageBody) {
+                    stage('Initial') {
+                        initialStageBody()
+                    }
+                }
                 if (runReleaseVar) {
                     preReleaseStage {
                         buildTool = buildToolVar

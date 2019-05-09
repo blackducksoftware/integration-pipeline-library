@@ -11,8 +11,6 @@ def call(Closure body) {
     String buildCommandVar = config.buildCommand
     String gradleExeVar = config.gradleExe
 
-    Closure userPreBuildBody = config.preBuild
-
     String exe = config.exe
 
     ConfigUtils configUtils = new ConfigUtils(config)
@@ -32,13 +30,10 @@ def call(Closure body) {
     println("DONT CHANGE CGP ${dontChangeCGP}")
 
     GradleUtils gradleUtils = new GradleUtils(this, exe)
-    Closure fullPreBuild = {
+    Closure initialBody = {
         if (!dontChangeCGP) {
             println("Running the update CGP, release ${runReleaseVar}")
             gradleUtils.updateCommonGradlePluginVersion(runReleaseVar)
-        }
-        if (null != userPreBuildBody) {
-            userPreBuildBody()
         }
     }
 
@@ -50,9 +45,7 @@ def call(Closure body) {
     params.add(booleanParam(defaultValue: false, description: 'If you do NOT want the build to change the version of the common-gradle-plugin, set this to true', name: 'DO_NOT_CHANGE_CGP'))
 
     config.additionalParameters = params
-    config.preBuild = fullPreBuild
-
-    boolean checkAllDependenciesVar = config.checkAllDependencies
+    config.initialStage = initialBody
 
     return integrationPipeline('gradle', gradleExeVar, {
         gradleStage {
