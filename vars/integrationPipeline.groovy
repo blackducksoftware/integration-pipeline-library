@@ -2,8 +2,7 @@
 
 import com.synopsys.integration.ConfigUtils
 
-def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
-    def config = [:]
+def call(String buildToolVar, String exeVar, Closure buildBody, Closure body, Map config) {
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
     body()
