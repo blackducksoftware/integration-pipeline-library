@@ -39,6 +39,7 @@ public class GradleUtils implements ToolUtils, Serializable {
         for (int i = 0; i < splitLines.size(); i++) {
             def line = splitLines[i]
             def trimmedLine = line.trim()
+            println("${trimmedLine}")
             if (commonGradlePluginLine.length() == 0 && isRelease && trimmedLine.contains('common-gradle-plugin:0.0.+')) {
                 script.println "Updating the CGP to a fixed version"
                 commonGradlePluginLineIndex = i
