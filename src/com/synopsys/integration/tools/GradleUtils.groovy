@@ -39,10 +39,18 @@ public class GradleUtils implements ToolUtils, Serializable {
         for (int i = 0; i < splitLines.size(); i++) {
             def line = splitLines[i]
             def trimmedLine = line.trim()
-            if (commonGradlePluginLine.length() == 0 && isRelease && trimmedLine.contains('common-gradle-plugin:0.0.+')) {
+            if (commonGradlePluginLine.length() == 0 && isRelease && trimmedLine.contains('common-gradle-plugin:')) {
                 commonGradlePluginLineIndex = i
                 String latestVersion = getLatestCommonGradlePluginVersion()
-                commonGradlePluginLine = line.replace('0.0.+', latestVersion)
+                String temp = trimmedLine.substring(trimmedLine.lastIndexOf(':') + 1)
+                if (temp.contains("'")) {
+                    temp = temp.substring(0, temp.indexOf("'"))
+                } else if (temp.contains('"')) {
+                    temp = temp.substring(0, temp.indexOf('"'))
+                }
+                if (!temp.equals(latestVersion)) {
+                    commonGradlePluginLine = line.replace(temp, latestVersion)
+                }
                 break
             } else if (commonGradlePluginLine.length() == 0 && !isRelease && trimmedLine.contains('common-gradle-plugin:') && !trimmedLine.contains('common-gradle-plugin:0.0.+')) {
                 commonGradlePluginLineIndex = i
