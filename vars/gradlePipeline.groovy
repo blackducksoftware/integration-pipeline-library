@@ -35,7 +35,9 @@ def call(Closure body) {
         if (!dontChangeCGP) {
             gradleUtils.updateCommonGradlePluginVersion(runReleaseVar)
         }
-        userPreBuildBody()
+        if (null != userPreBuildBody) {
+            userPreBuildBody()
+        }
     }
 
     def additionalParameters = config.get('additionalParameters', null)
