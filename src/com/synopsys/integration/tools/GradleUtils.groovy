@@ -23,7 +23,7 @@ public class GradleUtils implements ToolUtils, Serializable {
     @Override
     public String getProjectVersionProcess() {
         try {
-            def version = script.sh(script: "${exe} properties -q | grep 'version:'", returnStdout: true)
+            def version = script.sh(script: "${exe} properties -q | grep '^version: '", returnStdout: true)
             return version.substring(version.indexOf(':') + 1).trim()
         } catch (Exception e) {
             script.println "Failed to run the gradle command to get the Project version ${e.getMessage()}"
