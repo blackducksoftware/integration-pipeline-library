@@ -9,11 +9,23 @@ abstract class Wrapper {
 
     public abstract void start()
 
+    public Optional<String> startMessage() {
+        return Optional.empty()
+    }
+
     public abstract void handleException(Exception e)
+
+    public Optional<String> exceptionMessage() {
+        return Optional.empty()
+    }
 
     public abstract void end()
 
-    String getName() {
+    public Optional<String> endMessage() {
+        return Optional.empty()
+    }
+
+    public String getName() {
         return name
     }
 }

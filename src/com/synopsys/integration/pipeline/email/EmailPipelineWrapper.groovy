@@ -5,14 +5,18 @@ import com.synopsys.integration.pipeline.model.PipelineWrapper
 
 class EmailPipelineWrapper extends PipelineWrapper {
     private final String recipientList
-    def final currentBuild
-    def final emailext
-    def final jobName
-    def final buildNumber
-    def final buildURL
+    private final Object currentBuild
+    private final Object emailext
+    private final String jobName
+    private final String buildNumber
+    private final String buildURL
 
-    EmailPipelineWrapper(String recipientList, def currentBuild, def emailext, String jobName, String buildNumber, String buildURL) {
-        super("Email Pipeline Wrapper")
+    EmailPipelineWrapper(String recipientList, Object currentBuild, Object emailext, String jobName, String buildNumber, String buildURL) {
+        this("Email Pipeline Wrapper", recipientList, currentBuild, emailext, jobName, buildNumber, buildURL)
+    }
+
+    EmailPipelineWrapper(String wrapperName, String recipientList, Object currentBuild, Object emailext, String jobName, String buildNumber, String buildURL) {
+        super(stageName)
         this.recipientList = recipientList
         this.currentBuild = currentBuild
         this.emailext = emailext
