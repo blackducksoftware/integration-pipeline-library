@@ -1,5 +1,5 @@
 plugins {
-    id("com.mkobit.jenkins.pipelines.shared-library") version "0.6.2"
+    id("com.mkobit.jenkins.pipelines.shared-library") version "0.10.1"
 }
 
 repositories {
@@ -8,10 +8,6 @@ repositories {
 
 group 'com.synopsys.integration'
 version = '0.0.1-SNAPSHOT'
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.9'
-}
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.12'
