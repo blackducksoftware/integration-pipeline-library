@@ -6,11 +6,11 @@ import com.synopsys.integration.pipeline.email.EmailPipelineWrapper
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 
-class PipeLineFactory {
+class PipelineFactory {
     private final Object script
     private final PipelineLogger pipelineLogger
 
-    public PipeLineFactory(Object script) {
+    public PipelineFactory(Object script) {
         this.script = script
         script.println "script ${script.getClass()}"
         script.println "println ${script.println.getClass()}"
