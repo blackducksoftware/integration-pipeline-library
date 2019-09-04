@@ -1,23 +1,24 @@
 package com.synopsys.integration.pipeline.buildTool.gradle
 
+import com.synopsys.integration.pipeline.jenkins.ScriptWrapper
 import com.synopsys.integration.pipeline.model.Stage
 
 class GradleStage extends Stage {
     public static final String DEFAULT_GRADLE_EXE = './gradlew'
     public static final String DEFAULT_GRADLE_OPTIONS = 'clean build --refresh-dependencies'
 
-    private final Object sh
+    private final ScriptWrapper scriptWrapper
     private String gradleExe
     private String gradleOptions
 
 
-    public GradleStage(Object sh, String gradleExe, String gradleOptions) {
-        this(sh, "Gradle Stage", gradleExe, gradleOptions)
+    public GradleStage(ScriptWrapper scriptWrapper, String gradleExe, String gradleOptions) {
+        this(scriptWrapper, "Gradle Stage", gradleExe, gradleOptions)
     }
 
-    public GradleStage(Object sh, String stageName, String gradleExe, String gradleOptions) {
+    public GradleStage(ScriptWrapper scriptWrapper, String stageName, String gradleExe, String gradleOptions) {
         super(stageName)
-        this.sh = sh
+        this.scriptWrapper = scriptWrapper
 
         if (null != gradleExe && gradleExe.trim().length() > 0) {
             this.gradleExe = gradleExe
@@ -35,7 +36,7 @@ class GradleStage extends Stage {
 
     @Override
     void stageExecution() {
-        sh "${gradleExe} ${gradleOptions}"
+        scriptWrapper.sh("${gradleExe} ${gradleOptions}")
     }
 
     String getGradleExe() {

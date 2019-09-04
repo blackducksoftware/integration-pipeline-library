@@ -1,11 +1,13 @@
 package com.synopsys.integration.pipeline.logging
 
-class DefaultPipelineLoger extends PipelineLogger {
-    def LogLevel currentLogLevel = LogLevel.INFO
-    def println
+import com.synopsys.integration.pipeline.jenkins.ScriptWrapper
 
-    public DefaultPipelineLoger(Object println) {
-        this.println = println
+class DefaultPipelineLoger extends PipelineLogger {
+    private LogLevel currentLogLevel = LogLevel.INFO
+    private final ScriptWrapper scriptWrapper
+
+    public DefaultPipelineLoger(ScriptWrapper scriptWrapper) {
+        this.scriptWrapper = scriptWrapper
     }
 
     private void doLog(LogLevel logLevel, String txt, Throwable t) {
@@ -17,7 +19,7 @@ class DefaultPipelineLoger extends PipelineLogger {
                     sb.append("  ")
                 }
                 sb.append(txt)
-                println sb.toString()
+                scriptWrapper.println(sb.toString())
             }
             if (null != t) {
                 StringBuilder sb = new StringBuilder()
@@ -29,7 +31,7 @@ class DefaultPipelineLoger extends PipelineLogger {
                 PrintWriter pw = new PrintWriter(sw)
                 t.printStackTrace(pw)
                 sb.append(sw.toString())
-                println sb.toString()
+                scriptWrapper.println(sb.toString())
             }
         }
     }
