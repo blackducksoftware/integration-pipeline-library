@@ -17,19 +17,19 @@ class PipelineFactory {
     }
 
     public EmailPipelineWrapper createEmailPipelineWrapper(String recipientList) {
-        return new EmailPipelineWrapper(recipientList, scriptWrapper.currentBuild, scriptWrapper.emailext, scriptWrapper.env.JOB_NAME, scriptWrapper.env.BUILD_NUMBER, scriptWrapper.env.BUILD_URL)
+        return new EmailPipelineWrapper(recipientList, scriptWrapper.currentBuild(), scriptWrapper.emailext(), scriptWrapper.env().JOB_NAME, scriptWrapper.env().BUILD_NUMBER, scriptWrapper.env().BUILD_URL)
     }
 
     public EmailPipelineWrapper createEmailPipelineWrapper(String wrapperName, String recipientList) {
-        return new EmailPipelineWrapper(wrapperName, recipientList, scriptWrapper.currentBuild, scriptWrapper.emailext, scriptWrapper.env.JOB_NAME, scriptWrapper.env.BUILD_NUMBER, scriptWrapper.env.BUILD_URL)
+        return new EmailPipelineWrapper(wrapperName, recipientList, scriptWrapper.currentBuild(), scriptWrapper.emailext(), scriptWrapper.env().JOB_NAME, scriptWrapper.env().BUILD_NUMBER, scriptWrapper.env().BUILD_URL)
     }
 
     public GradleStage createGradleStage(String gradleExe, String gradleOptions) {
-        return new GradleStage(script.sh, gradleExe, gradleOptions)
+        return new GradleStage(scriptWrapper, gradleExe, gradleOptions)
     }
 
     public MavenStage createMavenStage(String mavenExe, String mavenOptions) {
-        return new MavenStage(script.sh, script.tool, mavenExe, mavenOptions)
+        return new MavenStage(scriptWrapper, script.tool, mavenExe, mavenOptions)
     }
 
 }

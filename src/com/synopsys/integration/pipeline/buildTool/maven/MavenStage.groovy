@@ -1,24 +1,23 @@
 package com.synopsys.integration.pipeline.buildTool.maven
 
+import com.synopsys.integration.pipeline.jenkins.ScriptWrapper
 import com.synopsys.integration.pipeline.model.Stage
 
 class MavenStage extends Stage {
     public static final String DEFAULT_MAVEN_TOOL_NAME = 'maven-3'
     public static final String DEFAULT_MAVEN_OPTIONS = '-U clean package deploy'
 
-    private final Object sh
-    private final Object tool
+    private final ScriptWrapper scriptWrapper
     private String mavenToolName
     private String mavenOptions
 
-    public MavenStage(Object sh, Object tool, String mavenToolName, String mavenOptions) {
-        this(sh, tool, "Maven Stage", mavenToolName, mavenOptions)
+    public MavenStage(ScriptWrapper scriptWrapper, String mavenToolName, String mavenOptions) {
+        this(scriptWrapper, "Maven Stage", mavenToolName, mavenOptions)
     }
 
-    public MavenStage(Object sh, Object tool, String stageName, String mavenToolName, String mavenOptions) {
+    public MavenStage(ScriptWrapper scriptWrapper, String stageName, String mavenToolName, String mavenOptions) {
         super(stageName)
-        this.sh = sh
-        this.tool = tool
+        this.scriptWrapper = scriptWrapper
 
         if (null != mavenToolName && mavenToolName.trim().length() > 0) {
             this.mavenToolName = mavenToolName
@@ -36,9 +35,9 @@ class MavenStage extends Stage {
 
     @Override
     void stageExecution() {
-        String mvnHome = tool "${mavenToolName}"
+        String mvnHome = scriptWrapper.tool("${mavenToolName}")
 
-        sh "${mvnHome}/bin/mvn ${mavenOptions}"
+        scriptWrapper.sh("${mvnHome}/bin/mvn ${mavenOptions}")
     }
 
     String getMavenToolName() {
