@@ -12,6 +12,12 @@ class PipeLineFactory {
 
     public PipeLineFactory(Object script) {
         this.script = script
+        script.println "script ${script.getClass()}"
+        script.println "println ${script.println.getClass()}"
+        script.println "current build ${script.currentBuild.getClass()}"
+        script.println "emailext ${script.emailext.getClass()}"
+        script.println "sh ${script.sh.getClass()}"
+        script.println "tool ${script.tool.getClass()}"
         this.pipelineLogger = new DefaultPipelineLoger(script.println)
     }
 
