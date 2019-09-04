@@ -16,6 +16,7 @@ class Pipeline {
     public Pipeline(Object script) {
         this.scriptWrapper = new ScriptWrapper(script)
         pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
+        pipelineLogger.info("testing logging")
     }
 
     public void addStage(Stage stage) {
