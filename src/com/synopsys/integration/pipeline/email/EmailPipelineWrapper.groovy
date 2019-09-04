@@ -16,7 +16,7 @@ class EmailPipelineWrapper extends PipelineWrapper {
     }
 
     EmailPipelineWrapper(String wrapperName, String recipientList, Object currentBuild, Object emailext, String jobName, String buildNumber, String buildURL) {
-        super(stageName)
+        super(wrapperName)
         this.recipientList = recipientList
         this.currentBuild = currentBuild
         this.emailext = emailext
