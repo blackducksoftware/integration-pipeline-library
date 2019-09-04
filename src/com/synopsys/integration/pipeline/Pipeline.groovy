@@ -1,16 +1,21 @@
 package com.synopsys.integration.pipeline
 
+import com.synopsys.integration.pipeline.jenkins.ScriptWrapper
+import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
+import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.PipelineWrapper
 import com.synopsys.integration.pipeline.model.Stage
 
 class Pipeline {
-    private final Object script
+    private final ScriptWrapper scriptWrapper
+    private final PipelineLogger pipelineLogger
 
     private final List<PipelineWrapper> wrappers = new LinkedList<>()
     private final List<Stage> stages = new LinkedList<>()
 
     public Pipeline(Object script) {
-        this.script = script
+        this.scriptWrapper = new ScriptWrapper(script)
+        pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
     }
 
     public void addStage(Stage stage) {
@@ -25,7 +30,8 @@ class Pipeline {
         wrappers.each { wrapper -> wrapper.start() }
         try {
             stages.each { stage ->
-                script.stage(stage.getName()) {
+                scriptWrapper.stage(stage.getName()) {
+                    pipelineLogger.info("running stage ${stage.getName()}")
                     stage.run()
                 }
             }

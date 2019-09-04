@@ -11,6 +11,10 @@ class ScriptWrapper {
         return script.sh(command)
     }
 
+    public Object stage(String stageName) {
+        return script.stage(stageName)
+    }
+
     public void println(String message) {
         script.println message
     }

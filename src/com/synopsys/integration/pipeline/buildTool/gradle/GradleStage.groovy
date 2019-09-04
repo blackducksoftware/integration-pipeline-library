@@ -1,6 +1,8 @@
 package com.synopsys.integration.pipeline.buildTool.gradle
 
 import com.synopsys.integration.pipeline.jenkins.ScriptWrapper
+import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
+import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.Stage
 
 class GradleStage extends Stage {
@@ -36,6 +38,8 @@ class GradleStage extends Stage {
 
     @Override
     void stageExecution() {
+        PipelineLogger pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
+        pipelineLogger.info("running gradle ${gradleExe} ${gradleOptions}")
         scriptWrapper.sh("${gradleExe} ${gradleOptions}")
     }
 
