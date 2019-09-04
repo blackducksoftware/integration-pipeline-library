@@ -17,11 +17,11 @@ class PipelineFactory {
     }
 
     public EmailPipelineWrapper createEmailPipelineWrapper(String recipientList) {
-        return new EmailPipelineWrapper(recipientList, scriptWrapper.currentBuild(), scriptWrapper.emailext(), scriptWrapper.env().JOB_NAME, scriptWrapper.env().BUILD_NUMBER, scriptWrapper.env().BUILD_URL)
+        return new EmailPipelineWrapper(pipelineLogger, scriptWrapper, recipientList, scriptWrapper.env().JOB_NAME, scriptWrapper.env().BUILD_NUMBER, scriptWrapper.env().BUILD_URL)
     }
 
     public EmailPipelineWrapper createEmailPipelineWrapper(String wrapperName, String recipientList) {
-        return new EmailPipelineWrapper(wrapperName, recipientList, scriptWrapper.currentBuild(), scriptWrapper.emailext(), scriptWrapper.env().JOB_NAME, scriptWrapper.env().BUILD_NUMBER, scriptWrapper.env().BUILD_URL)
+        return new EmailPipelineWrapper(pipelineLogger, scriptWrapper, wrapperName, recipientList, scriptWrapper.env().JOB_NAME, scriptWrapper.env().BUILD_NUMBER, scriptWrapper.env().BUILD_URL)
     }
 
     public GradleStage createGradleStage(String gradleExe, String gradleOptions) {

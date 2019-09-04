@@ -30,7 +30,7 @@ class ScriptWrapper {
     }
 
     public Object emailext(String content, String subjectLine, String recipientList) {
-        return script.emailext(content, subjectLine, recipientList)
+        return script.emailext(body: content, subject: subjectLine, to: recipientList)
     }
 
     public String tool(String toolName) {
