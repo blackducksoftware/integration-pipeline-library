@@ -15,10 +15,16 @@ class ScriptWrapper {
         script.println message
     }
 
+    /**
+     * org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
+     **/
     public Object currentBuild() {
         return script.currentBuild
     }
 
+    /**
+     * org.jenkinsci.plugins.workflow.cps.EnvActionImpl
+     **/
     public Object env() {
         return script.env
     }
@@ -31,6 +37,9 @@ class ScriptWrapper {
         return script.tool(toolName)
     }
 
+    /**
+     * WorkflowScript
+     **/
     public Object script() {
         return script
     }

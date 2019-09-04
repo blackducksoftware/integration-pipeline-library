@@ -17,7 +17,6 @@ class PipelineFactory {
         script.println "script ${script.getClass()}"
         script.println "env ${script.env.getClass()}"
         script.println "current build ${script.currentBuild.getClass()}"
-        script.println "emailext ${script.emailext.getClass()}"
         script.println "sh ${script.sh.getClass()}"
         script.println "tool ${script.tool.getClass()}"
 
