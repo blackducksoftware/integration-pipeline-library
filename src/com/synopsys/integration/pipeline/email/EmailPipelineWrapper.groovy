@@ -13,7 +13,7 @@ class EmailPipelineWrapper extends PipelineWrapper {
     private final String buildURL
 
     EmailPipelineWrapper(PipelineLogger pipelineLogger, ScriptWrapper scriptWrapper, String recipientList, String jobName, String buildNumber, String buildURL) {
-        this(pipelineLogger, scriptWrapper, "Email Pipeline Wrapper", recipientList, scriptWrapper, jobName, buildNumber, buildURL)
+        this(pipelineLogger, scriptWrapper, "Email Pipeline Wrapper", recipientList, jobName, buildNumber, buildURL)
     }
 
     EmailPipelineWrapper(PipelineLogger pipelineLogger, ScriptWrapper scriptWrapper, String wrapperName, String recipientList, String jobName, String buildNumber, String buildURL) {
