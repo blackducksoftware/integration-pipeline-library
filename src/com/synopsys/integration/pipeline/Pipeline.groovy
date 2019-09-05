@@ -39,7 +39,10 @@ class Pipeline implements Serializable {
                 }
             }
         } catch (Exception e) {
+            scriptWrapper.currentBuild().result = "FAILURE"
             wrappers.each { wrapper -> wrapper.handleException(e) }
+            pipelineLogger.error("Build failed because ${e.getMessage()}")
+            throw e
         } finally {
             wrappers.each { wrapper -> wrapper.end() }
         }
