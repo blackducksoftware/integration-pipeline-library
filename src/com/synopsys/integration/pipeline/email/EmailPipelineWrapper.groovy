@@ -5,18 +5,18 @@ import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.PipelineWrapper
 
 class EmailPipelineWrapper extends PipelineWrapper {
-    private final PipelineLogger pipelineLogger
-    private final ScriptWrapper scriptWrapper
-    private final String recipientList
-    private final String jobName
-    private final String buildNumber
-    private final String buildURL
+    final PipelineLogger pipelineLogger
+    final ScriptWrapper scriptWrapper
+    final String recipientList
+    final String jobName
+    final String buildNumber
+    final String buildURL
 
-    public EmailPipelineWrapper(PipelineLogger pipelineLogger, ScriptWrapper scriptWrapper, String recipientList, String jobName, String buildNumber, String buildURL) {
+    EmailPipelineWrapper(PipelineLogger pipelineLogger, ScriptWrapper scriptWrapper, String recipientList, String jobName, String buildNumber, String buildURL) {
         this(pipelineLogger, scriptWrapper, "Email Pipeline Wrapper", recipientList, jobName, buildNumber, buildURL)
     }
 
-    public EmailPipelineWrapper(PipelineLogger pipelineLogger, ScriptWrapper scriptWrapper, String wrapperName, String recipientList, String jobName, String buildNumber, String buildURL) {
+    EmailPipelineWrapper(PipelineLogger pipelineLogger, ScriptWrapper scriptWrapper, String wrapperName, String recipientList, String jobName, String buildNumber, String buildURL) {
         super(wrapperName)
         this.pipelineLogger = pipelineLogger;
         this.scriptWrapper = scriptWrapper
@@ -27,17 +27,17 @@ class EmailPipelineWrapper extends PipelineWrapper {
     }
 
     @Override
-    public void start() {
+    void start() {
 
     }
 
     @Override
-    public void handleException(final Exception e) {
+    void handleException(final Exception e) {
 
     }
 
     @Override
-    public void end() {
+    void end() {
         String TO = "${recipientList}"
         String SUBJECT = '$DEFAULT_SUBJECT'
         String CONTENT = '$DEFAULT_CONTENT'

@@ -10,7 +10,7 @@ enum LogLevel {
 
     /**
      * Will return true if logLevel is loggable for this logLevel, false otherwise.*/
-    public boolean isLoggable(final LogLevel logLevel) {
+    boolean isLoggable(final LogLevel logLevel) {
         return this >= logLevel
     }
 

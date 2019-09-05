@@ -1,50 +1,50 @@
 package com.synopsys.integration.pipeline.jenkins
 
 class ScriptWrapper implements Serializable {
-    private final Object script
+    final Object script
 
-    public ScriptWrapper(final Object script) {
+    ScriptWrapper(final Object script) {
         this.script = script
     }
 
-    public Object sh(String command) {
+    Object sh(String command) {
         return script.sh(command)
     }
 
-    public Object stage(String stageName) {
+    Object stage(String stageName) {
         return script.stage(stageName)
     }
 
-    public void println(String message) {
+    void println(String message) {
         script.println message
     }
 
     /**
      * org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
      **/
-    public Object currentBuild() {
+    Object currentBuild() {
         return script.currentBuild
     }
 
     /**
      * org.jenkinsci.plugins.workflow.cps.EnvActionImpl
      **/
-    public Object env() {
+    Object env() {
         return script.env
     }
 
-    public Object emailext(String content, String subjectLine, String recipientList) {
+    Object emailext(String content, String subjectLine, String recipientList) {
         return script.emailext(body: content, subject: subjectLine, to: recipientList)
     }
 
-    public String tool(String toolName) {
+    String tool(String toolName) {
         return script.tool(toolName)
     }
 
     /**
      * WorkflowScript
      **/
-    public Object script() {
+    Object script() {
         return script
     }
 

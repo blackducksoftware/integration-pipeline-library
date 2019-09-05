@@ -1,28 +1,28 @@
 package com.synopsys.integration.pipeline.logging
 
 abstract class PipelineLogger implements Serializable {
-    public abstract void alwaysLog(String txt);
+    abstract void alwaysLog(String txt);
 
-    public abstract void info(String txt);
+    abstract void info(String txt);
 
-    public abstract void error(Throwable t);
+    abstract void error(Throwable t);
 
-    public abstract void error(String txt, Throwable t);
+    abstract void error(String txt, Throwable t);
 
-    public abstract void error(String txt);
+    abstract void error(String txt);
 
-    public abstract void warn(String txt);
+    abstract void warn(String txt);
 
-    public abstract void trace(String txt);
+    abstract void trace(String txt);
 
-    public abstract void trace(String txt, Throwable t);
+    abstract void trace(String txt, Throwable t);
 
-    public abstract void debug(String txt);
+    abstract void debug(String txt);
 
-    public abstract void debug(String txt, Throwable t);
+    abstract void debug(String txt, Throwable t);
 
-    public abstract void setLogLevel(LogLevel logLevel);
+    abstract void setLogLevel(LogLevel logLevel);
 
-    public abstract LogLevel getLogLevel();
+    abstract LogLevel getLogLevel();
 
 }

@@ -7,28 +7,28 @@ import com.synopsys.integration.pipeline.model.PipelineWrapper
 import com.synopsys.integration.pipeline.model.Stage
 
 class Pipeline implements Serializable {
-    private final ScriptWrapper scriptWrapper
-    private final PipelineLogger pipelineLogger
+    final ScriptWrapper scriptWrapper
+    final PipelineLogger pipelineLogger
 
-    private final List<PipelineWrapper> wrappers = new LinkedList<>()
-    private final List<Stage> stages = new LinkedList<>()
+    final List<PipelineWrapper> wrappers = new LinkedList<>()
+    final List<Stage> stages = new LinkedList<>()
 
-    public Pipeline(Object script) {
+    Pipeline(Object script) {
         this.scriptWrapper = new ScriptWrapper(script)
         pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
     }
 
-    public void addStage(Stage stage) {
+    void addStage(Stage stage) {
         pipelineLogger.info("Adding stage")
         stages.add(stage)
     }
 
-    public void addPipelineWrapper(PipelineWrapper wrapper) {
+    void addPipelineWrapper(PipelineWrapper wrapper) {
         pipelineLogger.info("Adding wrapper")
         wrappers.add(wrapper)
     }
 
-    public void run() {
+    void run() {
         pipelineLogger.info("Starting run")
         wrappers.each { wrapper -> wrapper.start() }
         try {

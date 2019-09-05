@@ -1,20 +1,17 @@
 package com.synopsys.integration.pipeline.model
 
-
-import com.synopsys.integration.pipeline.logging.PipelineLogger
-
 abstract class Stage implements Serializable {
-    public String name
+    String name
 
-    public final List<StageWrapper> wrappers = new LinkedList<>()
+    final List<StageWrapper> wrappers = new LinkedList<>()
 
-    public Stage() {}
+    Stage(String name) { this.name = name }
 
-    public void addStageWrapper(StageWrapper wrapper) {
+    void addStageWrapper(StageWrapper wrapper) {
         wrappers.add(wrapper)
     }
 
-    public void run() {
+    void run() {
         wrappers.each { wrapper -> wrapper.start() }
         try {
             stageExecution()
@@ -27,14 +24,7 @@ abstract class Stage implements Serializable {
 
     abstract void stageExecution()
 
-    public void setName(final String name) {
-        this.name = name
-    }
-
-    public String getName(PipelineLogger pipelineLogger) {
-        pipelineLogger.info("class ${this.getClass()}")
-        pipelineLogger.info("name ${this.name}")
-        pipelineLogger.info("name ${name}")
+    String getName() {
         return name
     }
 
