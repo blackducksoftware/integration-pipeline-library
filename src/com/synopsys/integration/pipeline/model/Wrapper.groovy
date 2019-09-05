@@ -1,7 +1,8 @@
 package com.synopsys.integration.pipeline.model
 
 abstract class Wrapper implements Serializable {
-    final String name
+    // Fields here must be public or they can't be accessed (in Jenkins at runtime) in sub classes
+    public final String name
 
     Wrapper(String name) {
         this.name = name

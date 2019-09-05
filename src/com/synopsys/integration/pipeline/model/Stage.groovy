@@ -1,7 +1,8 @@
 package com.synopsys.integration.pipeline.model
 
 abstract class Stage implements Serializable {
-    String name
+    // Fields here must be public or they can't be accessed (in Jenkins at runtime) in sub classes
+    public final String name
 
     final List<StageWrapper> wrappers = new LinkedList<>()
 
