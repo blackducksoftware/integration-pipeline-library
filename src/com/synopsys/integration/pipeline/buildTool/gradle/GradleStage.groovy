@@ -14,10 +14,6 @@ class GradleStage extends Stage {
     private String gradleOptions
 
 
-    public GradleStage(ScriptWrapper scriptWrapper, String gradleExe, String gradleOptions) {
-        this(scriptWrapper, "Gradle Stage", gradleExe, gradleOptions)
-    }
-
     public GradleStage(ScriptWrapper scriptWrapper, String stageName, String gradleExe, String gradleOptions) {
         super(stageName)
         this.scriptWrapper = scriptWrapper

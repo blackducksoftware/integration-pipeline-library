@@ -25,11 +25,27 @@ class PipelineFactory implements Serializable {
     }
 
     public GradleStage createGradleStage(String gradleExe, String gradleOptions) {
-        return new GradleStage(scriptWrapper, gradleExe, gradleOptions)
+        return new GradleStage(scriptWrapper, "Gradle Stage", gradleExe, gradleOptions)
     }
 
-    public MavenStage createMavenStage(String mavenExe, String mavenOptions) {
-        return new MavenStage(scriptWrapper, script.tool, mavenExe, mavenOptions)
+    public GradleStage createGradleStage(String stageName, String gradleExe, String gradleOptions) {
+        return new GradleStage(scriptWrapper, stageName, gradleExe, gradleOptions)
+    }
+
+    public MavenStage createMavenStageDefaultTool(String mavenOptions) {
+        return new MavenStage(scriptWrapper, "Maven Stage", MavenStage.DEFAULT_MAVEN_TOOL_NAME, mavenOptions)
+    }
+
+    public MavenStage createMavenStageDefaultTool(String stageName, String mavenOptions) {
+        return new MavenStage(scriptWrapper, stageName, MavenStage.DEFAULT_MAVEN_TOOL_NAME, mavenOptions)
+    }
+
+    public MavenStage createMavenStage(String mavenToolName, String mavenOptions) {
+        return new MavenStage(scriptWrapper, "Maven Stage", mavenToolName, mavenOptions)
+    }
+
+    public MavenStage createMavenStage(String stageName, String mavenToolName, String mavenOptions) {
+        return new MavenStage(scriptWrapper, stageName, mavenToolName, mavenOptions)
     }
 
 }

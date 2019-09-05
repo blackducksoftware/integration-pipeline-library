@@ -11,10 +11,6 @@ class MavenStage extends Stage {
     private String mavenToolName
     private String mavenOptions
 
-    public MavenStage(ScriptWrapper scriptWrapper, String mavenToolName, String mavenOptions) {
-        this(scriptWrapper, "Maven Stage", mavenToolName, mavenOptions)
-    }
-
     public MavenStage(ScriptWrapper scriptWrapper, String stageName, String mavenToolName, String mavenOptions) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
