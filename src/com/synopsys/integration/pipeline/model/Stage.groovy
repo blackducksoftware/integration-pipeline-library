@@ -4,7 +4,7 @@ package com.synopsys.integration.pipeline.model
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 
 abstract class Stage implements Serializable {
-    private String name
+    public String name
 
     public final List<StageWrapper> wrappers = new LinkedList<>()
 
