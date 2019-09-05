@@ -33,9 +33,11 @@ class Pipeline implements Serializable {
         wrappers.each { wrapper -> wrapper.start() }
         try {
             stages.each { currentStage ->
-                scriptWrapper.stage(currentStage.getName()) {
-                    pipelineLogger.info("running stage ${currentStage.getName()}")
-                    currentStage.run()
+                scriptWrapper.dir(currentStage.getRelativeDirectory()) {
+                    scriptWrapper.stage(currentStage.getName()) {
+                        pipelineLogger.info("running stage ${currentStage.getName()}")
+                        currentStage.run()
+                    }
                 }
             }
         } catch (Exception e) {

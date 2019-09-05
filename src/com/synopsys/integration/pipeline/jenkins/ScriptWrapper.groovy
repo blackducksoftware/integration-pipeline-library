@@ -15,6 +15,10 @@ class ScriptWrapper implements Serializable {
         script.stage(stageName, closure)
     }
 
+    void dir(String relativeDirectory, Closure closure) {
+        script.dir(relativeDirectory, closure)
+    }
+
     void println(String message) {
         script.println message
     }
