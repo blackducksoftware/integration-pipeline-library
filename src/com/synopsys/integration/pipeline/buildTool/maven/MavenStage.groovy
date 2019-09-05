@@ -16,7 +16,7 @@ class MavenStage extends Stage {
     }
 
     public MavenStage(ScriptWrapper scriptWrapper, String stageName, String mavenToolName, String mavenOptions) {
-        super(stageName, scriptWrapper)
+        super(stageName)
         this.scriptWrapper = scriptWrapper
 
         if (null != mavenToolName && mavenToolName.trim().length() > 0) {

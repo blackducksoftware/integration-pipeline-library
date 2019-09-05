@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline.model
 
-import com.synopsys.integration.pipeline.jenkins.ScriptWrapper
+
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 
 abstract class Stage implements Serializable {
@@ -8,9 +8,8 @@ abstract class Stage implements Serializable {
 
     public final List<StageWrapper> wrappers = new LinkedList<>()
 
-    public Stage(String name, ScriptWrapper scriptWrapper) {
+    public Stage(String name) {
         this.name = name
-        scriptWrapper.println("name is ${name}")
     }
 
     public void addStageWrapper(StageWrapper wrapper) {
