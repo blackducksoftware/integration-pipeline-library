@@ -4,13 +4,11 @@ package com.synopsys.integration.pipeline.model
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 
 abstract class Stage implements Serializable {
-    private final String name
+    private String name
 
     public final List<StageWrapper> wrappers = new LinkedList<>()
 
-    public Stage(String name) {
-        this.name = name
-    }
+    public Stage() {}
 
     public void addStageWrapper(StageWrapper wrapper) {
         wrappers.add(wrapper)
@@ -28,6 +26,10 @@ abstract class Stage implements Serializable {
     }
 
     abstract void stageExecution()
+
+    public void setName(final String name) {
+        this.name = name
+    }
 
     public String getName(PipelineLogger pipelineLogger) {
         pipelineLogger.info("class ${this.getClass()}")

@@ -25,27 +25,40 @@ class PipelineFactory implements Serializable {
     }
 
     public GradleStage createGradleStage(String gradleExe, String gradleOptions) {
-        return new GradleStage(scriptWrapper, "Gradle Stage", gradleExe, gradleOptions)
+        pipelineLogger.info("Setting the gradle stage name to 'Gradle Stage' ")
+        GradleStage gradleStage = new GradleStage(scriptWrapper, gradleExe, gradleOptions)
+        gradleStage.setName("Gradle Stage")
+        return gradleStage
     }
 
     public GradleStage createGradleStage(String stageName, String gradleExe, String gradleOptions) {
-        return new GradleStage(scriptWrapper, stageName, gradleExe, gradleOptions)
+        GradleStage gradleStage = new GradleStage(scriptWrapper, stageName, gradleExe, gradleOptions)
+        gradleStage.setName(stageName)
+        return gradleStage
     }
 
     public MavenStage createMavenStageDefaultTool(String mavenOptions) {
-        return new MavenStage(scriptWrapper, "Maven Stage", MavenStage.DEFAULT_MAVEN_TOOL_NAME, mavenOptions)
+        MavenStage mavenStage = new MavenStage(scriptWrapper, "Maven Stage", MavenStage.DEFAULT_MAVEN_TOOL_NAME, mavenOptions)
+        mavenStage.setName("Maven Stage")
+        return mavenStage
     }
 
     public MavenStage createMavenStageDefaultTool(String stageName, String mavenOptions) {
-        return new MavenStage(scriptWrapper, stageName, MavenStage.DEFAULT_MAVEN_TOOL_NAME, mavenOptions)
+        MavenStage mavenStage = new MavenStage(scriptWrapper, stageName, MavenStage.DEFAULT_MAVEN_TOOL_NAME, mavenOptions)
+        mavenStage.setName(stageName)
+        return mavenStage
     }
 
     public MavenStage createMavenStage(String mavenToolName, String mavenOptions) {
-        return new MavenStage(scriptWrapper, "Maven Stage", mavenToolName, mavenOptions)
+        MavenStage mavenStage = new MavenStage(scriptWrapper, "Maven Stage", mavenToolName, mavenOptions)
+        mavenStage.setName("Maven Stage")
+        return mavenStage
     }
 
     public MavenStage createMavenStage(String stageName, String mavenToolName, String mavenOptions) {
-        return new MavenStage(scriptWrapper, stageName, mavenToolName, mavenOptions)
+        MavenStage mavenStage = new MavenStage(scriptWrapper, stageName, mavenToolName, mavenOptions)
+        mavenStage.setName(stageName)
+        return mavenStage
     }
 
 }

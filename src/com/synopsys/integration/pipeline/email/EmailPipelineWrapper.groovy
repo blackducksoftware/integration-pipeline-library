@@ -12,11 +12,11 @@ class EmailPipelineWrapper extends PipelineWrapper {
     private final String buildNumber
     private final String buildURL
 
-    EmailPipelineWrapper(PipelineLogger pipelineLogger, ScriptWrapper scriptWrapper, String recipientList, String jobName, String buildNumber, String buildURL) {
+    public EmailPipelineWrapper(PipelineLogger pipelineLogger, ScriptWrapper scriptWrapper, String recipientList, String jobName, String buildNumber, String buildURL) {
         this(pipelineLogger, scriptWrapper, "Email Pipeline Wrapper", recipientList, jobName, buildNumber, buildURL)
     }
 
-    EmailPipelineWrapper(PipelineLogger pipelineLogger, ScriptWrapper scriptWrapper, String wrapperName, String recipientList, String jobName, String buildNumber, String buildURL) {
+    public EmailPipelineWrapper(PipelineLogger pipelineLogger, ScriptWrapper scriptWrapper, String wrapperName, String recipientList, String jobName, String buildNumber, String buildURL) {
         super(wrapperName)
         this.pipelineLogger = pipelineLogger;
         this.scriptWrapper = scriptWrapper
@@ -27,17 +27,17 @@ class EmailPipelineWrapper extends PipelineWrapper {
     }
 
     @Override
-    void start() {
+    public void start() {
 
     }
 
     @Override
-    void handleException(final Exception e) {
+    public void handleException(final Exception e) {
 
     }
 
     @Override
-    void end() {
+    public void end() {
         String TO = "${recipientList}"
         String SUBJECT = '$DEFAULT_SUBJECT'
         String CONTENT = '$DEFAULT_CONTENT'
