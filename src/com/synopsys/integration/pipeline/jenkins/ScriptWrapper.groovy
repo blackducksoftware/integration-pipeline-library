@@ -11,8 +11,8 @@ class ScriptWrapper implements Serializable {
         return script.sh(command)
     }
 
-    Object stage(String stageName) {
-        return script.stage(stageName)
+    void stage(String stageName, Closure closure) {
+        script.stage(stageName, closure)
     }
 
     void println(String message) {
