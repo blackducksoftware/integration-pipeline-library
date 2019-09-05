@@ -7,7 +7,7 @@ import com.synopsys.integration.pipeline.jenkins.ScriptWrapper
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 
-class PipelineFactory {
+class PipelineFactory implements Serializable {
     private final PipelineLogger pipelineLogger
     private final ScriptWrapper scriptWrapper
 

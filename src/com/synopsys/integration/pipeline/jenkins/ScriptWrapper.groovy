@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline.jenkins
 
-class ScriptWrapper {
+class ScriptWrapper implements Serializable {
     private final Object script
 
     public ScriptWrapper(final Object script) {

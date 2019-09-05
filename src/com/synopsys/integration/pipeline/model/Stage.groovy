@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline.model
 
-abstract class Stage {
+abstract class Stage implements Serializable {
     private final String name
 
     public Stage(String name) {

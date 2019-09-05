@@ -6,7 +6,7 @@ import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.PipelineWrapper
 import com.synopsys.integration.pipeline.model.Stage
 
-class Pipeline {
+class Pipeline implements Serializable {
     private final ScriptWrapper scriptWrapper
     private final PipelineLogger pipelineLogger
 
@@ -16,18 +16,20 @@ class Pipeline {
     public Pipeline(Object script) {
         this.scriptWrapper = new ScriptWrapper(script)
         pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
-        pipelineLogger.info("testing logging")
     }
 
     public void addStage(Stage stage) {
+        pipelineLogger.info("Adding stage")
         stages.add(stage)
     }
 
     public void addPipelineWrapper(PipelineWrapper wrapper) {
+        pipelineLogger.info("Adding wrapper")
         wrappers.add(wrapper)
     }
 
     public void run() {
+        pipelineLogger.info("Starting run")
         wrappers.each { wrapper -> wrapper.start() }
         try {
             stages.each { stage ->
@@ -42,6 +44,5 @@ class Pipeline {
             wrappers.each { wrapper -> wrapper.end() }
         }
     }
-
 
 }

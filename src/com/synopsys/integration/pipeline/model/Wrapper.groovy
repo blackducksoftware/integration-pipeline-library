@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline.model
 
-abstract class Wrapper {
+abstract class Wrapper implements Serializable {
     private final String name
 
     public Wrapper(String name) {

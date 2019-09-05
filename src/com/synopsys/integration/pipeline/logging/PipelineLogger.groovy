@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline.logging
 
-abstract class PipelineLogger {
+abstract class PipelineLogger implements Serializable {
     public abstract void alwaysLog(String txt);
 
     public abstract void info(String txt);
@@ -22,7 +22,7 @@ abstract class PipelineLogger {
     public abstract void debug(String txt, Throwable t);
 
     public abstract void setLogLevel(LogLevel logLevel);
-    
+
     public abstract LogLevel getLogLevel();
 
 }
