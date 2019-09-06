@@ -21,6 +21,7 @@ abstract class Stage implements Serializable {
             stageExecution()
         } catch (Exception e) {
             wrappers.each { wrapper -> wrapper.handleException(e) }
+            throw e
         } finally {
             wrappers.each { wrapper -> wrapper.end() }
         }

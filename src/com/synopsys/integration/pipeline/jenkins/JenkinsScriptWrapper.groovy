@@ -23,14 +23,12 @@ class JenkinsScriptWrapper implements Serializable {
 
     void executeCommandWithException(String command) throws CommandExecutionException {
         PipelineLogger logger = new DefaultPipelineLoger(this)
-        logger.info("Executing command ${command}")
         int errorStatus
         if (isUnix()) {
             errorStatus = sh(command)
         } else {
             errorStatus = bat(command)
         }
-        logger.info("Command status ${errorStatus}")
         if (errorStatus != 0) {
             throw new CommandExecutionException(errorStatus, "Executing command '${command}', resulted in error status code '${errorStatus}'")
         }
