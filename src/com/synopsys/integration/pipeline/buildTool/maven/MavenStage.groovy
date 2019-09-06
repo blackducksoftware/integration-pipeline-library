@@ -1,17 +1,17 @@
 package com.synopsys.integration.pipeline.buildTool.maven
 
-import com.synopsys.integration.pipeline.jenkins.ScriptWrapper
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.model.Stage
 
 class MavenStage extends Stage {
     static final String DEFAULT_MAVEN_TOOL_NAME = 'maven-3'
     static final String DEFAULT_MAVEN_OPTIONS = '-U clean package deploy'
 
-    final ScriptWrapper scriptWrapper
+    final JenkinsScriptWrapper scriptWrapper
     String mavenToolName
     String mavenOptions
 
-    MavenStage(ScriptWrapper scriptWrapper, String stageName, String mavenToolName, String mavenOptions) {
+    MavenStage(JenkinsScriptWrapper scriptWrapper, String stageName, String mavenToolName, String mavenOptions) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
 

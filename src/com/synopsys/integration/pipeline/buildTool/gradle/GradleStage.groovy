@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline.buildTool.gradle
 
-import com.synopsys.integration.pipeline.jenkins.ScriptWrapper
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.Stage
@@ -9,12 +9,12 @@ class GradleStage extends Stage {
     public static final String DEFAULT_GRADLE_EXE = './gradlew'
     public static final String DEFAULT_GRADLE_OPTIONS = 'clean build --refresh-dependencies'
 
-    private final ScriptWrapper scriptWrapper
+    private final JenkinsScriptWrapper scriptWrapper
     private String gradleExe
     private String gradleOptions
 
 
-    public GradleStage(ScriptWrapper scriptWrapper, String stageName, String gradleExe, String gradleOptions) {
+    public GradleStage(JenkinsScriptWrapper scriptWrapper, String stageName, String gradleExe, String gradleOptions) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
 
@@ -36,7 +36,8 @@ class GradleStage extends Stage {
     void stageExecution() {
         PipelineLogger pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
         pipelineLogger.info("running gradle ${gradleExe} ${gradleOptions}")
-        scriptWrapper.sh("${gradleExe} ${gradleOptions}")
+        Object result = scriptWrapper.sh("${gradleExe} ${gradleOptions}")
+        pipelineLogger.info("gradle result ${result}")
     }
 
     String getGradleExe() {

@@ -1,22 +1,23 @@
 package com.synopsys.integration.pipeline.email
 
-import com.synopsys.integration.pipeline.jenkins.ScriptWrapper
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.PipelineWrapper
+import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 
 class EmailPipelineWrapper extends PipelineWrapper {
     final PipelineLogger pipelineLogger
-    final ScriptWrapper scriptWrapper
+    final JenkinsScriptWrapper scriptWrapper
     final String recipientList
     final String jobName
     final String buildNumber
     final String buildURL
 
-    EmailPipelineWrapper(PipelineLogger pipelineLogger, ScriptWrapper scriptWrapper, String recipientList, String jobName, String buildNumber, String buildURL) {
+    EmailPipelineWrapper(PipelineLogger pipelineLogger, JenkinsScriptWrapper scriptWrapper, String recipientList, String jobName, String buildNumber, String buildURL) {
         this(pipelineLogger, scriptWrapper, "Email Pipeline Wrapper", recipientList, jobName, buildNumber, buildURL)
     }
 
-    EmailPipelineWrapper(PipelineLogger pipelineLogger, ScriptWrapper scriptWrapper, String wrapperName, String recipientList, String jobName, String buildNumber, String buildURL) {
+    EmailPipelineWrapper(PipelineLogger pipelineLogger, JenkinsScriptWrapper scriptWrapper, String wrapperName, String recipientList, String jobName, String buildNumber, String buildURL) {
         super(wrapperName)
         this.pipelineLogger = pipelineLogger;
         this.scriptWrapper = scriptWrapper
@@ -42,7 +43,7 @@ class EmailPipelineWrapper extends PipelineWrapper {
         String SUBJECT = '$DEFAULT_SUBJECT'
         String CONTENT = '$DEFAULT_CONTENT'
 
-        Object currentBuild = scriptWrapper.currentBuild()
+        RunWrapper currentBuild = scriptWrapper.currentBuild()
         if (currentBuild.result == "FAILURE") {
             pipelineLogger.error("Sending out Build Failure email: ${SUBJECT}")
             scriptWrapper.emailext(CONTENT, SUBJECT, TO)

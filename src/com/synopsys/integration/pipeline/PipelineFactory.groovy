@@ -3,16 +3,17 @@ package com.synopsys.integration.pipeline
 import com.synopsys.integration.pipeline.buildTool.gradle.GradleStage
 import com.synopsys.integration.pipeline.buildTool.maven.MavenStage
 import com.synopsys.integration.pipeline.email.EmailPipelineWrapper
-import com.synopsys.integration.pipeline.jenkins.ScriptWrapper
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
+import com.synopsys.integration.pipeline.scm.GitStage
 
 class PipelineFactory implements Serializable {
     final PipelineLogger pipelineLogger
-    final ScriptWrapper scriptWrapper
+    final JenkinsScriptWrapper scriptWrapper
 
     PipelineFactory(Object script) {
-        scriptWrapper = new ScriptWrapper(script)
+        scriptWrapper = new JenkinsScriptWrapper(script)
         this.pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
     }
 
@@ -24,8 +25,15 @@ class PipelineFactory implements Serializable {
         return new EmailPipelineWrapper(pipelineLogger, scriptWrapper, wrapperName, recipientList, scriptWrapper.env().JOB_NAME, scriptWrapper.env().BUILD_NUMBER, scriptWrapper.env().BUILD_URL)
     }
 
+    GitStage createGitStage(String url, String branch) {
+        return new GitStage(scriptWrapper, "Git Stage", url, branch)
+    }
+
+    GitStage createGitStage(String stageName, String url, String branch) {
+        return new GitStage(scriptWrapper, stageName, url, branch)
+    }
+
     GradleStage createGradleStage(String gradleExe, String gradleOptions) {
-        pipelineLogger.info("Setting the gradle stage name to 'Gradle Stage' ")
         return new GradleStage(scriptWrapper, "Gradle Stage", gradleExe, gradleOptions)
     }
 

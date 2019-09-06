@@ -1,20 +1,20 @@
 package com.synopsys.integration.pipeline
 
-import com.synopsys.integration.pipeline.jenkins.ScriptWrapper
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.PipelineWrapper
 import com.synopsys.integration.pipeline.model.Stage
 
 class Pipeline implements Serializable {
-    final ScriptWrapper scriptWrapper
+    final JenkinsScriptWrapper scriptWrapper
     final PipelineLogger pipelineLogger
 
     final List<PipelineWrapper> wrappers = new LinkedList<>()
     final List<Stage> stages = new LinkedList<>()
 
     Pipeline(Object script) {
-        this.scriptWrapper = new ScriptWrapper(script)
+        this.scriptWrapper = new JenkinsScriptWrapper(script)
         pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
     }
 
