@@ -11,25 +11,13 @@ class GradleStage extends Stage {
     public static final String DEFAULT_GRADLE_OPTIONS = 'clean build --refresh-dependencies'
 
     private final JenkinsScriptWrapper scriptWrapper
-    private String gradleExe
-    private String gradleOptions
+    private String gradleExe = DEFAULT_GRADLE_EXE
+    private String gradleOptions = DEFAULT_GRADLE_OPTIONS
 
 
-    GradleStage(JenkinsScriptWrapper scriptWrapper, String stageName, String gradleExe, String gradleOptions) {
+    GradleStage(JenkinsScriptWrapper scriptWrapper, String stageName) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
-
-        if (null != gradleExe && gradleExe.trim().length() > 0) {
-            this.gradleExe = gradleExe
-        } else {
-            this.gradleExe = DEFAULT_GRADLE_EXE
-        }
-
-        if (null != gradleOptions && gradleOptions.trim().length() > 0) {
-            this.gradleOptions = gradleOptions
-        } else {
-            this.gradleOptions = DEFAULT_GRADLE_OPTIONS
-        }
     }
 
 

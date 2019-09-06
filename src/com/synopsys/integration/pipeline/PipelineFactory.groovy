@@ -51,28 +51,64 @@ class PipelineFactory implements Serializable {
         return new GitStage(scriptWrapper, stageName, url, branch)
     }
 
+    GradleStage createGradleStageDefaults() {
+        return new GradleStage(scriptWrapper, "Gradle Stage")
+    }
+
+    GradleStage createGradleStageWithOptions(String gradleOptions) {
+        GradleStage gradleStage = new GradleStage(scriptWrapper, "Gradle Stage")
+        gradleStage.setGradleOptions(gradleOptions)
+        return gradleStage
+    }
+
+    GradleStage createGradleStageWithExe(String gradleExe) {
+        GradleStage gradleStage = new GradleStage(scriptWrapper, "Gradle Stage")
+        gradleStage.setGradleExe(gradleExe)
+        return gradleStage
+    }
+
     GradleStage createGradleStage(String gradleExe, String gradleOptions) {
-        return new GradleStage(scriptWrapper, "Gradle Stage", gradleExe, gradleOptions)
+        GradleStage gradleStage = new GradleStage(scriptWrapper, "Gradle Stage")
+        gradleStage.setGradleExe(gradleExe)
+        gradleStage.setGradleOptions(gradleOptions)
+        return gradleStage
     }
 
     GradleStage createGradleStage(String stageName, String gradleExe, String gradleOptions) {
-        return new GradleStage(scriptWrapper, stageName, gradleExe, gradleOptions)
+        GradleStage gradleStage = new GradleStage(scriptWrapper, stageName)
+        gradleStage.setGradleExe(gradleExe)
+        gradleStage.setGradleOptions(gradleOptions)
+        return gradleStage
+    }
+
+    MavenStage createMavenStageDefaults() {
+        return new MavenStage(scriptWrapper, "Maven Stage")
     }
 
     MavenStage createMavenStageDefaultTool(String mavenOptions) {
-        return new MavenStage(scriptWrapper, "Maven Stage", MavenStage.DEFAULT_MAVEN_TOOL_NAME, mavenOptions)
+        MavenStage mavenStage = new MavenStage(scriptWrapper, "Maven Stage")
+        mavenStage.setMavenOptions(mavenOptions)
+        return mavenStage
     }
 
     MavenStage createMavenStageDefaultTool(String stageName, String mavenOptions) {
-        return new MavenStage(scriptWrapper, stageName, MavenStage.DEFAULT_MAVEN_TOOL_NAME, mavenOptions)
+        MavenStage mavenStage = new MavenStage(scriptWrapper, stageName)
+        mavenStage.setMavenOptions(mavenOptions)
+        return mavenStage
     }
 
     MavenStage createMavenStage(String mavenToolName, String mavenOptions) {
-        return new MavenStage(scriptWrapper, "Maven Stage", mavenToolName, mavenOptions)
+        MavenStage mavenStage = new MavenStage(scriptWrapper, "Maven Stage")
+        mavenStage.setMavenOptions(mavenOptions)
+        mavenStage.setMavenToolName(mavenToolName)
+        return mavenStage
     }
 
     MavenStage createMavenStage(String stageName, String mavenToolName, String mavenOptions) {
-        return new MavenStage(scriptWrapper, stageName, mavenToolName, mavenOptions)
+        MavenStage mavenStage = new MavenStage(scriptWrapper, stageName)
+        mavenStage.setMavenOptions(mavenOptions)
+        mavenStage.setMavenToolName(mavenToolName)
+        return mavenStage
     }
 
 }

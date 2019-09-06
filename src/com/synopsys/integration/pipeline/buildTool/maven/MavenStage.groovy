@@ -9,24 +9,12 @@ class MavenStage extends Stage {
     static final String DEFAULT_MAVEN_OPTIONS = '-U clean package deploy'
 
     final JenkinsScriptWrapper scriptWrapper
-    String mavenToolName
-    String mavenOptions
+    String mavenToolName = DEFAULT_MAVEN_TOOL_NAME
+    String mavenOptions = DEFAULT_MAVEN_OPTIONS
 
-    MavenStage(JenkinsScriptWrapper scriptWrapper, String stageName, String mavenToolName, String mavenOptions) {
+    MavenStage(JenkinsScriptWrapper scriptWrapper, String stageName) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
-
-        if (null != mavenToolName && mavenToolName.trim().length() > 0) {
-            this.mavenToolName = mavenToolName
-        } else {
-            this.mavenToolName = DEFAULT_MAVEN_TOOL_NAME
-        }
-
-        if (null != mavenOptions && mavenOptions.trim().length() > 0) {
-            this.mavenOptions = mavenOptions
-        } else {
-            this.mavenOptions = DEFAULT_MAVEN_OPTIONS
-        }
     }
 
 
