@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.jenkins
 
+import com.synopsys.integration.pipeline.exception.CommandExecutionException
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 import org.jenkinsci.plugins.workflow.cps.EnvActionImpl
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
@@ -11,19 +12,30 @@ class JenkinsScriptWrapper implements Serializable {
         this.script = script
     }
 
-    Object executeCommand(String command) {
+    int executeCommand(String command) {
         if (isUnix()) {
             return sh(command)
         }
         return bat(command)
     }
 
-    Object sh(String command) {
-        return script.sh(command)
+    void executeCommandWithException(String command) throws CommandExecutionException {
+        int errorStatus = 0
+        if (isUnix()) {
+            errorStatus = sh(command)
+        }
+        errorStatus = bat(command)
+        if (errorStatus != 0) {
+            throw new CommandExecutionException("Executing command '${command}', resulted in error status code '${errorStatus}'")
+        }
     }
 
-    Object bat(String command) {
-        return script.bat(command)
+    int sh(String command) {
+        return script.sh(script: command, returnStatus: true)
+    }
+
+    int bat(String command) {
+        return script.bat(script: command, returnStatus: true)
     }
 
     boolean isUnix() {

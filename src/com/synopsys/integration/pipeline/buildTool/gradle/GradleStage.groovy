@@ -36,12 +36,7 @@ class GradleStage extends Stage {
     void stageExecution() {
         PipelineLogger pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
         pipelineLogger.info("running gradle ${gradleExe} ${gradleOptions}")
-        try {
-            Object result = scriptWrapper.executeCommand("${gradleExe} ${gradleOptions}")
-            pipelineLogger.info("gradle result ${result}")
-        } catch (Exception e) {
-            pipelineLogger.error("gradle exception ${e.getMessage()}")
-        }
+        scriptWrapper.executeCommandWithException("${gradleExe} ${gradleOptions}")
     }
 
     String getGradleExe() {

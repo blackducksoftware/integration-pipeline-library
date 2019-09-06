@@ -1,8 +1,6 @@
 package com.synopsys.integration.pipeline.scm
 
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
-import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
-import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.Stage
 
 class GitStage extends Stage {
@@ -28,14 +26,11 @@ class GitStage extends Stage {
 
     @Override
     void stageExecution() {
-        PipelineLogger pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
         scriptWrapper.checkout(url, branch, gitToolName, changelog, poll)
         // Need to do this because Jenkins checks out a detached HEAD
-        Object checkoutResult = scriptWrapper.executeCommand("git checkout ${branch}")
-        pipelineLogger.info("checkoutResult ${checkoutResult}")
+        scriptWrapper.executeCommandWithException("git checkout ${branch}")
         // Do a hard reset in order to clear out any local changes/commits
-        Object resetResult = scriptWrapper.executeCommand("git reset --hard ${branch}")
-        pipelineLogger.info("resetResult ${resetResult}")
+        scriptWrapper.executeCommandWithException("git reset --hard ${branch}")
     }
 
     String getGitToolName() {
