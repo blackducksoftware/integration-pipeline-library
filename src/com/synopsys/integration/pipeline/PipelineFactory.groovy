@@ -7,6 +7,7 @@ import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.scm.GitStage
+import com.synopsys.integration.pipeline.setup.SetJdkStage
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class PipelineFactory implements Serializable {
@@ -24,6 +25,22 @@ class PipelineFactory implements Serializable {
 
     EmailPipelineWrapper createEmailPipelineWrapper(String wrapperName, String recipientList) {
         return new EmailPipelineWrapper(pipelineLogger, scriptWrapper, wrapperName, recipientList, scriptWrapper.env().JOB_NAME, scriptWrapper.env().BUILD_NUMBER, scriptWrapper.env().BUILD_URL)
+    }
+
+    SetJdkStage createSetJdkStage() {
+        return new SetJdkStage(scriptWrapper, "Set JDK Stage")
+    }
+
+    SetJdkStage createSetJdkStage(String jdkToolName) {
+        SetJdkStage setJdkStage = new SetJdkStage(scriptWrapper, "Set JDK Stage")
+        setJdkStage.setJdkToolName(jdkToolName)
+        return setJdkStage
+    }
+
+    SetJdkStage createSetJdkStage(String stageName, String jdkToolName) {
+        SetJdkStage setJdkStage = new SetJdkStage(scriptWrapper, stageName)
+        setJdkStage.setJdkToolName(jdkToolName)
+        return setJdkStage
     }
 
     GitStage createGitStage(String url, String branch) {

@@ -32,7 +32,7 @@ class MavenStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        String mvnHome = scriptWrapper.tool("${mavenToolName}")
+        String mvnHome = scriptWrapper.tool(mavenToolName)
 
         scriptWrapper.executeCommand("${mvnHome}/bin/mvn ${mavenOptions}")
     }
