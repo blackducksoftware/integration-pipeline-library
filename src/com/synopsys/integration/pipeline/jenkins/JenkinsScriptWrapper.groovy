@@ -20,11 +20,12 @@ class JenkinsScriptWrapper implements Serializable {
     }
 
     void executeCommandWithException(String command) throws CommandExecutionException {
-        int errorStatus = 0
+        int errorStatus
         if (isUnix()) {
             errorStatus = sh(command)
+        } else {
+            errorStatus = bat(command)
         }
-        errorStatus = bat(command)
         if (errorStatus != 0) {
             throw new CommandExecutionException("Executing command '${command}', resulted in error status code '${errorStatus}'")
         }
