@@ -27,7 +27,7 @@ class JenkinsScriptWrapper implements Serializable {
             errorStatus = bat(command)
         }
         if (errorStatus != 0) {
-            throw new CommandExecutionException("Executing command '${command}', resulted in error status code '${errorStatus}'")
+            throw new CommandExecutionException(errorStatus, "Executing command '${command}', resulted in error status code '${errorStatus}'")
         }
     }
 

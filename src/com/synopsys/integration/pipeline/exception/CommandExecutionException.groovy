@@ -8,7 +8,7 @@ class CommandExecutionException extends Exception {
         this.errorStatus = errorStatus
     }
 
-    CommandExecutionException(final String message) {
+    CommandExecutionException(int errorStatus, String message) {
         super(message)
         this.errorStatus = errorStatus
     }
