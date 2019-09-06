@@ -1,6 +1,8 @@
 package com.synopsys.integration.pipeline.jenkins
 
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
+import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
+import com.synopsys.integration.pipeline.logging.PipelineLogger
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 import org.jenkinsci.plugins.workflow.cps.EnvActionImpl
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
@@ -20,12 +22,15 @@ class JenkinsScriptWrapper implements Serializable {
     }
 
     void executeCommandWithException(String command) throws CommandExecutionException {
+        PipelineLogger logger = new DefaultPipelineLoger(this)
+        logger.info("Executing command ${command}")
         int errorStatus
         if (isUnix()) {
             errorStatus = sh(command)
         } else {
             errorStatus = bat(command)
         }
+        logger.info("Command status ${errorStatus}")
         if (errorStatus != 0) {
             throw new CommandExecutionException(errorStatus, "Executing command '${command}', resulted in error status code '${errorStatus}'")
         }
