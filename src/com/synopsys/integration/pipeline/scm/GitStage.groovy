@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.scm
 
+import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.model.Stage
 
@@ -25,7 +26,7 @@ class GitStage extends Stage {
     }
 
     @Override
-    void stageExecution() {
+    void stageExecution() throws PipelineException, Exception {
         scriptWrapper.checkout(url, branch, gitToolName, changelog, poll)
         // Need to do this because Jenkins checks out a detached HEAD
         scriptWrapper.executeCommandWithException("git checkout ${branch}")

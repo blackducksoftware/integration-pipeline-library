@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.buildTool.gradle
 
+import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
@@ -14,7 +15,7 @@ class GradleStage extends Stage {
     private String gradleOptions
 
 
-    public GradleStage(JenkinsScriptWrapper scriptWrapper, String stageName, String gradleExe, String gradleOptions) {
+    GradleStage(JenkinsScriptWrapper scriptWrapper, String stageName, String gradleExe, String gradleOptions) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
 
@@ -33,7 +34,7 @@ class GradleStage extends Stage {
 
 
     @Override
-    void stageExecution() {
+    void stageExecution() throws PipelineException, Exception {
         PipelineLogger pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
         pipelineLogger.info("running gradle ${gradleExe} ${gradleOptions}")
         scriptWrapper.executeCommandWithException("${gradleExe} ${gradleOptions}")

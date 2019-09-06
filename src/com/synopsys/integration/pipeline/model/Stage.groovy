@@ -1,5 +1,7 @@
 package com.synopsys.integration.pipeline.model
 
+import com.synopsys.integration.pipeline.exception.PipelineException
+
 abstract class Stage implements Serializable {
     // Fields here must be public or they can't be accessed (in Jenkins at runtime) in sub classes
     public final String name
@@ -13,7 +15,7 @@ abstract class Stage implements Serializable {
         wrappers.add(wrapper)
     }
 
-    void run() {
+    void run() throws PipelineException, Exception {
         wrappers.each { wrapper -> wrapper.start() }
         try {
             stageExecution()
@@ -24,7 +26,7 @@ abstract class Stage implements Serializable {
         }
     }
 
-    abstract void stageExecution()
+    abstract void stageExecution() throws PipelineException, Exception
 
     String getName() {
         return name

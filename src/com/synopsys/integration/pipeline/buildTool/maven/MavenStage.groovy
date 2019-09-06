@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.buildTool.maven
 
+import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.model.Stage
 
@@ -30,7 +31,7 @@ class MavenStage extends Stage {
 
 
     @Override
-    void stageExecution() {
+    void stageExecution() throws PipelineException, Exception {
         String mvnHome = scriptWrapper.tool("${mavenToolName}")
 
         scriptWrapper.executeCommand("${mvnHome}/bin/mvn ${mavenOptions}")
