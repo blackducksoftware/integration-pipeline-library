@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline
 
-import com.synopsys.integration.pipeline.exception.CommandExecutionException
+
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
@@ -42,16 +42,10 @@ class Pipeline implements Serializable {
                     }
                 }
             }
-        } catch (CommandExecutionException e) {
-            scriptWrapper.currentBuild().result = "FAILURE"
-            wrappers.each { wrapper -> wrapper.handleException(e) }
-            pipelineLogger.error("Build failed because ${e.getMessage()}")
-            throw e
         } catch (Exception e) {
             scriptWrapper.currentBuild().result = "FAILURE"
             wrappers.each { wrapper -> wrapper.handleException(e) }
-            pipelineLogger.error("Build failed because ${e.getMessage()}")
-            throw e
+            pipelineLogger.error("Build failed because ${e.getMessage()}", e)
         } finally {
             wrappers.each { wrapper -> wrapper.end() }
         }
