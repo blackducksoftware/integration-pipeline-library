@@ -7,12 +7,13 @@ import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.scm.GitStage
+import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class PipelineFactory implements Serializable {
     final PipelineLogger pipelineLogger
     final JenkinsScriptWrapper scriptWrapper
 
-    PipelineFactory(Object script) {
+    PipelineFactory(CpsScript script) {
         scriptWrapper = new JenkinsScriptWrapper(script)
         this.pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
     }

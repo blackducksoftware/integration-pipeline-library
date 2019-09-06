@@ -36,7 +36,7 @@ class GradleStage extends Stage {
     void stageExecution() {
         PipelineLogger pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
         pipelineLogger.info("running gradle ${gradleExe} ${gradleOptions}")
-        Object result = scriptWrapper.sh("${gradleExe} ${gradleOptions}")
+        Object result = scriptWrapper.executeCommand("${gradleExe} ${gradleOptions}")
         pipelineLogger.info("gradle result ${result}")
     }
 

@@ -1,17 +1,33 @@
 package com.synopsys.integration.pipeline.jenkins
 
+import org.jenkinsci.plugins.workflow.cps.CpsScript
 import org.jenkinsci.plugins.workflow.cps.EnvActionImpl
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 
 class JenkinsScriptWrapper implements Serializable {
-    final Object script
+    final CpsScript script
 
-    JenkinsScriptWrapper(final Object script) {
+    JenkinsScriptWrapper(final CpsScript script) {
         this.script = script
+    }
+
+    Object executeCommand(String command) {
+        if (isUnix()) {
+            return sh(command)
+        }
+        return bat(command)
     }
 
     Object sh(String command) {
         return script.sh(command)
+    }
+
+    Object bat(String command) {
+        return script.bat(command)
+    }
+
+    boolean isUnix() {
+        return script.isUnix()
     }
 
     void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll) {
@@ -53,9 +69,9 @@ class JenkinsScriptWrapper implements Serializable {
     }
 
     /**
-     * WorkflowScript
+     * WorkflowScript/CpsScript
      **/
-    Object script() {
+    CpsScript script() {
         return script
     }
 

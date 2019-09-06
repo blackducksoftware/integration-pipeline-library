@@ -31,10 +31,10 @@ class GitStage extends Stage {
         PipelineLogger pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
         scriptWrapper.checkout(url, branch, gitToolName, changelog, poll)
         // Need to do this because Jenkins checks out a detached HEAD
-        Object checkoutResult = scriptWrapper.sh("git checkout ${branch}")
+        Object checkoutResult = scriptWrapper.executeCommand("git checkout ${branch}")
         pipelineLogger.info("checkoutResult ${checkoutResult}")
         // Do a hard reset in order to clear out any local changes/commits
-        Object resetResult = scriptWrapper.sh("git reset --hard ${branch}")
+        Object resetResult = scriptWrapper.executeCommand("git reset --hard ${branch}")
         pipelineLogger.info("resetResult ${resetResult}")
     }
 

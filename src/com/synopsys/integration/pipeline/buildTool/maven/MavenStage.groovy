@@ -33,7 +33,7 @@ class MavenStage extends Stage {
     void stageExecution() {
         String mvnHome = scriptWrapper.tool("${mavenToolName}")
 
-        scriptWrapper.sh("${mvnHome}/bin/mvn ${mavenOptions}")
+        scriptWrapper.executeCommand("${mvnHome}/bin/mvn ${mavenOptions}")
     }
 
     String getMavenToolName() {
