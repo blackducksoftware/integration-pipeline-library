@@ -41,7 +41,7 @@ class Pipeline implements Serializable {
         wrappers.each { wrapper -> wrapper.start() }
         try {
             steps.each { currentStep ->
-                if (currentStep.class.isAssignableFrom(Stage.class)) {
+                if (currentStep instanceof Stage) {
                     Stage currentStage = (Stage) currentStep
                     scriptWrapper.dir(currentStage.getRelativeDirectory()) {
                         scriptWrapper.stage(currentStage.getName()) {
