@@ -1,19 +1,21 @@
 package com.synopsys.integration.pipeline.generic
 
-import com.cloudbees.groovy.cps.NonCPS
+
 import com.synopsys.integration.pipeline.exception.PipelineException
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.model.Step
 
 class ClosureStep extends Step {
+    private final JenkinsScriptWrapper scriptWrapper
     private final Closure closure
 
-    ClosureStep(Closure closure) {
+    ClosureStep(JenkinsScriptWrapper scriptWrapper, Closure closure) {
+        this.scriptWrapper = scriptWrapper
         this.closure = closure
     }
 
-    @NonCPS
     @Override
     void run() throws PipelineException, Exception {
-        closure.run()
+        scriptWrapper.run(closure)
     }
 }

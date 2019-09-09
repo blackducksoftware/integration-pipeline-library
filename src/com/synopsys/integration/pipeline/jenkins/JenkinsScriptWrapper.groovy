@@ -65,6 +65,10 @@ class JenkinsScriptWrapper implements Serializable {
         script.println message
     }
 
+    void run(Closure closure) {
+        script.run closure
+    }
+
     /**
      * org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
      **/
