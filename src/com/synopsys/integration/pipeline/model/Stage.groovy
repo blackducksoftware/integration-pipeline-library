@@ -2,7 +2,7 @@ package com.synopsys.integration.pipeline.model
 
 import com.synopsys.integration.pipeline.exception.PipelineException
 
-abstract class Stage implements Serializable {
+abstract class Stage extends Step {
     // Fields here must be public or they can't be accessed (in Jenkins at runtime) in sub classes
     public final String name
     public String relativeDirectory = '.'
@@ -15,6 +15,7 @@ abstract class Stage implements Serializable {
         wrappers.add(wrapper)
     }
 
+    @Override
     void run() throws PipelineException, Exception {
         wrappers.each { wrapper -> wrapper.start() }
         try {
@@ -27,6 +28,7 @@ abstract class Stage implements Serializable {
         }
     }
 
+    // Stage that takes in sh commands and asserts that it contained certain output
     abstract void stageExecution() throws PipelineException, Exception
 
     String getName() {

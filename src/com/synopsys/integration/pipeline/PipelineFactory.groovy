@@ -3,6 +3,8 @@ package com.synopsys.integration.pipeline
 import com.synopsys.integration.pipeline.buildTool.gradle.GradleStage
 import com.synopsys.integration.pipeline.buildTool.maven.MavenStage
 import com.synopsys.integration.pipeline.email.EmailPipelineWrapper
+import com.synopsys.integration.pipeline.generic.ClosureStage
+import com.synopsys.integration.pipeline.generic.ClosureStep
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
@@ -19,96 +21,104 @@ class PipelineFactory implements Serializable {
         this.pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
     }
 
-    EmailPipelineWrapper createEmailPipelineWrapper(String recipientList) {
+    EmailPipelineWrapper emailPipelineWrapper(String recipientList) {
         return new EmailPipelineWrapper(pipelineLogger, scriptWrapper, recipientList, scriptWrapper.env().JOB_NAME, scriptWrapper.env().BUILD_NUMBER, scriptWrapper.env().BUILD_URL)
     }
 
-    EmailPipelineWrapper createEmailPipelineWrapper(String wrapperName, String recipientList) {
+    EmailPipelineWrapper emailPipelineWrapper(String wrapperName, String recipientList) {
         return new EmailPipelineWrapper(pipelineLogger, scriptWrapper, wrapperName, recipientList, scriptWrapper.env().JOB_NAME, scriptWrapper.env().BUILD_NUMBER, scriptWrapper.env().BUILD_URL)
     }
 
-    SetJdkStage createSetJdkStage() {
+    SetJdkStage setJdkStage() {
         return new SetJdkStage(scriptWrapper, "Set JDK Stage")
     }
 
-    SetJdkStage createSetJdkStage(String jdkToolName) {
+    SetJdkStage setJdkStage(String jdkToolName) {
         SetJdkStage setJdkStage = new SetJdkStage(scriptWrapper, "Set JDK Stage")
         setJdkStage.setJdkToolName(jdkToolName)
         return setJdkStage
     }
 
-    SetJdkStage createSetJdkStage(String stageName, String jdkToolName) {
+    SetJdkStage setJdkStage(String stageName, String jdkToolName) {
         SetJdkStage setJdkStage = new SetJdkStage(scriptWrapper, stageName)
         setJdkStage.setJdkToolName(jdkToolName)
         return setJdkStage
     }
 
-    GitStage createGitStage(String url, String branch) {
+    GitStage gitStage(String url, String branch) {
         return new GitStage(scriptWrapper, "Git Stage", url, branch)
     }
 
-    GitStage createGitStage(String stageName, String url, String branch) {
+    GitStage gitStage(String stageName, String url, String branch) {
         return new GitStage(scriptWrapper, stageName, url, branch)
     }
 
-    GradleStage createGradleStageDefaults() {
+    GradleStage gradleStageDefaults() {
         return new GradleStage(scriptWrapper, "Gradle Stage")
     }
 
-    GradleStage createGradleStageWithOptions(String gradleOptions) {
+    GradleStage gradleStageWithOptions(String gradleOptions) {
         GradleStage gradleStage = new GradleStage(scriptWrapper, "Gradle Stage")
         gradleStage.setGradleOptions(gradleOptions)
         return gradleStage
     }
 
-    GradleStage createGradleStageWithExe(String gradleExe) {
+    GradleStage gradleStageWithExe(String gradleExe) {
         GradleStage gradleStage = new GradleStage(scriptWrapper, "Gradle Stage")
         gradleStage.setGradleExe(gradleExe)
         return gradleStage
     }
 
-    GradleStage createGradleStage(String gradleExe, String gradleOptions) {
+    GradleStage gradleStage(String gradleExe, String gradleOptions) {
         GradleStage gradleStage = new GradleStage(scriptWrapper, "Gradle Stage")
         gradleStage.setGradleExe(gradleExe)
         gradleStage.setGradleOptions(gradleOptions)
         return gradleStage
     }
 
-    GradleStage createGradleStage(String stageName, String gradleExe, String gradleOptions) {
+    GradleStage gradleStage(String stageName, String gradleExe, String gradleOptions) {
         GradleStage gradleStage = new GradleStage(scriptWrapper, stageName)
         gradleStage.setGradleExe(gradleExe)
         gradleStage.setGradleOptions(gradleOptions)
         return gradleStage
     }
 
-    MavenStage createMavenStageDefaults() {
+    MavenStage mavenStageDefaults() {
         return new MavenStage(scriptWrapper, "Maven Stage")
     }
 
-    MavenStage createMavenStageDefaultTool(String mavenOptions) {
+    MavenStage mavenStageDefaultTool(String mavenOptions) {
         MavenStage mavenStage = new MavenStage(scriptWrapper, "Maven Stage")
         mavenStage.setMavenOptions(mavenOptions)
         return mavenStage
     }
 
-    MavenStage createMavenStageDefaultTool(String stageName, String mavenOptions) {
+    MavenStage mavenStageDefaultTool(String stageName, String mavenOptions) {
         MavenStage mavenStage = new MavenStage(scriptWrapper, stageName)
         mavenStage.setMavenOptions(mavenOptions)
         return mavenStage
     }
 
-    MavenStage createMavenStage(String mavenToolName, String mavenOptions) {
+    MavenStage mavenStage(String mavenToolName, String mavenOptions) {
         MavenStage mavenStage = new MavenStage(scriptWrapper, "Maven Stage")
         mavenStage.setMavenOptions(mavenOptions)
         mavenStage.setMavenToolName(mavenToolName)
         return mavenStage
     }
 
-    MavenStage createMavenStage(String stageName, String mavenToolName, String mavenOptions) {
+    MavenStage mavenStage(String stageName, String mavenToolName, String mavenOptions) {
         MavenStage mavenStage = new MavenStage(scriptWrapper, stageName)
         mavenStage.setMavenOptions(mavenOptions)
         mavenStage.setMavenToolName(mavenToolName)
         return mavenStage
+    }
+
+    ClosureStage stage(String stageName, Closure closure) {
+        return new ClosureStage(stageName, closure)
+    }
+
+    ClosureStep step(Closure closure) {
+        return new ClosureStep(closure)
     }
 
 }

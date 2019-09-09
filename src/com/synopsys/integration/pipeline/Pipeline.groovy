@@ -6,6 +6,7 @@ import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.PipelineWrapper
 import com.synopsys.integration.pipeline.model.Stage
+import com.synopsys.integration.pipeline.model.Step
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class Pipeline implements Serializable {
@@ -13,20 +14,25 @@ class Pipeline implements Serializable {
     final PipelineLogger pipelineLogger
 
     final List<PipelineWrapper> wrappers = new LinkedList<>()
-    final List<Stage> stages = new LinkedList<>()
+    final List<Step> steps = new LinkedList<>()
 
     Pipeline(CpsScript script) {
         this.scriptWrapper = new JenkinsScriptWrapper(script)
         pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
     }
 
+    void addStep(Step step) {
+        pipelineLogger.info("Adding step")
+        steps.add(step)
+    }
+
     void addStage(Stage stage) {
-        pipelineLogger.info("Adding stage")
-        stages.add(stage)
+        pipelineLogger.info("Adding stage ${stage.getName()}")
+        steps.add(stage)
     }
 
     void addPipelineWrapper(PipelineWrapper wrapper) {
-        pipelineLogger.info("Adding wrapper")
+        pipelineLogger.info("Adding wrapper ${wrapper.getName()}")
         wrappers.add(wrapper)
     }
 

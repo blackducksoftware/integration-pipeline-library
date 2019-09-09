@@ -12,7 +12,7 @@ version = '0.0.1-SNAPSHOT'
 
 sourceSets {
     main {
-        java { srcDirs = [] }    // no source dirs for the java compiler
+        java { srcDirs = [] } // no source dirs for the java compiler
         groovy { srcDir "src" }
     }
 }

@@ -34,6 +34,8 @@ class JenkinsScriptWrapper implements Serializable {
         }
     }
 
+    // Add options to get the standard out from the commands
+
     int sh(String command) {
         return script.sh(script: command, returnStatus: true)
     }
