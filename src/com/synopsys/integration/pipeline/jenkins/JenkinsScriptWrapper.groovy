@@ -53,11 +53,11 @@ class JenkinsScriptWrapper implements Serializable {
         script.checkout changelog: changelog, poll: poll, scm: [$class: 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false, gitTool: gitToolName, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
     }
 
-    void stage(String stageName, CpsScript closure) {
+    void stage(String stageName, Closure closure) {
         script.stage(stageName, closure)
     }
 
-    void dir(String relativeDirectory, CpsScript closure) {
+    void dir(String relativeDirectory, Closure closure) {
         script.dir(relativeDirectory, closure)
     }
 
