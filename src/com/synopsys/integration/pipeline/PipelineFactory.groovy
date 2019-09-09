@@ -114,11 +114,11 @@ class PipelineFactory implements Serializable {
         return mavenStage
     }
 
-    ClosureStage stage(String stageName, CpsScript closure) {
+    ClosureStage stage(String stageName, Closure closure) {
         return new ClosureStage(stageName, closure)
     }
 
-    ClosureStep step(CpsScript closure) {
+    ClosureStep step(Closure closure) {
         return new ClosureStep(closure)
     }
 
