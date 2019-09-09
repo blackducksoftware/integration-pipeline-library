@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.jenkins
 
+import com.cloudbees.groovy.cps.impl.CpsClosure
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
@@ -52,11 +53,11 @@ class JenkinsScriptWrapper implements Serializable {
         script.checkout changelog: changelog, poll: poll, scm: [$class: 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false, gitTool: gitToolName, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
     }
 
-    void stage(String stageName, Closure closure) {
+    void stage(String stageName, CpsClosure closure) {
         script.stage(stageName, closure)
     }
 
-    void dir(String relativeDirectory, Closure closure) {
+    void dir(String relativeDirectory, CpsClosure closure) {
         script.dir(relativeDirectory, closure)
     }
 

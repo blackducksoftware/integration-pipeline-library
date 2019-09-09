@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline
 
+import com.cloudbees.groovy.cps.impl.CpsClosure
 import com.synopsys.integration.pipeline.buildTool.gradle.GradleStage
 import com.synopsys.integration.pipeline.buildTool.maven.MavenStage
 import com.synopsys.integration.pipeline.email.EmailPipelineWrapper
@@ -113,11 +114,11 @@ class PipelineFactory implements Serializable {
         return mavenStage
     }
 
-    ClosureStage stage(String stageName, Closure closure) {
+    ClosureStage stage(String stageName, CpsClosure closure) {
         return new ClosureStage(stageName, closure)
     }
 
-    ClosureStep step(Closure closure) {
+    ClosureStep step(CpsClosure closure) {
         return new ClosureStep(closure)
     }
 
