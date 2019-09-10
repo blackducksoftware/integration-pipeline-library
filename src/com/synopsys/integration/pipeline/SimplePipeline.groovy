@@ -43,6 +43,7 @@ class SimplePipeline extends Pipeline {
 
     CleanupStep addCleanupStep() {
         CleanupStep cleanupStep = new CleanupStep(getScriptWrapper())
+        addStep(cleanupStep)
         return cleanupStep
     }
 
