@@ -50,14 +50,14 @@ class SimplePipeline extends Pipeline {
     }
 
     GitStage addGitStage(String url, String branch) {
-        GitStage gitStage = new GitStage(getScriptWrapper(), "Git Stage", url, branch)
+        GitStage gitStage = new GitStage(getScriptWrapper(), getPipelineLogger(), "Git Stage", url, branch)
         gitStage.setRelativeDirectory(commonRunDirectory)
         addStage(gitStage)
         return gitStage
     }
 
     GitStage addGitStage(String stageName, String url, String branch) {
-        GitStage gitStage = new GitStage(getScriptWrapper(), stageName, url, branch)
+        GitStage gitStage = new GitStage(getScriptWrapper(), getPipelineLogger(), stageName, url, branch)
         gitStage.setRelativeDirectory(commonRunDirectory)
         addStage(gitStage)
         return gitStage
