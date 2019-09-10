@@ -13,8 +13,8 @@ class Pipeline implements Serializable {
     public final JenkinsScriptWrapper scriptWrapper
     public final PipelineLogger pipelineLogger
 
-    final List<PipelineWrapper> wrappers = new LinkedList<>()
-    final List<Step> steps = new LinkedList<>()
+    public final List<PipelineWrapper> wrappers = new LinkedList<>()
+    public final List<Step> steps = new LinkedList<>()
 
     Pipeline(CpsScript script) {
         this.scriptWrapper = new JenkinsScriptWrapper(script)
@@ -71,11 +71,11 @@ class Pipeline implements Serializable {
         return pipelineLogger
     }
 
-    List<PipelineWrapper> getWrappers() {
+    public List<PipelineWrapper> getWrappers() {
         return wrappers
     }
 
-    List<Step> getSteps() {
+    public List<Step> getSteps() {
         return steps
     }
 }
