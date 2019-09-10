@@ -3,6 +3,7 @@ package com.synopsys.integration.pipeline.model
 abstract class Wrapper implements Serializable {
     // Fields here must be public or they can't be accessed (in Jenkins at runtime) in sub classes
     public final String name
+    public String relativeDirectory = '.'
 
     Wrapper(String name) {
         this.name = name
@@ -28,5 +29,13 @@ abstract class Wrapper implements Serializable {
 
     String getName() {
         return name
+    }
+
+    String getRelativeDirectory() {
+        return relativeDirectory
+    }
+
+    void setRelativeDirectory(final String relativeDirectory) {
+        this.relativeDirectory = relativeDirectory
     }
 }

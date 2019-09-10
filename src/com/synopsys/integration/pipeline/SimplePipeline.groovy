@@ -13,113 +13,166 @@ import com.synopsys.integration.pipeline.setup.SetJdkStage
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class SimplePipeline extends Pipeline {
+    public String commonRunDirectory = '.'
 
     SimplePipeline(CpsScript script) {
         super(script)
     }
 
-    void addArchiveStage(String archiveFilePattern) {
+    ArchiveStage addArchiveStage(String archiveFilePattern) {
         ArchiveStage archiveStage = new ArchiveStage(getScriptWrapper(), 'Archive Stage')
         archiveStage.setArchiveFilePattern(archiveFilePattern)
+        archiveStage.setRelativeDirectory(commonRunDirectory)
         addStage(archiveStage)
+        return archiveStage
     }
 
-    void addArchiveStage(String stageName, String archiveFilePattern) {
+    ArchiveStage addArchiveStage(String stageName, String archiveFilePattern) {
         ArchiveStage archiveStage = new ArchiveStage(getScriptWrapper(), stageName)
         archiveStage.setArchiveFilePattern(archiveFilePattern)
+        archiveStage.setRelativeDirectory(commonRunDirectory)
         addStage(archiveStage)
+        return archiveStage
     }
 
-    void addEmailPipelineWrapper(String recipientList) {
-        addPipelineWrapper(new EmailPipelineWrapper(getPipelineLogger(), getScriptWrapper(), recipientList, getScriptWrapper().env().JOB_NAME, getScriptWrapper().env().BUILD_NUMBER, getScriptWrapper().env().BUILD_URL))
+    EmailPipelineWrapper addEmailPipelineWrapper(String recipientList) {
+        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineLogger(), getScriptWrapper(), recipientList, getScriptWrapper().env().JOB_NAME, getScriptWrapper().env().BUILD_NUMBER, getScriptWrapper().env().BUILD_URL)
+        emailPipelineWrapper.setRelativeDirectory(commonRunDirectory)
+        addPipelineWrapper(emailPipelineWrapper)
+        return emailPipelineWrapper
     }
 
-    void addEmailPipelineWrapper(String wrapperName, String recipientList) {
-        addPipelineWrapper(new EmailPipelineWrapper(getPipelineLogger(), getScriptWrapper(), wrapperName, recipientList, getScriptWrapper().env().JOB_NAME, getScriptWrapper().env().BUILD_NUMBER, getScriptWrapper().env().BUILD_URL))
+    EmailPipelineWrapper addEmailPipelineWrapper(String wrapperName, String recipientList) {
+        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineLogger(), getScriptWrapper(), wrapperName, recipientList, getScriptWrapper().env().JOB_NAME, getScriptWrapper().env().BUILD_NUMBER, getScriptWrapper().env().BUILD_URL)
+        emailPipelineWrapper.setRelativeDirectory(commonRunDirectory)
+        addPipelineWrapper(emailPipelineWrapper)
+        return emailPipelineWrapper
     }
 
-    void addGitStage(String url, String branch) {
-        addStage(new GitStage(getScriptWrapper(), "Git Stage", url, branch))
+    GitStage addGitStage(String url, String branch) {
+        GitStage gitStage = new GitStage(getScriptWrapper(), "Git Stage", url, branch)
+        gitStage.setRelativeDirectory(commonRunDirectory)
+        addStage(gitStage)
+        return gitStage
     }
 
-    void addGitStage(String stageName, String url, String branch) {
-        addStage(new GitStage(getScriptWrapper(), stageName, url, branch))
+    GitStage addGitStage(String stageName, String url, String branch) {
+        GitStage gitStage = new GitStage(getScriptWrapper(), stageName, url, branch)
+        gitStage.setRelativeDirectory(commonRunDirectory)
+        addStage(gitStage)
+        return gitStage
     }
 
 
-    void addGradleStage(String gradleExe, String gradleOptions) {
+    GradleStage addGradleStage(String gradleExe, String gradleOptions) {
         GradleStage gradleStage = new GradleStage(getScriptWrapper(), "Gradle Stage")
         gradleStage.setGradleExe(gradleExe)
         gradleStage.setGradleOptions(gradleOptions)
+        gradleStage.setRelativeDirectory(commonRunDirectory)
         addStage(gradleStage)
+        return gradleStage
     }
 
-    void addGradleStage(String stageName, String gradleExe, String gradleOptions) {
+    GradleStage addGradleStage(String stageName, String gradleExe, String gradleOptions) {
         GradleStage gradleStage = new GradleStage(getScriptWrapper(), stageName)
         gradleStage.setGradleExe(gradleExe)
         gradleStage.setGradleOptions(gradleOptions)
+        gradleStage.setRelativeDirectory(commonRunDirectory)
         addStage(gradleStage)
+        return gradleStage
     }
 
-    void addJacocoStage() {
+    JacocoStage addJacocoStage() {
         JacocoStage jacocoStage = new JacocoStage(getScriptWrapper(), 'Jacoco Stage')
+        jacocoStage.setRelativeDirectory(commonRunDirectory)
         addStage(jacocoStage)
+        return jacocoStage
     }
 
-    void addJacocoStage(String stageName) {
+    JacocoStage addJacocoStage(String stageName) {
         JacocoStage jacocoStage = new JacocoStage(getScriptWrapper(), stageName)
+        jacocoStage.setRelativeDirectory(commonRunDirectory)
         addStage(jacocoStage)
+        return jacocoStage
     }
 
-    void addJunitStage(String xmlFilePattern) {
+    JunitStage addJunitStage(String xmlFilePattern) {
         JunitStage junitStage = new JunitStage(getScriptWrapper(), 'Junit Stage')
         junitStage.setXmlFilePattern(xmlFilePattern)
+        junitStage.setRelativeDirectory(commonRunDirectory)
         addStage(junitStage)
+        return junitStage
     }
 
-    void addJunitStage(String stageName, String xmlFilePattern) {
+    JunitStage addJunitStage(String stageName, String xmlFilePattern) {
         JunitStage junitStage = new JunitStage(getScriptWrapper(), stageName)
         junitStage.setXmlFilePattern(xmlFilePattern)
+        junitStage.setRelativeDirectory(commonRunDirectory)
         addStage(junitStage)
+        return junitStage
     }
 
 
-    void addMavenStage(String mavenToolName, String mavenOptions) {
+    MavenStage addMavenStage(String mavenToolName, String mavenOptions) {
         MavenStage mavenStage = new MavenStage(getScriptWrapper(), "Maven Stage")
         mavenStage.setMavenOptions(mavenOptions)
         mavenStage.setMavenToolName(mavenToolName)
+        mavenStage.setRelativeDirectory(commonRunDirectory)
         addStage(mavenStage)
+        return mavenStage
     }
 
-    void addMavenStage(String stageName, String mavenToolName, String mavenOptions) {
+    MavenStage addMavenStage(String stageName, String mavenToolName, String mavenOptions) {
         MavenStage mavenStage = new MavenStage(getScriptWrapper(), stageName)
         mavenStage.setMavenOptions(mavenOptions)
         mavenStage.setMavenToolName(mavenToolName)
+        mavenStage.setRelativeDirectory(commonRunDirectory)
         addStage(mavenStage)
+        return mavenStage
     }
 
-    void addSetJdkStage() {
-        addStage(new SetJdkStage(getScriptWrapper(), "Set JDK Stage"))
+    SetJdkStage addSetJdkStage() {
+        SetJdkStage setJdkStage = new SetJdkStage(getScriptWrapper(), "Set JDK Stage")
+        setJdkStage.setRelativeDirectory(commonRunDirectory)
+        addStage(setJdkStage)
+        return setJdkStage
     }
 
-    void addSetJdkStage(String jdkToolName) {
+    SetJdkStage addSetJdkStage(String jdkToolName) {
         SetJdkStage setJdkStage = new SetJdkStage(getScriptWrapper(), "Set JDK Stage")
         setJdkStage.setJdkToolName(jdkToolName)
+        setJdkStage.setRelativeDirectory(commonRunDirectory)
         addStage(setJdkStage)
+        return setJdkStage
     }
 
-    void addSetJdkStage(String stageName, String jdkToolName) {
+    SetJdkStage addSetJdkStage(String stageName, String jdkToolName) {
         SetJdkStage setJdkStage = new SetJdkStage(getScriptWrapper(), stageName)
         setJdkStage.setJdkToolName(jdkToolName)
+        setJdkStage.setRelativeDirectory(commonRunDirectory)
         addStage(setJdkStage)
+        return setJdkStage
     }
 
-    void addStage(String stageName, Closure closure) {
-        addStage(new ClosureStage(stageName, closure))
+    ClosureStage addStage(String stageName, Closure closure) {
+        ClosureStage closureStage = new ClosureStage(stageName, closure)
+        closureStage.setRelativeDirectory(commonRunDirectory)
+        addStage(closureStage)
+        return closureStage
     }
 
-    void addStep(Closure closure) {
-        addStep(new ClosureStep(closure))
+    ClosureStep addStep(Closure closure) {
+        ClosureStep closureStep = new ClosureStep(closure)
+        closureStep.setRelativeDirectory(commonRunDirectory)
+        addStep(closureStep)
+        return closureStep
     }
 
+    String getCommonRunDirectory() {
+        return commonRunDirectory
+    }
+
+    void setCommonRunDirectory(final String commonRunDirectory) {
+        this.commonRunDirectory = commonRunDirectory
+    }
 }

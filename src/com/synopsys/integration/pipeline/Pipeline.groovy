@@ -38,7 +38,11 @@ class Pipeline implements Serializable {
 
     void run() {
         getPipelineLogger().info("Starting run")
-        getWrappers().each { wrapper -> wrapper.start() }
+        getWrappers().each { wrapper ->
+            getScriptWrapper().dir(wrapper.getRelativeDirectory()) {
+                wrapper.start()
+            }
+        }
         try {
             getSteps().each { currentStep ->
                 getPipelineLogger().info("Current Step ${currentStep}")
@@ -56,10 +60,18 @@ class Pipeline implements Serializable {
             }
         } catch (Exception e) {
             getScriptWrapper().currentBuild().result = "FAILURE"
-            getWrappers().each { wrapper -> wrapper.handleException(e) }
+            getWrappers().each { wrapper ->
+                getScriptWrapper().dir(wrapper.getRelativeDirectory()) {
+                    wrapper.handleException(e)
+                }
+            }
             getPipelineLogger().error("Build failed because ${e.getMessage()}", e)
         } finally {
-            getWrappers().each { wrapper -> wrapper.end() }
+            getWrappers().each { wrapper ->
+                getScriptWrapper().dir(wrapper.getRelativeDirectory()) {
+                    wrapper.end()
+                }
+            }
         }
     }
 

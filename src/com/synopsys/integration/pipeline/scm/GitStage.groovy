@@ -2,6 +2,7 @@ package com.synopsys.integration.pipeline.scm
 
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
+import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.Stage
 
 class GitStage extends Stage {
@@ -11,6 +12,7 @@ class GitStage extends Stage {
 
 
     private final JenkinsScriptWrapper scriptWrapper
+    private final PipelineLogger logger
     private final String url
     private final String branch
     private String gitToolName = DEFAULT_GIT_TOOL
@@ -18,15 +20,17 @@ class GitStage extends Stage {
     private boolean poll = DEFAULT_GIT_POLL
 
 
-    GitStage(JenkinsScriptWrapper scriptWrapper, String stageName, String url, String branch) {
+    GitStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, String url, String branch) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
+        this.logger = logger
         this.url = url
         this.branch = branch
     }
 
     @Override
     void stageExecution() throws PipelineException, Exception {
+        logger.info("Pulling branch '${branch}' from repo '${url}")
         scriptWrapper.checkout(url, branch, gitToolName, changelog, poll)
         // Need to do this because Jenkins checks out a detached HEAD
         scriptWrapper.executeCommandWithException("git checkout ${branch}")

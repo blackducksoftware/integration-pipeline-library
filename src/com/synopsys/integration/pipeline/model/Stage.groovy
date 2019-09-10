@@ -5,7 +5,6 @@ import com.synopsys.integration.pipeline.exception.PipelineException
 abstract class Stage extends Step {
     // Fields here must be public or they can't be accessed (in Jenkins at runtime) in sub classes
     public final String name
-    public String relativeDirectory = '.'
 
     final List<StageWrapper> wrappers = new LinkedList<>()
 
@@ -33,13 +32,5 @@ abstract class Stage extends Step {
 
     String getName() {
         return name
-    }
-
-    String getRelativeDirectory() {
-        return relativeDirectory
-    }
-
-    void setRelativeDirectory(final String relativeDirectory) {
-        this.relativeDirectory = relativeDirectory
     }
 }
