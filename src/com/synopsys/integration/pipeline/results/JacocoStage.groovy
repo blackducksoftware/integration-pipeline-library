@@ -14,6 +14,6 @@ class JacocoStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        scriptWrapper.step([$class: 'JacocoPublisher'])
+        scriptWrapper.jacoco(buildOverBuild: true)
     }
 }
