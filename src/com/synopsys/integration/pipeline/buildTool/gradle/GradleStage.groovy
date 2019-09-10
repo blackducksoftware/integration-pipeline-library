@@ -8,7 +8,7 @@ import com.synopsys.integration.pipeline.model.Stage
 
 class GradleStage extends Stage {
     public static final String DEFAULT_GRADLE_EXE = './gradlew'
-    public static final String DEFAULT_GRADLE_OPTIONS = 'clean build --refresh-dependencies'
+    public static final String DEFAULT_GRADLE_OPTIONS = 'clean build'
 
     private final JenkinsScriptWrapper scriptWrapper
     private String gradleExe = DEFAULT_GRADLE_EXE

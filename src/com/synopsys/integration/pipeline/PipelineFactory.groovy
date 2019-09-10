@@ -54,21 +54,6 @@ class PipelineFactory implements Serializable {
         return new GitStage(scriptWrapper, stageName, url, branch)
     }
 
-    GradleStage gradleStageDefaults() {
-        return new GradleStage(scriptWrapper, "Gradle Stage")
-    }
-
-    GradleStage gradleStageWithOptions(String gradleOptions) {
-        GradleStage gradleStage = new GradleStage(scriptWrapper, "Gradle Stage")
-        gradleStage.setGradleOptions(gradleOptions)
-        return gradleStage
-    }
-
-    GradleStage gradleStageWithExe(String gradleExe) {
-        GradleStage gradleStage = new GradleStage(scriptWrapper, "Gradle Stage")
-        gradleStage.setGradleExe(gradleExe)
-        return gradleStage
-    }
 
     GradleStage gradleStage(String gradleExe, String gradleOptions) {
         GradleStage gradleStage = new GradleStage(scriptWrapper, "Gradle Stage")
@@ -82,22 +67,6 @@ class PipelineFactory implements Serializable {
         gradleStage.setGradleExe(gradleExe)
         gradleStage.setGradleOptions(gradleOptions)
         return gradleStage
-    }
-
-    MavenStage mavenStageDefaults() {
-        return new MavenStage(scriptWrapper, "Maven Stage")
-    }
-
-    MavenStage mavenStageDefaultTool(String mavenOptions) {
-        MavenStage mavenStage = new MavenStage(scriptWrapper, "Maven Stage")
-        mavenStage.setMavenOptions(mavenOptions)
-        return mavenStage
-    }
-
-    MavenStage mavenStageDefaultTool(String stageName, String mavenOptions) {
-        MavenStage mavenStage = new MavenStage(scriptWrapper, stageName)
-        mavenStage.setMavenOptions(mavenOptions)
-        return mavenStage
     }
 
     MavenStage mavenStage(String mavenToolName, String mavenOptions) {
