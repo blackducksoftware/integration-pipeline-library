@@ -77,10 +77,10 @@ class JenkinsScriptWrapper implements Serializable {
         script.junit allowEmptyResults: allowEmptyResults, testResults: xmlPattern
     }
 
-    void jacoco(Object object) {
+    void jacoco(Object jacocoOptions) {
         PipelineLogger logger = new DefaultPipelineLoger(this)
-        logger.info("Jacoco options ${object}")
-        script.jacoco()
+        logger.info("Jacoco options ${jacocoOptions.getClass()}")
+        script.jacoco jacocoOptions
     }
 
     /**
