@@ -62,4 +62,11 @@ class Pipeline implements Serializable {
         }
     }
 
+    JenkinsScriptWrapper getScriptWrapper() {
+        return scriptWrapper
+    }
+
+    PipelineLogger getPipelineLogger() {
+        return pipelineLogger
+    }
 }

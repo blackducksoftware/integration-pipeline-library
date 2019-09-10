@@ -65,8 +65,12 @@ class JenkinsScriptWrapper implements Serializable {
         script.println message
     }
 
-    void run(Closure closure) {
-        script.run closure
+    void step(String[] fields) {
+        script.step fields
+    }
+
+    void archiveArtifacts(String artifactPattern) {
+        script.archiveArtifacts artifactPattern
     }
 
     /**
