@@ -16,6 +16,7 @@ class ClosureStep extends Step {
 
     @Override
     void run() throws PipelineException, Exception {
-        scriptWrapper.run(closure)
+        //FIXME not working yet
+        closure.call()
     }
 }

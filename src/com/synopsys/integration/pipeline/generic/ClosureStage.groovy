@@ -17,6 +17,7 @@ class ClosureStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        scriptWrapper.run(closure)
+        //FIXME not working yet
+        closure.call()
     }
 }
