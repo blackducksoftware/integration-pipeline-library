@@ -22,31 +22,31 @@ class Pipeline implements Serializable {
     }
 
     void addStep(Step step) {
-        pipelineLogger.info("Adding step")
+        getPipelineLogger().info("Adding step")
         steps.add(step)
     }
 
     void addStage(Stage stage) {
-        pipelineLogger.info("Adding stage ${stage.getName()}")
+        getPipelineLogger().info("Adding stage ${stage.getName()}")
         steps.add(stage)
     }
 
     void addPipelineWrapper(PipelineWrapper wrapper) {
-        pipelineLogger.info("Adding wrapper ${wrapper.getName()}")
+        getPipelineLogger().info("Adding wrapper ${wrapper.getName()}")
         wrappers.add(wrapper)
     }
 
     void run() {
-        pipelineLogger.info("Starting run")
-        wrappers.each { wrapper -> wrapper.start() }
+        getPipelineLogger().info("Starting run")
+        getWrappers().each { wrapper -> wrapper.start() }
         try {
-            steps.each { currentStep ->
-                pipelineLogger.info("Current Step ${currentStep}")
+            getSteps().each { currentStep ->
+                getPipelineLogger().info("Current Step ${currentStep}")
                 if (currentStep instanceof Stage) {
                     Stage currentStage = (Stage) currentStep
-                    scriptWrapper.dir(currentStage.getRelativeDirectory()) {
-                        scriptWrapper.stage(currentStage.getName()) {
-                            pipelineLogger.info("running stage ${currentStage.getName()}")
+                    getScriptWrapper().dir(currentStage.getRelativeDirectory()) {
+                        getScriptWrapper().stage(currentStage.getName()) {
+                            getPipelineLogger().info("running stage ${currentStage.getName()}")
                             currentStage.run()
                         }
                     }
@@ -55,11 +55,11 @@ class Pipeline implements Serializable {
                 }
             }
         } catch (Exception e) {
-            scriptWrapper.currentBuild().result = "FAILURE"
-            wrappers.each { wrapper -> wrapper.handleException(e) }
-            pipelineLogger.error("Build failed because ${e.getMessage()}", e)
+            getScriptWrapper().currentBuild().result = "FAILURE"
+            getWrappers().each { wrapper -> wrapper.handleException(e) }
+            getPipelineLogger().error("Build failed because ${e.getMessage()}", e)
         } finally {
-            wrappers.each { wrapper -> wrapper.end() }
+            getWrappers().each { wrapper -> wrapper.end() }
         }
     }
 
@@ -69,5 +69,13 @@ class Pipeline implements Serializable {
 
     public PipelineLogger getPipelineLogger() {
         return pipelineLogger
+    }
+
+    List<PipelineWrapper> getWrappers() {
+        return wrappers
+    }
+
+    List<Step> getSteps() {
+        return steps
     }
 }
