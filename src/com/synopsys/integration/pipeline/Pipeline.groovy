@@ -45,17 +45,16 @@ class Pipeline implements Serializable {
         }
         try {
             getSteps().each { currentStep ->
-                getPipelineLogger().info("Current Step ${currentStep}")
-                if (currentStep instanceof Stage) {
-                    Stage currentStage = (Stage) currentStep
-                    getScriptWrapper().dir(currentStage.getRelativeDirectory()) {
+                getScriptWrapper().dir(currentStep.getRelativeDirectory()) {
+                    if (currentStep instanceof Stage) {
+                        Stage currentStage = (Stage) currentStep
                         getScriptWrapper().stage(currentStage.getName()) {
                             getPipelineLogger().info("running stage ${currentStage.getName()}")
                             currentStage.run()
                         }
+                    } else {
+                        currentStep.run()
                     }
-                } else {
-                    currentStep.run()
                 }
             }
         } catch (Exception e) {
