@@ -10,8 +10,8 @@ import com.synopsys.integration.pipeline.model.Step
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class Pipeline implements Serializable {
-    final JenkinsScriptWrapper scriptWrapper
-    final PipelineLogger pipelineLogger
+    public final JenkinsScriptWrapper scriptWrapper
+    public final PipelineLogger pipelineLogger
 
     final List<PipelineWrapper> wrappers = new LinkedList<>()
     final List<Step> steps = new LinkedList<>()
@@ -62,11 +62,11 @@ class Pipeline implements Serializable {
         }
     }
 
-    JenkinsScriptWrapper getScriptWrapper() {
+    public JenkinsScriptWrapper getScriptWrapper() {
         return scriptWrapper
     }
 
-    PipelineLogger getPipelineLogger() {
+    public PipelineLogger getPipelineLogger() {
         return pipelineLogger
     }
 }
