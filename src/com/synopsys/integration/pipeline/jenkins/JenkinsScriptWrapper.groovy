@@ -80,7 +80,7 @@ class JenkinsScriptWrapper implements Serializable {
     void jacoco(Object object) {
         PipelineLogger logger = new DefaultPipelineLoger()
         logger.info("Jacoco options ${object}")
-        script.jacoco
+        script.jacoco()
     }
 
     /**
