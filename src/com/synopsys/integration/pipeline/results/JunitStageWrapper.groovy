@@ -8,8 +8,7 @@ class JunitStageWrapper extends StageWrapper {
     public static final String DEFAULT_JUNIT_XML_PATTERN = 'build/**/*.xml'
 
     private JenkinsScriptWrapper scriptWrapper
-    private String xmlFilePattern = DEFAULT_JUNIT_XML_PATTERN
-    private boolean allowEmptyResults = false
+    private LinkedHashMap junitOptions = [allowEmptyResults: false, testResults: DEFAULT_JUNIT_XML_PATTERN]
 
     JunitStageWrapper(JenkinsScriptWrapper scriptWrapper, String name) {
         super(name)
@@ -28,22 +27,14 @@ class JunitStageWrapper extends StageWrapper {
 
     @Override
     void end() {
-        scriptWrapper.junit(allowEmptyResults, xmlFilePattern)
+        scriptWrapper.junit(junitOptions)
     }
 
-    String getXmlFilePattern() {
-        return xmlFilePattern
+    LinkedHashMap getJunitOptions() {
+        return junitOptions
     }
 
-    void setXmlFilePattern(final String xmlFilePattern) {
-        this.xmlFilePattern = xmlFilePattern
-    }
-
-    boolean getAllowEmptyResults() {
-        return allowEmptyResults
-    }
-
-    void setAllowEmptyResults(final boolean allowEmptyResults) {
-        this.allowEmptyResults = allowEmptyResults
+    void setJunitOptions(final LinkedHashMap junitOptions) {
+        this.junitOptions = junitOptions
     }
 }

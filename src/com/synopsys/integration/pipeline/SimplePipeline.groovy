@@ -95,31 +95,33 @@ class SimplePipeline extends Pipeline {
         return gradleStage
     }
 
-    JacocoStage addJacocoStage() {
+    JacocoStage addJacocoStage(LinkedHashMap jacocoOptions) {
         JacocoStage jacocoStage = new JacocoStage(getScriptWrapper(), 'Jacoco Stage')
+        jacocoStage.setJacocoOptions(jacocoOptions)
         jacocoStage.setRelativeDirectory(commonRunDirectory)
         addStage(jacocoStage)
         return jacocoStage
     }
 
-    JacocoStage addJacocoStage(String stageName) {
+    JacocoStage addJacocoStage(String stageName, LinkedHashMap jacocoOptions) {
         JacocoStage jacocoStage = new JacocoStage(getScriptWrapper(), stageName)
+        jacocoStage.setJacocoOptions(jacocoOptions)
         jacocoStage.setRelativeDirectory(commonRunDirectory)
         addStage(jacocoStage)
         return jacocoStage
     }
 
-    JunitStageWrapper addJunitStageWrapper(Stage stage, String xmlFilePattern) {
+    JunitStageWrapper addJunitStageWrapper(Stage stage, LinkedHashMap junitOptions) {
         JunitStageWrapper junitStageWrapper = new JunitStageWrapper(getScriptWrapper(), 'Junit Stage')
-        junitStageWrapper.setXmlFilePattern(xmlFilePattern)
+        junitStageWrapper.setJunitOptions(junitOptions)
         junitStageWrapper.setRelativeDirectory(commonRunDirectory)
         stage.addStageWrapper(junitStageWrapper)
         return junitStageWrapper
     }
 
-    JunitStageWrapper addJunitStageWrapper(Stage stage, String stageName, String xmlFilePattern) {
+    JunitStageWrapper addJunitStageWrapper(Stage stage, String stageName, LinkedHashMap junitOptions) {
         JunitStageWrapper junitStageWrapper = new JunitStageWrapper(getScriptWrapper(), stageName)
-        junitStageWrapper.setXmlFilePattern(xmlFilePattern)
+        junitStageWrapper.setJunitOptions(junitOptions)
         junitStageWrapper.setRelativeDirectory(commonRunDirectory)
         stage.addStageWrapper(junitStageWrapper)
         return junitStageWrapper

@@ -6,7 +6,7 @@ import com.synopsys.integration.pipeline.model.Stage
 
 class JacocoStage extends Stage {
     private JenkinsScriptWrapper scriptWrapper
-    private Object jacocoOptions = [changeBuildStatus: false]
+    private LinkedHashMap jacocoOptions = [changeBuildStatus: false]
 
     JacocoStage(JenkinsScriptWrapper scriptWrapper, String name) {
         super(name)
@@ -18,11 +18,11 @@ class JacocoStage extends Stage {
         scriptWrapper.jacoco(jacocoOptions)
     }
 
-    Object getJacocoOptions() {
+    LinkedHashMap getJacocoOptions() {
         return jacocoOptions
     }
 
-    void setJacocoOptions(final Object jacocoOptions) {
+    void setJacocoOptions(final LinkedHashMap jacocoOptions) {
         this.jacocoOptions = jacocoOptions
     }
 }
