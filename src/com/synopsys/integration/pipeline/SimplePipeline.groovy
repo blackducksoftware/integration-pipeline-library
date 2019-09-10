@@ -117,7 +117,7 @@ class SimplePipeline extends Pipeline {
         return junitStageWrapper
     }
 
-    JunitStageWrapper addJunitStage(Stage stage, String stageName, String xmlFilePattern) {
+    JunitStageWrapper addJunitStageWrapper(Stage stage, String stageName, String xmlFilePattern) {
         JunitStageWrapper junitStageWrapper = new JunitStageWrapper(getScriptWrapper(), stageName)
         junitStageWrapper.setXmlFilePattern(xmlFilePattern)
         junitStageWrapper.setRelativeDirectory(commonRunDirectory)

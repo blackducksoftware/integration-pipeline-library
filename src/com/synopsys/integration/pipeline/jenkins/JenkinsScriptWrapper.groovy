@@ -73,6 +73,10 @@ class JenkinsScriptWrapper implements Serializable {
         script.archiveArtifacts artifactPattern
     }
 
+    void junit(boolean allowEmptyResults, String xmlPattern) {
+        script.junit allowEmptyResults: allowEmptyResults, testResults: xmlPattern
+    }
+
     /**
      * org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
      **/
