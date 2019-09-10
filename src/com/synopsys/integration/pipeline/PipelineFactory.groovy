@@ -115,11 +115,11 @@ class PipelineFactory implements Serializable {
     }
 
     ClosureStage stage(String stageName, Closure closure) {
-        return new ClosureStage(scriptWrapper, stageName, closure)
+        return new ClosureStage(stageName, closure)
     }
 
     ClosureStep step(Closure closure) {
-        return new ClosureStep(scriptWrapper, closure)
+        return new ClosureStep(closure)
     }
 
 }
