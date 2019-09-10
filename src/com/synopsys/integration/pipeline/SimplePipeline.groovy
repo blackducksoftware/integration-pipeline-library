@@ -13,10 +13,15 @@ import com.synopsys.integration.pipeline.setup.SetJdkStage
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class SimplePipeline extends Pipeline {
-    public String commonRunDirectory = '.'
+    public String commonRunDirectory
 
     SimplePipeline(CpsScript script) {
+        this(script, '.')
+    }
+
+    SimplePipeline(CpsScript script, String commonRunDirectory) {
         super(script)
+        this.commonRunDirectory = commonRunDirectory
     }
 
     ArchiveStage addArchiveStage(String archiveFilePattern) {
