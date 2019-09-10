@@ -5,9 +5,10 @@ import com.synopsys.integration.pipeline.buildTool.maven.MavenStage
 import com.synopsys.integration.pipeline.email.EmailPipelineWrapper
 import com.synopsys.integration.pipeline.generic.ClosureStage
 import com.synopsys.integration.pipeline.generic.ClosureStep
+import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.results.ArchiveStage
 import com.synopsys.integration.pipeline.results.JacocoStage
-import com.synopsys.integration.pipeline.results.JunitStage
+import com.synopsys.integration.pipeline.results.JunitStageWrapper
 import com.synopsys.integration.pipeline.scm.GitStage
 import com.synopsys.integration.pipeline.setup.CleanupStep
 import com.synopsys.integration.pipeline.setup.SetJdkStage
@@ -108,20 +109,20 @@ class SimplePipeline extends Pipeline {
         return jacocoStage
     }
 
-    JunitStage addJunitStage(String xmlFilePattern) {
-        JunitStage junitStage = new JunitStage(getScriptWrapper(), 'Junit Stage')
-        junitStage.setXmlFilePattern(xmlFilePattern)
-        junitStage.setRelativeDirectory(commonRunDirectory)
-        addStage(junitStage)
-        return junitStage
+    JunitStageWrapper addJunitStageWrapper(Stage stage, String xmlFilePattern) {
+        JunitStageWrapper junitStageWrapper = new JunitStageWrapper(getScriptWrapper(), 'Junit Stage')
+        junitStageWrapper.setXmlFilePattern(xmlFilePattern)
+        junitStageWrapper.setRelativeDirectory(commonRunDirectory)
+        stage.addStageWrapper(junitStageWrapper)
+        return junitStageWrapper
     }
 
-    JunitStage addJunitStage(String stageName, String xmlFilePattern) {
-        JunitStage junitStage = new JunitStage(getScriptWrapper(), stageName)
-        junitStage.setXmlFilePattern(xmlFilePattern)
-        junitStage.setRelativeDirectory(commonRunDirectory)
-        addStage(junitStage)
-        return junitStage
+    JunitStageWrapper addJunitStage(Stage stage, String stageName, String xmlFilePattern) {
+        JunitStageWrapper junitStageWrapper = new JunitStageWrapper(getScriptWrapper(), stageName)
+        junitStageWrapper.setXmlFilePattern(xmlFilePattern)
+        junitStageWrapper.setRelativeDirectory(commonRunDirectory)
+        stage.addStageWrapper(junitStageWrapper)
+        return junitStageWrapper
     }
 
 

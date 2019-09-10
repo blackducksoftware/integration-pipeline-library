@@ -1,24 +1,18 @@
 package com.synopsys.integration.pipeline.results
 
-import com.synopsys.integration.pipeline.exception.PipelineException
-import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
-import com.synopsys.integration.pipeline.model.Stage
 
-class JunitStage extends Stage {
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
+import com.synopsys.integration.pipeline.model.StageWrapper
+
+class JunitStageWrapper extends StageWrapper {
     public static final String DEFAULT_JUNIT_XML_PATTERN = 'build/**/*.xml'
 
     private String xmlFilePattern = DEFAULT_JUNIT_XML_PATTERN
     private JenkinsScriptWrapper scriptWrapper
 
-
-    JunitStage(JenkinsScriptWrapper scriptWrapper, String name) {
+    JunitStageWrapper(JenkinsScriptWrapper scriptWrapper, String name) {
         super(name)
         this.scriptWrapper = scriptWrapper
-    }
-
-    @Override
-    void stageExecution() throws PipelineException, Exception {
-        scriptWrapper.step([$class: 'JUnitResultArchiver', testResults: "${xmlFilePattern}"])
     }
 
     String getXmlFilePattern() {
@@ -27,5 +21,20 @@ class JunitStage extends Stage {
 
     void setXmlFilePattern(final String xmlFilePattern) {
         this.xmlFilePattern = xmlFilePattern
+    }
+
+    @Override
+    void start() {
+
+    }
+
+    @Override
+    void handleException(final Exception e) {
+
+    }
+
+    @Override
+    void end() {
+        scriptWrapper.step([$class: 'JUnitResultArchiver', testResults: "${xmlFilePattern}"])
     }
 }
