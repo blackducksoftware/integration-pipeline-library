@@ -41,6 +41,7 @@ class Pipeline implements Serializable {
         wrappers.each { wrapper -> wrapper.start() }
         try {
             steps.each { currentStep ->
+                pipelineLogger.info("Current Step ${currentStep}")
                 if (currentStep instanceof Stage) {
                     Stage currentStage = (Stage) currentStep
                     scriptWrapper.dir(currentStage.getRelativeDirectory()) {
