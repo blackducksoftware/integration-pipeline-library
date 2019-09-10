@@ -9,6 +9,7 @@ import com.synopsys.integration.pipeline.results.ArchiveStage
 import com.synopsys.integration.pipeline.results.JacocoStage
 import com.synopsys.integration.pipeline.results.JunitStage
 import com.synopsys.integration.pipeline.scm.GitStage
+import com.synopsys.integration.pipeline.setup.CleanupStep
 import com.synopsys.integration.pipeline.setup.SetJdkStage
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
@@ -38,6 +39,11 @@ class SimplePipeline extends Pipeline {
         archiveStage.setRelativeDirectory(commonRunDirectory)
         addStage(archiveStage)
         return archiveStage
+    }
+
+    CleanupStep addCleanupStep() {
+        CleanupStep cleanupStep = new CleanupStep(getScriptWrapper())
+        return cleanupStep
     }
 
     EmailPipelineWrapper addEmailPipelineWrapper(String recipientList) {
