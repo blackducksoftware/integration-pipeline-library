@@ -27,6 +27,17 @@ class GithubReleaseStage extends Stage {
     private String releaseDescription = DEFAULT_RELEASE_MESSAGE
     private String releaseScriptUrl = DEFAULT_SCRIPT_URL
 
+    GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, String project, String branch) {
+        super(stageName)
+        this.scriptWrapper = scriptWrapper
+        this.logger = logger
+        this.artifactFile = null
+        this.artifactPattern = null
+        this.artifactDirectory = null
+        this.project = project
+        this.branch = branch
+    }
+
     GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, String artifactFile,
                        String project, String branch) {
         super(stageName)
