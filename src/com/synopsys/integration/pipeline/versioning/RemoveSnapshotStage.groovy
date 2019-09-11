@@ -45,7 +45,20 @@ class RemoveSnapshotStage extends Stage {
             String gitPath = scriptWrapper.tool(gitToolName)
 
             scriptWrapper.executeCommand("${gitPath} commit -am \"Release ${newVersion}\"")
-            scriptWrapper.executeCommand("${gitPath} push origin ${branch}")
+
+            String remote = 'origin'
+            String branchName = branch
+
+            if (branch.contains('/')) {
+                String[] pieces = branch.split('/')
+                if (pieces.length != 2) {
+                    throw new IllegalArgumentException('The branch provided was not in a valid format.')
+                }
+                remote = pieces[0]
+                branchName = pieces[1]
+            }
+
+            scriptWrapper.executeCommand("${gitPath} push ${remote} ${branchName}")
             logger.debug("Pushing release to branch ${branch}")
         }
         if (version.contains('-SNAPSHOT')) {
