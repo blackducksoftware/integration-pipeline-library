@@ -1,7 +1,7 @@
 package com.synopsys.integration.pipeline
 
-import com.synopsys.integration.pipeline.buildTool.gradle.GradleStage
-import com.synopsys.integration.pipeline.buildTool.maven.MavenStage
+import com.synopsys.integration.pipeline.buildTool.GradleStage
+import com.synopsys.integration.pipeline.buildTool.MavenStage
 import com.synopsys.integration.pipeline.email.EmailPipelineWrapper
 import com.synopsys.integration.pipeline.generic.ClosureStage
 import com.synopsys.integration.pipeline.generic.ClosureStep
@@ -12,6 +12,7 @@ import com.synopsys.integration.pipeline.results.JunitStageWrapper
 import com.synopsys.integration.pipeline.scm.GitStage
 import com.synopsys.integration.pipeline.setup.CleanupStep
 import com.synopsys.integration.pipeline.setup.SetJdkStage
+import com.synopsys.integration.pipeline.tools.DetectStage
 import com.synopsys.integration.pipeline.versioning.GithubReleaseStage
 import com.synopsys.integration.pipeline.versioning.NextSnapshotStage
 import com.synopsys.integration.pipeline.versioning.RemoveSnapshotStage
@@ -49,6 +50,26 @@ class SimplePipeline extends Pipeline {
         CleanupStep cleanupStep = new CleanupStep(getScriptWrapper())
         addStep(cleanupStep)
         return cleanupStep
+    }
+
+    DetectStage addDetectStage(String detectCommand) {
+        detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.blackduck.signature.scanner.disabled=true --detect.force.success=true'
+
+        DetectStage detectStage = new DetectStage(getScriptWrapper(), 'Detect', detectCommand)
+        detectStage.setDetectURL(getScriptWrapper().env().HUB_DETECT_URL)
+        detectStage.setRelativeDirectory(commonRunDirectory)
+        addStage(detectStage)
+        return detectStage
+    }
+
+    DetectStage addDetectStage(String stageName, String detectCommand) {
+        detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.blackduck.signature.scanner.disabled=true --detect.force.success=true'
+        
+        DetectStage detectStage = new DetectStage(getScriptWrapper(), stageName, detectCommand)
+        detectStage.setDetectURL(getScriptWrapper().env().HUB_DETECT_URL)
+        detectStage.setRelativeDirectory(commonRunDirectory)
+        addStage(detectStage)
+        return detectStage
     }
 
     EmailPipelineWrapper addEmailPipelineWrapper(String recipientList) {

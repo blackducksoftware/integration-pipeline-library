@@ -1,4 +1,4 @@
-package com.synopsys.integration.pipeline.buildTool.maven
+package com.synopsys.integration.pipeline.buildTool
 
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
