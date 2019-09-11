@@ -58,9 +58,8 @@ class RemoveSnapshotStage extends Stage {
 
             scriptWrapper.executeCommand("${gitPath} push ${remote} ${branch}")
             logger.debug("Pushing release to branch ${branch}")
-        }
-        if (version.contains('-SNAPSHOT')) {
-            scriptWrapper.env().GITHUB_RELEASE_VERSION = version
+            
+            scriptWrapper.env().GITHUB_RELEASE_VERSION = newVersion
         }
     }
 
