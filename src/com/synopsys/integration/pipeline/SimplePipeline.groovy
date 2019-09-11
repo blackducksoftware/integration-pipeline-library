@@ -67,36 +67,42 @@ class SimplePipeline extends Pipeline {
 
     GithubReleaseStage addGithubReleaseStage(String branch) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', branch)
+        githubReleaseStage.setRelativeDirectory(commonRunDirectory)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
     GithubReleaseStage addGithubReleaseStage(String stageName, String branch) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, branch)
+        githubReleaseStage.setRelativeDirectory(commonRunDirectory)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
     GithubReleaseStage addGithubReleaseStageByFile(String artifactFile, String branch) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', artifactFile, branch)
+        githubReleaseStage.setRelativeDirectory(commonRunDirectory)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
     GithubReleaseStage addGithubReleaseStageByFile(String stageName, String artifactFile, String branch) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, artifactFile, branch)
+        githubReleaseStage.setRelativeDirectory(commonRunDirectory)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
     GithubReleaseStage addGithubReleaseStageByPattern(String artifactPattern, String artifactDirectory, String branch) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', artifactPattern, artifactDirectory, branch)
+        githubReleaseStage.setRelativeDirectory(commonRunDirectory)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
     GithubReleaseStage addGithubReleaseStageByPattern(String stageName, String artifactPattern, String artifactDirectory, String branch) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, artifactPattern, artifactDirectory, branch)
+        githubReleaseStage.setRelativeDirectory(commonRunDirectory)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
@@ -187,24 +193,28 @@ class SimplePipeline extends Pipeline {
 
     NextSnapshotStage addNextSnapshotStage(String buildTool, String exe, String branch) {
         NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getScriptWrapper(), getPipelineLogger(), 'Next Snapshot', buildTool, exe, branch)
+        nextSnapshotStage.setRelativeDirectory(commonRunDirectory)
         addStage(nextSnapshotStage)
         return nextSnapshotStage
     }
 
     NextSnapshotStage addNextSnapshotStage(String stageName, String buildTool, String exe, String branch) {
         NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getScriptWrapper(), getPipelineLogger(), stageName, buildTool, exe, branch)
+        nextSnapshotStage.setRelativeDirectory(commonRunDirectory)
         addStage(nextSnapshotStage)
         return nextSnapshotStage
     }
 
     RemoveSnapshotStage addRemoveSnapshotStage(String buildTool, String exe, String branch) {
         RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getScriptWrapper(), getPipelineLogger(), 'Remove Snapshot', buildTool, exe, branch)
+        removeSnapshotStage.setRelativeDirectory(commonRunDirectory)
         addStage(removeSnapshotStage)
         return removeSnapshotStage
     }
 
     RemoveSnapshotStage addRemoveSnapshotStage(String stageName, String buildTool, String exe, String branch) {
         RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getScriptWrapper(), getPipelineLogger(), stageName, buildTool, exe, branch)
+        removeSnapshotStage.setRelativeDirectory(commonRunDirectory)
         addStage(removeSnapshotStage)
         return removeSnapshotStage
     }
