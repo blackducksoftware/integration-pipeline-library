@@ -13,11 +13,11 @@ class EmailPipelineWrapper extends PipelineWrapper {
     final String buildNumber
     final String buildURL
 
-    EmailPipelineWrapper(PipelineLogger pipelineLogger, JenkinsScriptWrapper scriptWrapper, String recipientList, String jobName, String buildNumber, String buildURL) {
-        this(pipelineLogger, scriptWrapper, "Email Pipeline Wrapper", recipientList, jobName, buildNumber, buildURL)
+    EmailPipelineWrapper(JenkinsScriptWrapper scriptWrapper, PipelineLogger pipelineLogger, String recipientList, String jobName, String buildNumber, String buildURL) {
+        this(scriptWrapper, pipelineLogger, "Email Pipeline Wrapper", recipientList, jobName, buildNumber, buildURL)
     }
 
-    EmailPipelineWrapper(PipelineLogger pipelineLogger, JenkinsScriptWrapper scriptWrapper, String wrapperName, String recipientList, String jobName, String buildNumber, String buildURL) {
+    EmailPipelineWrapper(JenkinsScriptWrapper scriptWrapper, PipelineLogger pipelineLogger, String wrapperName, String recipientList, String jobName, String buildNumber, String buildURL) {
         super(wrapperName)
         this.pipelineLogger = pipelineLogger;
         this.scriptWrapper = scriptWrapper

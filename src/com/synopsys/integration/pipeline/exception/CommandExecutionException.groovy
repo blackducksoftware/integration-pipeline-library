@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline.exception
 
-class CommandExecutionException extends Exception {
+class CommandExecutionException extends PipelineException {
     final int errorStatus
 
     CommandExecutionException(int errorStatus) {

@@ -12,6 +12,9 @@ import com.synopsys.integration.pipeline.results.JunitStageWrapper
 import com.synopsys.integration.pipeline.scm.GitStage
 import com.synopsys.integration.pipeline.setup.CleanupStep
 import com.synopsys.integration.pipeline.setup.SetJdkStage
+import com.synopsys.integration.pipeline.versioning.GithubReleaseStage
+import com.synopsys.integration.pipeline.versioning.NextSnapshotStage
+import com.synopsys.integration.pipeline.versioning.RemoveSnapshotStage
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class SimplePipeline extends Pipeline {
@@ -27,7 +30,7 @@ class SimplePipeline extends Pipeline {
     }
 
     ArchiveStage addArchiveStage(String archiveFilePattern) {
-        ArchiveStage archiveStage = new ArchiveStage(getScriptWrapper(), 'Archive Stage')
+        ArchiveStage archiveStage = new ArchiveStage(getScriptWrapper(), 'Archive')
         archiveStage.setArchiveFilePattern(archiveFilePattern)
         archiveStage.setRelativeDirectory(commonRunDirectory)
         addStage(archiveStage)
@@ -49,21 +52,33 @@ class SimplePipeline extends Pipeline {
     }
 
     EmailPipelineWrapper addEmailPipelineWrapper(String recipientList) {
-        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineLogger(), getScriptWrapper(), recipientList, getScriptWrapper().env().JOB_NAME, getScriptWrapper().env().BUILD_NUMBER, getScriptWrapper().env().BUILD_URL)
+        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getScriptWrapper(), getPipelineLogger(), recipientList, getScriptWrapper().env().JOB_NAME, getScriptWrapper().env().BUILD_NUMBER, getScriptWrapper().env().BUILD_URL)
         emailPipelineWrapper.setRelativeDirectory(commonRunDirectory)
         addPipelineWrapper(emailPipelineWrapper)
         return emailPipelineWrapper
     }
 
     EmailPipelineWrapper addEmailPipelineWrapper(String wrapperName, String recipientList) {
-        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineLogger(), getScriptWrapper(), wrapperName, recipientList, getScriptWrapper().env().JOB_NAME, getScriptWrapper().env().BUILD_NUMBER, getScriptWrapper().env().BUILD_URL)
+        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getScriptWrapper(), getPipelineLogger(), wrapperName, recipientList, getScriptWrapper().env().JOB_NAME, getScriptWrapper().env().BUILD_NUMBER, getScriptWrapper().env().BUILD_URL)
         emailPipelineWrapper.setRelativeDirectory(commonRunDirectory)
         addPipelineWrapper(emailPipelineWrapper)
         return emailPipelineWrapper
     }
 
+    GithubReleaseStage addGithubReleaseStage(String artifactFile, String artifactPattern, String artifactDirectory, String project, String branch) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', artifactFile, artifactPattern, artifactDirectory, project, branch)
+        addStage(githubReleaseStage)
+        return githubReleaseStage
+    }
+
+    GithubReleaseStage addGithubReleaseStage(String stageName, String artifactFile, String artifactPattern, String artifactDirectory, String project, String branch) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, artifactFile, artifactPattern, artifactDirectory, project, branch)
+        addStage(githubReleaseStage)
+        return githubReleaseStage
+    }
+
     GitStage addGitStage(String url, String branch) {
-        GitStage gitStage = new GitStage(getScriptWrapper(), getPipelineLogger(), "Git Stage", url, branch)
+        GitStage gitStage = new GitStage(getScriptWrapper(), getPipelineLogger(), "Git", url, branch)
         gitStage.setRelativeDirectory(commonRunDirectory)
         addStage(gitStage)
         return gitStage
@@ -78,7 +93,7 @@ class SimplePipeline extends Pipeline {
 
 
     GradleStage addGradleStage(String gradleExe, String gradleOptions) {
-        GradleStage gradleStage = new GradleStage(getScriptWrapper(), "Gradle Stage")
+        GradleStage gradleStage = new GradleStage(getScriptWrapper(), "Gradle")
         gradleStage.setGradleExe(gradleExe)
         gradleStage.setGradleOptions(gradleOptions)
         gradleStage.setRelativeDirectory(commonRunDirectory)
@@ -96,7 +111,7 @@ class SimplePipeline extends Pipeline {
     }
 
     JacocoStage addJacocoStage(LinkedHashMap jacocoOptions) {
-        JacocoStage jacocoStage = new JacocoStage(getScriptWrapper(), 'Jacoco Stage')
+        JacocoStage jacocoStage = new JacocoStage(getScriptWrapper(), 'Jacoco')
         jacocoStage.setJacocoOptions(jacocoOptions)
         jacocoStage.setRelativeDirectory(commonRunDirectory)
         addStage(jacocoStage)
@@ -112,7 +127,7 @@ class SimplePipeline extends Pipeline {
     }
 
     JunitStageWrapper addJunitStageWrapper(Stage stage, LinkedHashMap junitOptions) {
-        JunitStageWrapper junitStageWrapper = new JunitStageWrapper(getScriptWrapper(), 'Junit Stage')
+        JunitStageWrapper junitStageWrapper = new JunitStageWrapper(getScriptWrapper(), 'Junit')
         junitStageWrapper.setJunitOptions(junitOptions)
         junitStageWrapper.setRelativeDirectory(commonRunDirectory)
         stage.addStageWrapper(junitStageWrapper)
@@ -129,7 +144,7 @@ class SimplePipeline extends Pipeline {
 
 
     MavenStage addMavenStage(String mavenToolName, String mavenOptions) {
-        MavenStage mavenStage = new MavenStage(getScriptWrapper(), "Maven Stage")
+        MavenStage mavenStage = new MavenStage(getScriptWrapper(), "Maven")
         mavenStage.setMavenOptions(mavenOptions)
         mavenStage.setMavenToolName(mavenToolName)
         mavenStage.setRelativeDirectory(commonRunDirectory)
@@ -146,15 +161,39 @@ class SimplePipeline extends Pipeline {
         return mavenStage
     }
 
+    NextSnapshotStage addNextSnapshotStage(String buildTool, String exe, String branch) {
+        NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getScriptWrapper(), getPipelineLogger(), 'Next Snapshot', buildTool, exe, branch)
+        addStage(nextSnapshotStage)
+        return nextSnapshotStage
+    }
+
+    NextSnapshotStage addNextSnapshotStage(String stageName, String buildTool, String exe, String branch) {
+        NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getScriptWrapper(), getPipelineLogger(), stageName, buildTool, exe, branch)
+        addStage(nextSnapshotStage)
+        return nextSnapshotStage
+    }
+
+    RemoveSnapshotStage addRemoveSnapshotStage(String buildTool, String exe, String branch) {
+        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getScriptWrapper(), getPipelineLogger(), 'Remove Snapshot', buildTool, exe, branch)
+        addStage(removeSnapshotStage)
+        return removeSnapshotStage
+    }
+
+    RemoveSnapshotStage addRemoveSnapshotStage(String stageName, String buildTool, String exe, String branch) {
+        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getScriptWrapper(), getPipelineLogger(), stageName, buildTool, exe, branch)
+        addStage(removeSnapshotStage)
+        return removeSnapshotStage
+    }
+
     SetJdkStage addSetJdkStage() {
-        SetJdkStage setJdkStage = new SetJdkStage(getScriptWrapper(), "Set JDK Stage")
+        SetJdkStage setJdkStage = new SetJdkStage(getScriptWrapper(), "Set JDK")
         setJdkStage.setRelativeDirectory(commonRunDirectory)
         addStage(setJdkStage)
         return setJdkStage
     }
 
     SetJdkStage addSetJdkStage(String jdkToolName) {
-        SetJdkStage setJdkStage = new SetJdkStage(getScriptWrapper(), "Set JDK Stage")
+        SetJdkStage setJdkStage = new SetJdkStage(getScriptWrapper(), "Set JDK")
         setJdkStage.setJdkToolName(jdkToolName)
         setJdkStage.setRelativeDirectory(commonRunDirectory)
         addStage(setJdkStage)

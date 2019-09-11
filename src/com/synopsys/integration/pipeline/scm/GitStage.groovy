@@ -32,10 +32,13 @@ class GitStage extends Stage {
     void stageExecution() throws PipelineException, Exception {
         logger.info("Pulling branch '${branch}' from repo '${url}")
         scriptWrapper.checkout(url, branch, gitToolName, changelog, poll)
+
+        String gitPath = scriptWrapper.tool(gitToolName)
+
         // Need to do this because Jenkins checks out a detached HEAD
-        scriptWrapper.executeCommandWithException("git checkout ${branch}")
+        scriptWrapper.executeCommandWithException("${gitPath} checkout ${branch}")
         // Do a hard reset in order to clear out any local changes/commits
-        scriptWrapper.executeCommandWithException("git reset --hard ${branch}")
+        scriptWrapper.executeCommandWithException("${gitPath} reset --hard ${branch}")
     }
 
     String getGitToolName() {
