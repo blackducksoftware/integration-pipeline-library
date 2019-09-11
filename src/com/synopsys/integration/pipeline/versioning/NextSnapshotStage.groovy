@@ -29,7 +29,7 @@ class NextSnapshotStage extends Stage {
     @Override
     void stageExecution() throws PipelineException, Exception {
         ProjectUtils projectUtils = new ProjectUtils()
-        projectUtils.initialize(this, buildTool, exe)
+        projectUtils.initialize(scriptWrapper.getScript(), buildTool, exe)
         String newVersion = projectUtils.increaseSemver()
         if (newVersion.contains('-SNAPSHOT')) {
             logger.info("Using the next snapshot post release. ${newVersion}")

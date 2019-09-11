@@ -31,7 +31,7 @@ class RemoveSnapshotStage extends Stage {
     @Override
     void stageExecution() throws PipelineException, Exception {
         ProjectUtils projectUtils = new ProjectUtils()
-        projectUtils.initialize(this, buildTool, exe)
+        projectUtils.initialize(scriptWrapper.getScript(), buildTool, exe)
         boolean hasSnapshotDependencies = projectUtils.checkForSnapshotDependencies(checkAllDependencies)
         if (hasSnapshotDependencies) {
             String errorMessage = "Failing release preparation because of ${buildTool} SNAPSHOT dependencies"
