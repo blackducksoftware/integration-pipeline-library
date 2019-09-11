@@ -31,7 +31,7 @@ class GitStage extends Stage {
     @Override
     void stageExecution() throws PipelineException, Exception {
         logger.info("Pulling branch '${branch}' from repo '${url}")
-        scriptWrapper.checkout(url, branch, gitToolName, changelog, poll)
+        scriptWrapper.checkout(getRelativeDirectory(), url, branch, gitToolName, changelog, poll)
 
         String gitPath = scriptWrapper.tool(gitToolName)
 
