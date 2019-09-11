@@ -10,10 +10,10 @@ class DetectStage extends Stage {
 
     private final String detectURL
 
-    DetectStage(JenkinsScriptWrapper scriptWrapper, String stageName, String detectUrl, String detectCommand) {
+    DetectStage(JenkinsScriptWrapper scriptWrapper, String stageName, String detectURL, String detectCommand) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
-        this.detectUrl = detectUrl
+        this.detectURL = detectURL
         this.detectCommand = detectCommand
     }
 
