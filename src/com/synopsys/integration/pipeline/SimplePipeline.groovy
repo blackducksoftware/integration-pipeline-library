@@ -65,6 +65,18 @@ class SimplePipeline extends Pipeline {
         return emailPipelineWrapper
     }
 
+    GithubReleaseStage addGithubReleaseStage(String project, String branch) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', project, branch)
+        addStage(githubReleaseStage)
+        return githubReleaseStage
+    }
+
+    GithubReleaseStage addGithubReleaseStage(String stageName, String project, String branch) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, project, branch)
+        addStage(githubReleaseStage)
+        return githubReleaseStage
+    }
+
     GithubReleaseStage addGithubReleaseStageByFile(String artifactFile, String project, String branch) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', artifactFile, project, branch)
         addStage(githubReleaseStage)
