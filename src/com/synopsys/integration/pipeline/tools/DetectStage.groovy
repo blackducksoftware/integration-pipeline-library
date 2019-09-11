@@ -8,11 +8,12 @@ class DetectStage extends Stage {
     private final JenkinsScriptWrapper scriptWrapper
     private final String detectCommand
 
-    private String detectURL = config.detectURL ?: "${HUB_DETECT_URL}"
+    private final String detectURL
 
-    DetectStage(JenkinsScriptWrapper scriptWrapper, String stageName, String detectCommand) {
+    DetectStage(JenkinsScriptWrapper scriptWrapper, String stageName, String detectUrl, String detectCommand) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
+        this.detectUrl = detectUrl
         this.detectCommand = detectCommand
     }
 
@@ -30,9 +31,5 @@ class DetectStage extends Stage {
 
     String getDetectURL() {
         return detectURL
-    }
-
-    void setDetectURL(final String detectURL) {
-        this.detectURL = detectURL
     }
 }
