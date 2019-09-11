@@ -54,6 +54,10 @@ class JenkinsScriptWrapper implements Serializable {
                 extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: relativeDirectory]]
     }
 
+    void deleteDir() {
+        script.deleteDir()
+    }
+
     void stage(String stageName, Closure closure) {
         script.stage(stageName, closure)
     }

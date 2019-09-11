@@ -13,6 +13,6 @@ class CleanupStep extends Step {
 
     @Override
     void run() throws PipelineException, Exception {
-        this.scriptWrapper.executeCommand('rm -rf *')
+        this.scriptWrapper.deleteDir()
     }
 }
