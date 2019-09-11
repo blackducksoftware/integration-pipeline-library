@@ -36,7 +36,7 @@ class Pipeline implements Serializable {
         wrappers.add(wrapper)
     }
 
-    void addProperties(LinkedHashMap pipelineProperties) {
+    void addProperties(ArrayList pipelineProperties) {
         scriptWrapper.properties(pipelineProperties)
     }
 

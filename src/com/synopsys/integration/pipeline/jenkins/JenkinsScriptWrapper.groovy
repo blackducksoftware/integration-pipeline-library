@@ -88,7 +88,7 @@ class JenkinsScriptWrapper implements Serializable {
         script.println message
     }
 
-    void properties(LinkedHashMap pipelineOptions) {
+    void properties(ArrayList pipelineOptions) {
         script.properties(pipelineOptions)
     }
 
