@@ -15,6 +15,43 @@ class JenkinsScriptWrapper implements Serializable {
         this.script = script
     }
 
+    int bat(String command) {
+        return script.bat(script: command, returnStatus: true)
+    }
+
+    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll) {
+        script.checkout changelog: changelog, poll: poll, scm: [$class : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
+                                                                gitTool: gitToolName, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
+    }
+
+    // Add options to get the standard out from the commands
+
+    /**
+     * org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
+     **/
+    RunWrapper currentBuild() {
+        return script.currentBuild
+    }
+
+    void deleteDir() {
+        script.deleteDir()
+    }
+
+    void dir(String relativeDirectory, Closure closure) {
+        script.dir(relativeDirectory, closure)
+    }
+
+    void emailext(String content, String subjectLine, String recipientList) {
+        script.emailext(body: content, subject: subjectLine, to: recipientList)
+    }
+
+    /**
+     * org.jenkinsci.plugins.workflow.cps.EnvActionImpl
+     **/
+    EnvActionImpl env() {
+        return script.env
+    }
+
     int executeCommand(String command) {
         if (isUnix()) {
             return sh(command)
@@ -35,39 +72,24 @@ class JenkinsScriptWrapper implements Serializable {
         }
     }
 
-    // Add options to get the standard out from the commands
-
-    int sh(String command) {
-        return script.sh(script: command, returnStatus: true)
-    }
-
-    int bat(String command) {
-        return script.bat(script: command, returnStatus: true)
-    }
-
     boolean isUnix() {
         return script.isUnix()
     }
 
-    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll) {
-        script.checkout changelog: changelog, poll: poll, scm: [$class : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
-                                                                gitTool: gitToolName, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
+    void jacoco(LinkedHashMap jacocoOptions) {
+        script.jacoco jacocoOptions
     }
 
-    void deleteDir() {
-        script.deleteDir()
-    }
-
-    void stage(String stageName, Closure closure) {
-        script.stage(stageName, closure)
-    }
-
-    void dir(String relativeDirectory, Closure closure) {
-        script.dir(relativeDirectory, closure)
+    void junit(LinkedHashMap junitOptions) {
+        script.junit junitOptions
     }
 
     void println(String message) {
         script.println message
+    }
+
+    void properties(LinkedHashMap pipelineOptions) {
+        script.properties(pipelineOptions)
     }
 
     void step(String[] fields) {
@@ -78,41 +100,23 @@ class JenkinsScriptWrapper implements Serializable {
         script.archiveArtifacts artifactPattern
     }
 
-    void junit(LinkedHashMap junitOptions) {
-        script.junit junitOptions
-    }
-
-    void jacoco(LinkedHashMap jacocoOptions) {
-        script.jacoco jacocoOptions
-    }
-
-    /**
-     * org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
-     **/
-    RunWrapper currentBuild() {
-        return script.currentBuild
-    }
-
-    /**
-     * org.jenkinsci.plugins.workflow.cps.EnvActionImpl
-     **/
-    EnvActionImpl env() {
-        return script.env
-    }
-
-    void emailext(String content, String subjectLine, String recipientList) {
-        script.emailext(body: content, subject: subjectLine, to: recipientList)
-    }
-
-    String tool(String toolName) {
-        return script.tool(toolName)
-    }
-
     /**
      * WorkflowScript/CpsScript
      **/
     CpsScript script() {
         return script
+    }
+
+    int sh(String command) {
+        return script.sh(script: command, returnStatus: true)
+    }
+
+    void stage(String stageName, Closure closure) {
+        script.stage(stageName, closure)
+    }
+
+    String tool(String toolName) {
+        return script.tool(toolName)
     }
 
 }

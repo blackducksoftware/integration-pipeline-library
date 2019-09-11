@@ -21,19 +21,23 @@ class Pipeline implements Serializable {
         pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
     }
 
-    void addStep(Step step) {
-        getPipelineLogger().info("Adding step")
-        steps.add(step)
-    }
-
     void addStage(Stage stage) {
         getPipelineLogger().info("Adding stage ${stage.getName()}")
         steps.add(stage)
     }
 
+    void addStep(Step step) {
+        getPipelineLogger().info("Adding step")
+        steps.add(step)
+    }
+
     void addPipelineWrapper(PipelineWrapper wrapper) {
         getPipelineLogger().info("Adding wrapper ${wrapper.getName()}")
         wrappers.add(wrapper)
+    }
+
+    void addProperties(LinkedHashMap pipelineProperties) {
+        scriptWrapper.properties(pipelineProperties)
     }
 
     void run() {
