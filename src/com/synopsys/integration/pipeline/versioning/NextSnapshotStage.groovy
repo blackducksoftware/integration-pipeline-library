@@ -1,11 +1,13 @@
 package com.synopsys.integration.pipeline.versioning
 
 import com.synopsys.integration.ProjectUtils
+import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.scm.GitStage
+import com.synopsys.integration.utilities.GithubBranchParser
 
 class NextSnapshotStage extends Stage {
     private final JenkinsScriptWrapper scriptWrapper
@@ -38,17 +40,10 @@ class NextSnapshotStage extends Stage {
 
             scriptWrapper.executeCommand("${gitPath} commit -a -m \"${commitMessage}\"")
 
-            String remote = 'origin'
+            GithubBranchParser githubBranchParser = new GithubBranchParser()
+            GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
 
-            if (branch.contains('/')) {
-                String[] pieces = branch.split('/')
-                if (pieces.length != 2) {
-                    throw new IllegalArgumentException('The branch provided was not in a valid format.')
-                }
-                remote = pieces[0]
-            }
-
-            scriptWrapper.executeCommand("${gitPath} push ${remote} ${branch}")
+            scriptWrapper.executeCommand("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
         } else {
             logger.warn("Could not update the version to the next SNAPSHOT version.")
         }

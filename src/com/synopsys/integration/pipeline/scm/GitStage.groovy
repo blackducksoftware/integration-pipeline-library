@@ -1,9 +1,11 @@
 package com.synopsys.integration.pipeline.scm
 
+import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.Stage
+import com.synopsys.integration.utilities.GithubBranchParser
 
 class GitStage extends Stage {
     public static final String DEFAULT_GIT_TOOL = 'Default'
@@ -35,10 +37,13 @@ class GitStage extends Stage {
 
         String gitPath = scriptWrapper.tool(gitToolName)
 
+        GithubBranchParser githubBranchParser = new GithubBranchParser()
+        GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
+
         // Need to do this because Jenkins checks out a detached HEAD
-        scriptWrapper.executeCommandWithException("${gitPath} checkout ${branch}")
+        scriptWrapper.executeCommandWithException("${gitPath} checkout ${githubBranchModel.getBranchName()}")
         // Do a hard reset in order to clear out any local changes/commits
-        scriptWrapper.executeCommandWithException("${gitPath} reset --hard ${branch}")
+        scriptWrapper.executeCommandWithException("${gitPath} reset --hard ${githubBranchModel.getBranchName()}")
     }
 
     String getGitToolName() {
