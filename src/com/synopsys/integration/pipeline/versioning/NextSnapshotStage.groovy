@@ -39,7 +39,6 @@ class NextSnapshotStage extends Stage {
             scriptWrapper.executeCommand("${gitPath} commit -a -m \"${commitMessage}\"")
 
             String remote = 'origin'
-            String branchName = branch
 
             if (branch.contains('/')) {
                 String[] pieces = branch.split('/')
@@ -47,10 +46,9 @@ class NextSnapshotStage extends Stage {
                     throw new IllegalArgumentException('The branch provided was not in a valid format.')
                 }
                 remote = pieces[0]
-                branchName = pieces[1]
             }
 
-            scriptWrapper.executeCommand("${gitPath} push ${remote} ${branchName}")
+            scriptWrapper.executeCommand("${gitPath} push ${remote} ${branch}")
         } else {
             logger.warn("Could not update the version to the next SNAPSHOT version.")
         }
