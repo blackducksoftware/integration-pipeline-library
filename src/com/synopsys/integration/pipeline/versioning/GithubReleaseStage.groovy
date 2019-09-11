@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.versioning
 
+import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.GitHubReleaseException
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.exception.PrepareForReleaseException
@@ -7,6 +8,7 @@ import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.scm.GitStage
+import com.synopsys.integration.utilities.GithubBranchParser
 
 class GithubReleaseStage extends Stage {
     public static final String DEFAULT_GITHUB_OWNER = 'blackducksoftware'
@@ -88,8 +90,12 @@ class GithubReleaseStage extends Stage {
         }
         options.add('-m')
         options.add("\"${releaseDescription}\"")
+
+        GithubBranchParser githubBranchParser = new GithubBranchParser()
+        GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
+
         options.add('-br')
-        options.add(branch)
+        options.add(githubBranchModel.getBranchName())
 
         String commandOptions = options.join(' ')
 
