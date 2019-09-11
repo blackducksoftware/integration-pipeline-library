@@ -19,46 +19,43 @@ class GithubReleaseStage extends Stage {
     private final String artifactFile
     private final String artifactPattern
     private final String artifactDirectory
-    private final String project
     private final String branch
 
     private String gitToolName = GitStage.DEFAULT_GIT_TOOL
     private String owner = DEFAULT_GITHUB_OWNER
     private String releaseDescription = DEFAULT_RELEASE_MESSAGE
     private String releaseScriptUrl = DEFAULT_SCRIPT_URL
+    private String project = null
 
-    GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, String project, String branch) {
+    GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, String branch) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
         this.logger = logger
         this.artifactFile = null
         this.artifactPattern = null
         this.artifactDirectory = null
-        this.project = project
         this.branch = branch
     }
 
     GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, String artifactFile,
-                       String project, String branch) {
+                       String branch) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
         this.logger = logger
         this.artifactFile = artifactFile
         this.artifactPattern = null
         this.artifactDirectory = null
-        this.project = project
         this.branch = branch
     }
 
     GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, String artifactPattern, String artifactDirectory,
-                       String project, String branch) {
+                       String branch) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
         this.logger = logger
         this.artifactFile = null
         this.artifactPattern = artifactPattern
         this.artifactDirectory = artifactDirectory
-        this.project = project
         this.branch = branch
     }
 
@@ -122,9 +119,6 @@ class GithubReleaseStage extends Stage {
         return artifactDirectory
     }
 
-    String getProject() {
-        return project
-    }
 
     String getBranch() {
         return branch
@@ -160,5 +154,13 @@ class GithubReleaseStage extends Stage {
 
     void setReleaseScriptUrl(final String releaseScriptUrl) {
         this.releaseScriptUrl = releaseScriptUrl
+    }
+
+    String getProject() {
+        return project
+    }
+
+    void setProject(final String project) {
+        this.project = project
     }
 }

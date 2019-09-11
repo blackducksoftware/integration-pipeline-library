@@ -65,38 +65,38 @@ class SimplePipeline extends Pipeline {
         return emailPipelineWrapper
     }
 
-    GithubReleaseStage addGithubReleaseStage(String project, String branch) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', project, branch)
+    GithubReleaseStage addGithubReleaseStage(String branch) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', branch)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
-    GithubReleaseStage addGithubReleaseStage(String stageName, String project, String branch) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, project, branch)
+    GithubReleaseStage addGithubReleaseStage(String stageName, String branch) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, branch)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
-    GithubReleaseStage addGithubReleaseStageByFile(String artifactFile, String project, String branch) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', artifactFile, project, branch)
+    GithubReleaseStage addGithubReleaseStageByFile(String artifactFile, String branch) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', artifactFile, branch)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
-    GithubReleaseStage addGithubReleaseStageByFile(String stageName, String artifactFile, String project, String branch) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, artifactFile, project, branch)
+    GithubReleaseStage addGithubReleaseStageByFile(String stageName, String artifactFile, String branch) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, artifactFile, branch)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
-    GithubReleaseStage addGithubReleaseStageByPattern(String artifactPattern, String artifactDirectory, String project, String branch) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', artifactPattern, artifactDirectory, project, branch)
+    GithubReleaseStage addGithubReleaseStageByPattern(String artifactPattern, String artifactDirectory, String branch) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', artifactPattern, artifactDirectory, branch)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
-    GithubReleaseStage addGithubReleaseStageByPattern(String stageName, String artifactPattern, String artifactDirectory, String project, String branch) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, artifactPattern, artifactDirectory, project, branch)
+    GithubReleaseStage addGithubReleaseStageByPattern(String stageName, String artifactPattern, String artifactDirectory, String branch) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, artifactPattern, artifactDirectory, branch)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
