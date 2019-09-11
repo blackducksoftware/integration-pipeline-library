@@ -50,8 +50,8 @@ class JenkinsScriptWrapper implements Serializable {
     }
 
     void checkout(String relativeDirectory, String url, String branch, String gitToolName, boolean changelog, boolean poll) {
-        script.checkout changelog: changelog, poll: poll, scm: [$class: 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false, gitTool: gitToolName, submoduleCfg: [], userRemoteConfigs: [[url: url]]],
-                extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: relativeDirectory]]
+        script.checkout changelog: changelog, poll: poll, scm: [$class : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
+                                                                gitTool: gitToolName, submoduleCfg: [], userRemoteConfigs: [[url: url]], extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: relativeDirectory]]]
     }
 
     void deleteDir() {
