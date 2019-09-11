@@ -18,6 +18,7 @@ class GithubReleaseStage extends Stage {
     private final JenkinsScriptWrapper scriptWrapper
     private final PipelineLogger logger
 
+    private final boolean runRelease
     private final String artifactFile
     private final String artifactPattern
     private final String artifactDirectory
@@ -29,32 +30,35 @@ class GithubReleaseStage extends Stage {
     private String releaseScriptUrl = DEFAULT_SCRIPT_URL
     private String project = null
 
-    GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, String branch) {
+    GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, boolean runRelease, String branch) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
         this.logger = logger
+        this.runRelease = runRelease
         this.artifactFile = null
         this.artifactPattern = null
         this.artifactDirectory = null
         this.branch = branch
     }
 
-    GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, String artifactFile,
+    GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, boolean runRelease, String artifactFile,
                        String branch) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
         this.logger = logger
+        this.runRelease = runRelease
         this.artifactFile = artifactFile
         this.artifactPattern = null
         this.artifactDirectory = null
         this.branch = branch
     }
 
-    GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, String artifactPattern, String artifactDirectory,
-                       String branch) {
+    GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, boolean runRelease, String artifactPattern,
+                       String artifactDirectory, String branch) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
         this.logger = logger
+        this.runRelease = runRelease
         this.artifactFile = null
         this.artifactPattern = artifactPattern
         this.artifactDirectory = artifactDirectory
@@ -63,6 +67,10 @@ class GithubReleaseStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
+        if (!runRelease) {
+            logger.info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
+            return
+        }
         String version = scriptWrapper.env().GITHUB_RELEASE_VERSION
         if (null == version || version.trim().length() == 0) {
             throw new PrepareForReleaseException('Could not find the "GITHUB_RELEASE_VERSION" environment variable. Will not perform the GitHub release.')

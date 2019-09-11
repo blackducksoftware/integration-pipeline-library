@@ -85,14 +85,14 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStage addGithubReleaseStage(String branch) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', branch)
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', Boolean.valueOf(getScriptWrapper().env().PIPELINE_RUN_RELEASE), branch)
         githubReleaseStage.setRelativeDirectory(commonRunDirectory)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
     GithubReleaseStage addGithubReleaseStage(String stageName, String branch) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, branch)
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, Boolean.valueOf(getScriptWrapper().env().PIPELINE_RUN_RELEASE), branch)
         githubReleaseStage.setRelativeDirectory(commonRunDirectory)
         addStage(githubReleaseStage)
         return githubReleaseStage
@@ -211,28 +211,28 @@ class SimplePipeline extends Pipeline {
     }
 
     NextSnapshotStage addNextSnapshotStage(String buildTool, String exe, String branch) {
-        NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getScriptWrapper(), getPipelineLogger(), 'Next Snapshot', buildTool, exe, branch)
+        NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getScriptWrapper(), getPipelineLogger(), 'Next Snapshot', Boolean.valueOf(getScriptWrapper().env().PIPELINE_RUN_RELEASE), buildTool, exe, branch)
         nextSnapshotStage.setRelativeDirectory(commonRunDirectory)
         addStage(nextSnapshotStage)
         return nextSnapshotStage
     }
 
     NextSnapshotStage addNextSnapshotStage(String stageName, String buildTool, String exe, String branch) {
-        NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getScriptWrapper(), getPipelineLogger(), stageName, buildTool, exe, branch)
+        NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getScriptWrapper(), getPipelineLogger(), stageName, Boolean.valueOf(getScriptWrapper().env().PIPELINE_RUN_RELEASE), buildTool, exe, branch)
         nextSnapshotStage.setRelativeDirectory(commonRunDirectory)
         addStage(nextSnapshotStage)
         return nextSnapshotStage
     }
 
     RemoveSnapshotStage addRemoveSnapshotStage(String buildTool, String exe, String branch) {
-        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getScriptWrapper(), getPipelineLogger(), 'Remove Snapshot', buildTool, exe, branch)
+        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getScriptWrapper(), getPipelineLogger(), 'Remove Snapshot', Boolean.valueOf(getScriptWrapper().env().PIPELINE_RUN_RELEASE), buildTool, exe, branch)
         removeSnapshotStage.setRelativeDirectory(commonRunDirectory)
         addStage(removeSnapshotStage)
         return removeSnapshotStage
     }
 
     RemoveSnapshotStage addRemoveSnapshotStage(String stageName, String buildTool, String exe, String branch) {
-        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getScriptWrapper(), getPipelineLogger(), stageName, buildTool, exe, branch)
+        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getScriptWrapper(), getPipelineLogger(), stageName, Boolean.valueOf(getScriptWrapper().env().PIPELINE_RUN_RELEASE), buildTool, exe, branch)
         removeSnapshotStage.setRelativeDirectory(commonRunDirectory)
         addStage(removeSnapshotStage)
         return removeSnapshotStage

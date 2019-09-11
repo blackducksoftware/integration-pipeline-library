@@ -12,6 +12,8 @@ import com.synopsys.integration.utilities.GithubBranchParser
 class NextSnapshotStage extends Stage {
     private final JenkinsScriptWrapper scriptWrapper
     private final PipelineLogger logger
+    private final boolean runRelease
+
     private final String buildTool
     private final String exe
 
@@ -19,10 +21,11 @@ class NextSnapshotStage extends Stage {
 
     private String gitToolName = GitStage.DEFAULT_GIT_TOOL
 
-    NextSnapshotStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, String buildTool, String exe, String branch) {
+    NextSnapshotStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, boolean runRelease, String buildTool, String exe, String branch) {
         super(stageName)
         this.scriptWrapper = scriptWrapper
         this.logger = logger
+        this.runRelease = runRelease;
         this.buildTool = buildTool
         this.exe = exe
         this.branch = branch
@@ -30,6 +33,10 @@ class NextSnapshotStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
+        if (!runRelease) {
+            logger.info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
+            return
+        }
         ProjectUtils projectUtils = new ProjectUtils()
         projectUtils.initialize(scriptWrapper.getScript(), buildTool, exe)
         String newVersion = projectUtils.increaseSemver()
