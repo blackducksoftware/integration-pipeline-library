@@ -1,5 +1,6 @@
 plugins {
-    id("com.mkobit.jenkins.pipelines.shared-library") version "0.6.2"
+    id("com.mkobit.jenkins.pipelines.shared-library") version "0.10.1"
+    id 'groovy'
 }
 
 repositories {
@@ -9,8 +10,11 @@ repositories {
 group 'com.synopsys.integration'
 version = '0.0.1-SNAPSHOT'
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.9'
+sourceSets {
+    main {
+        java { srcDirs = [] } // no source dirs for the java compiler
+        groovy { srcDir "src" }
+    }
 }
 
 dependencies {
