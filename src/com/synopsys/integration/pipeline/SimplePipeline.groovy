@@ -19,6 +19,9 @@ import com.synopsys.integration.pipeline.versioning.RemoveSnapshotStage
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class SimplePipeline extends Pipeline {
+    public static final String GRADLE_BUILD_TOOL = 'gradle'
+    public static final String MAVEN_BUILD_TOOL = 'maven'
+
     public String commonRunDirectory
 
     SimplePipeline(CpsScript script) {

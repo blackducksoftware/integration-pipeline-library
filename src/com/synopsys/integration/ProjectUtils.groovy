@@ -1,5 +1,6 @@
 package com.synopsys.integration
 
+import com.synopsys.integration.pipeline.SimplePipeline
 import com.synopsys.integration.tools.GradleUtils
 import com.synopsys.integration.tools.MavenUtils
 import com.synopsys.integration.tools.ToolUtils
@@ -11,9 +12,9 @@ public class ProjectUtils {
 
     public void initialize(script, String tool, String exe) {
         script.println "Using tool ${tool}"
-        if (tool.equalsIgnoreCase('maven')) {
+        if (tool.equalsIgnoreCase(SimplePipeline.MAVEN_BUILD_TOOL)) {
             toolUtils = new MavenUtils(script, exe)
-        } else if (tool.equalsIgnoreCase('gradle')) {
+        } else if (tool.equalsIgnoreCase(SimplePipeline.GRADLE_BUILD_TOOL)) {
             toolUtils = new GradleUtils(script, exe)
         }
         if (null != toolUtils) {
