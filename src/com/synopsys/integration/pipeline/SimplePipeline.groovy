@@ -101,28 +101,28 @@ class SimplePipeline extends Pipeline {
         return githubReleaseStage
     }
 
-    GithubReleaseStage addGithubReleaseStageByFile(String artifactFile, String branch) {
+    GithubReleaseStage addGithubReleaseStageByFile(String branch, String artifactFile) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', artifactFile, branch)
         githubReleaseStage.setRelativeDirectory(commonRunDirectory)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
-    GithubReleaseStage addGithubReleaseStageByFile(String stageName, String artifactFile, String branch) {
+    GithubReleaseStage addGithubReleaseStageByFile(String stageName, String branch, String artifactFile) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, artifactFile, branch)
         githubReleaseStage.setRelativeDirectory(commonRunDirectory)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
-    GithubReleaseStage addGithubReleaseStageByPattern(String artifactPattern, String artifactDirectory, String branch) {
+    GithubReleaseStage addGithubReleaseStageByPattern(String branch, String artifactPattern, String artifactDirectory) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), 'GitHub Release', artifactPattern, artifactDirectory, branch)
         githubReleaseStage.setRelativeDirectory(commonRunDirectory)
         addStage(githubReleaseStage)
         return githubReleaseStage
     }
 
-    GithubReleaseStage addGithubReleaseStageByPattern(String stageName, String artifactPattern, String artifactDirectory, String branch) {
+    GithubReleaseStage addGithubReleaseStageByPattern(String stageName, String branch, String artifactPattern, String artifactDirectory) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getScriptWrapper(), getPipelineLogger(), stageName, artifactPattern, artifactDirectory, branch)
         githubReleaseStage.setRelativeDirectory(commonRunDirectory)
         addStage(githubReleaseStage)
