@@ -60,7 +60,7 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
     }
 
     @Override
-    void pipelineProperties(ArrayList pipelineOptions) {
+    void pipelineProperties(List pipelineOptions) {
         logger.alwaysLog("properties ${pipelineOptions}")
     }
 
