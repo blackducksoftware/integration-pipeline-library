@@ -17,6 +17,7 @@ class Pipeline implements Serializable {
 
     public final List<PipelineWrapper> wrappers = new LinkedList<>()
     public final List<Step> steps = new LinkedList<>()
+    public final List pipelineProperties = new LinkedList()
 
     Pipeline(CpsScript script) {
         this.script = script
@@ -38,8 +39,8 @@ class Pipeline implements Serializable {
         wrappers.add(wrapper)
     }
 
-    void addProperties(ArrayList pipelineProperties) {
-        scriptWrapper.properties(pipelineProperties)
+    void addProperties(List pipelineProperties) {
+        pipelineProperties.addAll(pipelineProperties)
     }
 
     void run() {
@@ -47,6 +48,7 @@ class Pipeline implements Serializable {
         runWithJenkinsWrapper(dryRunWrapper)
 
         JenkinsScriptWrapper scriptWrapper = new JenkinsScriptWrapperImpl(this.script)
+        scriptWrapper.properties(pipelineProperties)
         runWithJenkinsWrapper(scriptWrapper)
     }
 
