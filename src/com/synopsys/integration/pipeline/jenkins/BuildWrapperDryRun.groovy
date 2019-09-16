@@ -19,12 +19,12 @@ class BuildWrapperDryRun extends BuildWrapperImpl {
 
     @Override
     BuildWrapper getPreviousBuild() throws AbortException {
-        return new BuildWrapperDryRun(getRunWrapper().getPreviousBuild())
+        return new BuildWrapperDryRun(getRunWrapper().getPreviousBuild(), logger)
     }
 
     @Override
     BuildWrapper getNextBuild() throws AbortException {
-        return new BuildWrapperDryRun(getRunWrapper().getNextBuild())
+        return new BuildWrapperDryRun(getRunWrapper().getNextBuild(), logger)
     }
 
 

@@ -242,14 +242,14 @@ class SimplePipeline extends Pipeline {
     }
 
     SetJdkStage addSetJdkStage() {
-        SetJdkStage setJdkStage = new SetJdkStage("Set JDK")
+        SetJdkStage setJdkStage = new SetJdkStage("Set JDK", getPipelineLogger())
         setJdkStage.setRelativeDirectory(commonRunDirectory)
         addStage(setJdkStage)
         return setJdkStage
     }
 
     SetJdkStage addSetJdkStage(String jdkToolName) {
-        SetJdkStage setJdkStage = new SetJdkStage("Set JDK")
+        SetJdkStage setJdkStage = new SetJdkStage("Set JDK", getPipelineLogger())
         setJdkStage.setJdkToolName(jdkToolName)
         setJdkStage.setRelativeDirectory(commonRunDirectory)
         addStage(setJdkStage)
@@ -257,7 +257,7 @@ class SimplePipeline extends Pipeline {
     }
 
     SetJdkStage addSetJdkStage(String stageName, String jdkToolName) {
-        SetJdkStage setJdkStage = new SetJdkStage(stageName)
+        SetJdkStage setJdkStage = new SetJdkStage(stageName, getPipelineLogger())
         setJdkStage.setJdkToolName(jdkToolName)
         setJdkStage.setRelativeDirectory(commonRunDirectory)
         addStage(setJdkStage)
