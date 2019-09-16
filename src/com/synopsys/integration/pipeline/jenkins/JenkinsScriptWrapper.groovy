@@ -30,7 +30,7 @@ interface JenkinsScriptWrapper {
 
     void println(String message)
 
-    void properties(ArrayList pipelineOptions)
+    void pipelineProperties(ArrayList pipelineOptions)
 
     void step(String[] fields)
 

@@ -91,7 +91,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper, Serializable {
     }
 
     @Override
-    void properties(ArrayList pipelineOptions) {
+    void pipelineProperties(ArrayList pipelineOptions) {
         script.properties(pipelineOptions)
     }
 

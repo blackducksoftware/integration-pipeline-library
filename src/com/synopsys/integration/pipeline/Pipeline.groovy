@@ -49,7 +49,7 @@ class Pipeline implements Serializable {
         JenkinsScriptWrapper dryRunWrapper = new JenkinsScriptWrapperDryRun(this.script, pipelineLogger)
         runWithJenkinsWrapper(dryRunWrapper)
 
-        getScriptWrapper().properties(pipelineProperties)
+        getScriptWrapper().pipelineProperties(pipelineProperties)
         runWithJenkinsWrapper(getScriptWrapper())
     }
 
