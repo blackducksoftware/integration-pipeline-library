@@ -4,7 +4,6 @@ import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.GitHubReleaseException
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.exception.PrepareForReleaseException
-import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.scm.GitStage
@@ -15,7 +14,6 @@ class GithubReleaseStage extends Stage {
     public static final String DEFAULT_RELEASE_MESSAGE = 'Auto Release'
     public static final String DEFAULT_SCRIPT_URL = 'https://github.com/blackducksoftware/github-auto-release/releases/download/1.2.0/github_auto_release.sh'
 
-    private final JenkinsScriptWrapper scriptWrapper
     private final PipelineLogger logger
 
     private final boolean runRelease
@@ -30,9 +28,8 @@ class GithubReleaseStage extends Stage {
     private String releaseScriptUrl = DEFAULT_SCRIPT_URL
     private String project = null
 
-    GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, boolean runRelease, String branch) {
+    GithubReleaseStage(PipelineLogger logger, String stageName, boolean runRelease, String branch) {
         super(stageName)
-        this.scriptWrapper = scriptWrapper
         this.logger = logger
         this.runRelease = runRelease
         this.artifactFile = null
@@ -41,10 +38,9 @@ class GithubReleaseStage extends Stage {
         this.branch = branch
     }
 
-    GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, boolean runRelease, String artifactFile,
+    GithubReleaseStage(PipelineLogger logger, String stageName, boolean runRelease, String artifactFile,
                        String branch) {
         super(stageName)
-        this.scriptWrapper = scriptWrapper
         this.logger = logger
         this.runRelease = runRelease
         this.artifactFile = artifactFile
@@ -53,10 +49,9 @@ class GithubReleaseStage extends Stage {
         this.branch = branch
     }
 
-    GithubReleaseStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, boolean runRelease, String artifactPattern,
+    GithubReleaseStage(PipelineLogger logger, String stageName, boolean runRelease, String artifactPattern,
                        String artifactDirectory, String branch) {
         super(stageName)
-        this.scriptWrapper = scriptWrapper
         this.logger = logger
         this.runRelease = runRelease
         this.artifactFile = null
@@ -71,7 +66,7 @@ class GithubReleaseStage extends Stage {
             logger.info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
             return
         }
-        String version = scriptWrapper.env().GITHUB_RELEASE_VERSION
+        String version = getScriptWrapper().env().GITHUB_RELEASE_VERSION
         if (null == version || version.trim().length() == 0) {
             throw new PrepareForReleaseException('Could not find the "GITHUB_RELEASE_VERSION" environment variable. Will not perform the GitHub release.')
         }
@@ -115,7 +110,7 @@ class GithubReleaseStage extends Stage {
         commandLines.add("chmod 777 github_auto_release.sh")
         commandLines.add("./github_auto_release.sh ${commandOptions}")
         try {
-            scriptWrapper.executeCommand(commandLines.join(" \n"))
+            getScriptWrapper().executeCommand(commandLines.join(" \n"))
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")
         }

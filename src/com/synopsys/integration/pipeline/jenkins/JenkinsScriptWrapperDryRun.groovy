@@ -23,6 +23,11 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
         logger.alwaysLog("checkout url:${url} branch:${branch} gitTool:${gitToolName} changelog:${changelog} poll:${poll}")
     }
 
+    @Override
+    BuildWrapper currentBuild() {
+        return new BuildWrapperDryRun(script.currentBuild, logger)
+    }
+
 
     @Override
     void deleteDir() {

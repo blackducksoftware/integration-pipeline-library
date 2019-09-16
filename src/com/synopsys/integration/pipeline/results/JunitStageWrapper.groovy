@@ -1,18 +1,15 @@
 package com.synopsys.integration.pipeline.results
 
 
-import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.model.StageWrapper
 
 class JunitStageWrapper extends StageWrapper {
     public static final String DEFAULT_JUNIT_XML_PATTERN = 'build/**/*.xml'
 
-    private JenkinsScriptWrapper scriptWrapper
     private LinkedHashMap junitOptions = [allowEmptyResults: false, testResults: DEFAULT_JUNIT_XML_PATTERN]
 
-    JunitStageWrapper(JenkinsScriptWrapper scriptWrapper, String name) {
+    JunitStageWrapper(String name) {
         super(name)
-        this.scriptWrapper = scriptWrapper
     }
 
     @Override
@@ -27,7 +24,7 @@ class JunitStageWrapper extends StageWrapper {
 
     @Override
     void end() {
-        scriptWrapper.junit(junitOptions)
+        getScriptWrapper().junit(junitOptions)
     }
 
     LinkedHashMap getJunitOptions() {

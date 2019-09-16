@@ -2,7 +2,6 @@ package com.synopsys.integration.pipeline.scm
 
 import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.PipelineException
-import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.utilities.GithubBranchParser
@@ -12,8 +11,6 @@ class GitStage extends Stage {
     public static final boolean DEFAULT_GIT_CHANGELOG = false
     public static final boolean DEFAULT_GIT_POLL = false
 
-
-    private final JenkinsScriptWrapper scriptWrapper
     private final PipelineLogger logger
     private final String url
     private final String branch
@@ -22,9 +19,8 @@ class GitStage extends Stage {
     private boolean poll = DEFAULT_GIT_POLL
 
 
-    GitStage(JenkinsScriptWrapper scriptWrapper, PipelineLogger logger, String stageName, String url, String branch) {
+    GitStage(PipelineLogger logger, String stageName, String url, String branch) {
         super(stageName)
-        this.scriptWrapper = scriptWrapper
         this.logger = logger
         this.url = url
         this.branch = branch
@@ -33,17 +29,17 @@ class GitStage extends Stage {
     @Override
     void stageExecution() throws PipelineException, Exception {
         logger.info("Pulling branch '${branch}' from repo '${url}")
-        scriptWrapper.checkout(url, branch, gitToolName, changelog, poll)
+        getScriptWrapper().checkout(url, branch, gitToolName, changelog, poll)
 
-        String gitPath = scriptWrapper.tool(gitToolName)
+        String gitPath = getScriptWrapper().tool(gitToolName)
 
         GithubBranchParser githubBranchParser = new GithubBranchParser()
         GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
 
         // Need to do this because Jenkins checks out a detached HEAD
-        scriptWrapper.executeCommandWithException("${gitPath} checkout ${githubBranchModel.getBranchName()}")
+        getScriptWrapper().executeCommandWithException("${gitPath} checkout ${githubBranchModel.getBranchName()}")
         // Do a hard reset in order to clear out any local changes/commits
-        scriptWrapper.executeCommandWithException("${gitPath} reset --hard ${githubBranchModel.getBranchName()}")
+        getScriptWrapper().executeCommandWithException("${gitPath} reset --hard ${githubBranchModel.getBranchName()}")
     }
 
     String getGitToolName() {
