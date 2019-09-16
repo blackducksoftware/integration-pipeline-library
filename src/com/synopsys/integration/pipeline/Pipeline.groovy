@@ -13,6 +13,7 @@ import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class Pipeline implements Serializable {
     public final CpsScript script
+    public final JenkinsScriptWrapper scriptWrapper
     public final PipelineLogger pipelineLogger
 
     public final List<PipelineWrapper> wrappers = new LinkedList<>()
@@ -21,7 +22,8 @@ class Pipeline implements Serializable {
 
     Pipeline(CpsScript script) {
         this.script = script
-        pipelineLogger = new DefaultPipelineLoger(new JenkinsScriptWrapperImpl(script))
+        this.scriptWrapper = new JenkinsScriptWrapperImpl(script)
+        pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
     }
 
     void addStage(Stage stage) {
@@ -47,9 +49,8 @@ class Pipeline implements Serializable {
         JenkinsScriptWrapper dryRunWrapper = new JenkinsScriptWrapperDryRun(this.script, pipelineLogger)
         runWithJenkinsWrapper(dryRunWrapper)
 
-        JenkinsScriptWrapper scriptWrapper = new JenkinsScriptWrapperImpl(this.script)
-        scriptWrapper.properties(pipelineProperties)
-        runWithJenkinsWrapper(scriptWrapper)
+        getScriptWrapper().properties(pipelineProperties)
+        runWithJenkinsWrapper(getScriptWrapper())
     }
 
     void runWithJenkinsWrapper(JenkinsScriptWrapper currentJenkinsScriptWrapper) {
@@ -88,6 +89,10 @@ class Pipeline implements Serializable {
                 }
             }
         }
+    }
+
+    public JenkinsScriptWrapper getScriptWrapper() {
+        return scriptWrapper
     }
 
     public PipelineLogger getPipelineLogger() {
