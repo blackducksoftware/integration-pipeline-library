@@ -1,122 +1,47 @@
 package com.synopsys.integration.pipeline.jenkins
 
-
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
-import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
-import com.synopsys.integration.pipeline.logging.PipelineLogger
 import org.jenkinsci.plugins.workflow.cps.CpsScript
-import org.jenkinsci.plugins.workflow.cps.EnvActionImpl
-import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 
-class JenkinsScriptWrapper implements Serializable {
-    final CpsScript script
+interface JenkinsScriptWrapper {
+    int bat(String command)
 
-    JenkinsScriptWrapper(final CpsScript script) {
-        this.script = script
-    }
+    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll)
 
-    int bat(String command) {
-        return script.bat(script: command, returnStatus: true)
-    }
+    BuildWrapper currentBuild()
 
-    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll) {
-        script.checkout changelog: changelog, poll: poll, scm: [$class : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
-                                                                gitTool: gitToolName, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
-    }
+    void deleteDir()
 
-    // Add options to get the standard out from the commands
+    void dir(String relativeDirectory, Closure closure)
 
-    /**
-     * org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
-     **/
-    RunWrapper currentBuild() {
-        return script.currentBuild
-    }
+    void emailext(String content, String subjectLine, String recipientList)
 
-    void deleteDir() {
-        script.deleteDir()
-    }
+    EnvActionWrapper env()
 
-    void dir(String relativeDirectory, Closure closure) {
-        script.dir(relativeDirectory, closure)
-    }
+    int executeCommand(String command)
 
-    void emailext(String content, String subjectLine, String recipientList) {
-        script.emailext(body: content, subject: subjectLine, to: recipientList)
-    }
+    void executeCommandWithException(String command) throws CommandExecutionException
 
-    /**
-     * org.jenkinsci.plugins.workflow.cps.EnvActionImpl
-     **/
-    EnvActionImpl env() {
-        return script.env
-    }
+    boolean isUnix()
 
-    int executeCommand(String command) {
-        if (isUnix()) {
-            return sh(command)
-        }
-        return bat(command)
-    }
+    void jacoco(LinkedHashMap jacocoOptions)
 
-    void executeCommandWithException(String command) throws CommandExecutionException {
-        PipelineLogger logger = new DefaultPipelineLoger(this)
-        int errorStatus
-        if (isUnix()) {
-            errorStatus = sh(command)
-        } else {
-            errorStatus = bat(command)
-        }
-        if (errorStatus != 0) {
-            throw new CommandExecutionException(errorStatus, "Executing command '${command}', resulted in error status code '${errorStatus}'")
-        }
-    }
+    void junit(LinkedHashMap junitOptions)
 
-    boolean isUnix() {
-        return script.isUnix()
-    }
+    void println(String message)
 
-    void jacoco(LinkedHashMap jacocoOptions) {
-        script.jacoco jacocoOptions
-    }
+    void properties(ArrayList pipelineOptions)
 
-    void junit(LinkedHashMap junitOptions) {
-        script.junit junitOptions
-    }
+    void step(String[] fields)
 
-    void println(String message) {
-        script.println message
-    }
+    void archiveArtifacts(String artifactPattern)
 
-    void properties(ArrayList pipelineOptions) {
-        script.properties(pipelineOptions)
-    }
+    CpsScript script()
 
-    void step(String[] fields) {
-        script.step fields
-    }
+    int sh(String command)
 
-    void archiveArtifacts(String artifactPattern) {
-        script.archiveArtifacts artifactPattern
-    }
+    void stage(String stageName, Closure closure)
 
-    /**
-     * WorkflowScript/CpsScript
-     **/
-    CpsScript script() {
-        return script
-    }
-
-    int sh(String command) {
-        return script.sh(script: command, returnStatus: true)
-    }
-
-    void stage(String stageName, Closure closure) {
-        script.stage(stageName, closure)
-    }
-
-    String tool(String toolName) {
-        return script.tool(toolName)
-    }
+    String tool(String toolName)
 
 }
