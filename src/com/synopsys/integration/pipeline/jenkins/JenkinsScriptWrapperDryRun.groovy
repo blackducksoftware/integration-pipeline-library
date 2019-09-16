@@ -32,6 +32,7 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
     @Override
     void dir(String relativeDirectory, Closure closure) {
         logger.alwaysLog("dir ${relativeDirectory}")
+        closure.call()
     }
 
     @Override
@@ -91,6 +92,7 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
     @Override
     void stage(String stageName, Closure closure) {
         logger.alwaysLog("stage name: ${stageName}")
+        closure.call()
     }
 
     @Override
