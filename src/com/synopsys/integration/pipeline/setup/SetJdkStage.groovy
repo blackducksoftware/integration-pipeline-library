@@ -18,14 +18,12 @@ class SetJdkStage extends Stage {
         getPipelineConfiguration().getLogger().info("Setting jdk = ${jdkToolName}")
 
         String toolHome = getPipelineConfiguration().getScriptWrapper().tool(jdkToolName)
-        getPipelineConfiguration().getLogger().info("Script Wrapper ${getPipelineConfiguration().getScriptWrapper().getClass()}")
-        getPipelineConfiguration().getLogger().info("EnvAction ${getPipelineConfiguration().getScriptWrapper().env().getClass()}")
-        getPipelineConfiguration().getScriptWrapper().env().JAVA_HOME = "${toolHome}"
-        String currentPath = getPipelineConfiguration().getScriptWrapper().env().PATH
-        getPipelineConfiguration().getScriptWrapper().env().PATH = "${toolHome}/bin:${currentPath}"
+        getPipelineConfiguration().getScriptWrapper().setJenkinsProperty('JAVA_HOME', toolHome)
+        String currentPath = getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('PATH')
+        getPipelineConfiguration().getScriptWrapper().setJenkinsProperty('PATH', "${toolHome}/bin:${currentPath}")
 
-        getPipelineConfiguration().getLogger().info("JAVA_HOME = ${getPipelineConfiguration().getScriptWrapper().env().JAVA_HOME}")
-        getPipelineConfiguration().getLogger().info("PATH = ${getPipelineConfiguration().getScriptWrapper().env().PATH}")
+        getPipelineConfiguration().getLogger().info("JAVA_HOME = ${getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('JAVA_HOME')}")
+        getPipelineConfiguration().getLogger().info("PATH = ${getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('PATH')}")
 
     }
 

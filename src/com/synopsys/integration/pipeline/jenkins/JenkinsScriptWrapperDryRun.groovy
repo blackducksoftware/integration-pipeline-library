@@ -22,6 +22,10 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
         getDryRunPipelineBuilder().addPipelineLine("checkout url:${url} branch:${branch} gitTool:${gitToolName} changelog:${changelog} poll:${poll}")
     }
 
+    void closure(Closure closure) {
+        getDryRunPipelineBuilder().addPipelineLine("closure ${closure}")
+    }
+
     @Override
     BuildWrapper currentBuild() {
         return new BuildWrapperDryRun(script.currentBuild, getDryRunPipelineBuilder())

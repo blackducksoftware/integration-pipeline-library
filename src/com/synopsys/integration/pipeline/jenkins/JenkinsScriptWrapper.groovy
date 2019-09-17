@@ -8,6 +8,8 @@ interface JenkinsScriptWrapper extends Serializable {
 
     void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll)
 
+    void closure(Closure closure)
+
     BuildWrapper currentBuild()
 
     void deleteDir()

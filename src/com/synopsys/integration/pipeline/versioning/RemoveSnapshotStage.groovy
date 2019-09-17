@@ -56,7 +56,7 @@ class RemoveSnapshotStage extends Stage {
             getPipelineConfiguration().getScriptWrapper().executeCommand("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
             getPipelineConfiguration().getLogger().debug("Pushing release to branch ${branch}")
 
-            getPipelineConfiguration().getScriptWrapper().env().GITHUB_RELEASE_VERSION = newVersion
+            getPipelineConfiguration().getScriptWrapper().setJenkinsProperty('GITHUB_RELEASE_VERSION', newVersion)
         }
     }
 

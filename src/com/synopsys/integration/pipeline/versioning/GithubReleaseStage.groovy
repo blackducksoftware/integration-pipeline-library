@@ -61,7 +61,7 @@ class GithubReleaseStage extends Stage {
             getPipelineConfiguration().getLogger().info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
             return
         }
-        String version = getPipelineConfiguration().getScriptWrapper().env().GITHUB_RELEASE_VERSION
+        String version = getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('GITHUB_RELEASE_VERSION')
         if (null == version || version.trim().length() == 0) {
             throw new PrepareForReleaseException('Could not find the "GITHUB_RELEASE_VERSION" environment variable. Will not perform the GitHub release.')
         }

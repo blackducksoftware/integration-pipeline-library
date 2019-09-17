@@ -21,6 +21,10 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
                                                                 gitTool: gitToolName, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
     }
 
+    void closure(Closure closure) {
+        closure.call()
+    }
+
     @Override
     BuildWrapper currentBuild() {
         return new BuildWrapperImpl(script.currentBuild)
