@@ -14,6 +14,6 @@ class ClosureStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        closure.call()
+        getPipelineConfiguration().getScriptWrapper().closure(closure)
     }
 }

@@ -14,6 +14,6 @@ class ClosureStep extends Step {
 
     @Override
     void run() throws PipelineException, Exception {
-        closure.call()
+        getPipelineConfiguration().getScriptWrapper().closure(closure)
     }
 }
