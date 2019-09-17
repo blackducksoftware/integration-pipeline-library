@@ -35,11 +35,15 @@ class DryRunPipelineBuilder {
     }
 
     public void increaseIndent() {
+        logger.info("Increasing the indent from ${indent}")
         indent++
+        logger.info("to ${indent}")
     }
 
     public void decreaseIndent() {
+        logger.info("Decreasing the indent from ${indent}")
         indent--
+        logger.info("to ${indent}")
     }
 
     private String indentString(int currentIndent) {
