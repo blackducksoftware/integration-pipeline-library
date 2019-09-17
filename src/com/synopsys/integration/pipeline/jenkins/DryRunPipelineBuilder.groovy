@@ -45,7 +45,6 @@ class DryRunPipelineBuilder {
         String indentString = ''
 
         for (int i = 0; i < currentIndent; i++) {
-            logger.info("indent loop ${i} index to reach ${currentIndent}")
             indentString += INDENT
         }
         return indentString
