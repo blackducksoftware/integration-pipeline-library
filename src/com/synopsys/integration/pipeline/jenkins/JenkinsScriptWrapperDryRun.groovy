@@ -6,13 +6,9 @@ import org.jenkinsci.plugins.workflow.cps.CpsScript
 class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
     public final DryRunPipelineBuilder dryRunPipelineBuilder
 
-    JenkinsScriptWrapperDryRun(CpsScript script) {
+    JenkinsScriptWrapperDryRun(CpsScript script, DryRunPipelineBuilder dryRunPipelineBuilder) {
         super(script)
-        dryRunPipelineBuilder = new DryRunPipelineBuilder()
-    }
-
-    public void initialize() {
-        dryRunPipelineBuilder.initialize()
+        this.dryRunPipelineBuilder = dryRunPipelineBuilder
     }
 
     @Override

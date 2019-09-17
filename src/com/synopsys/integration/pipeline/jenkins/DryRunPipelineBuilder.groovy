@@ -1,11 +1,16 @@
 package com.synopsys.integration.pipeline.jenkins
 
+import com.synopsys.integration.pipeline.logging.PipelineLogger
+
 class DryRunPipelineBuilder {
     private static final String INDENT = "  "
     private final List<String> scriptSteps = new ArrayList<>()
     private int indent = 0
 
-    public DryRunPipelineBuilder() {
+    private final PipelineLogger logger
+
+    public DryRunPipelineBuilder(PipelineLogger logger) {
+        this.logger = logger;
         scriptSteps = new ArrayList<>()
         indent = 0
     }
@@ -16,6 +21,7 @@ class DryRunPipelineBuilder {
     }
 
     public void addPipelineLine(String line) {
+        logger.info("Adding line ${line}")
         String currentIndentString = indentString(indent)
         scriptSteps.add("${currentIndentString}${line}")
     }
