@@ -18,6 +18,11 @@ abstract class Stage extends Step {
     void run() throws PipelineException, Exception {
         for (int i = 0; i < getWrappers().size(); i++) {
             StageWrapper wrapper = getWrappers().get(i)
+            wrapper.setScriptWrapper(getScriptWrapper())
+        }
+
+        for (int i = 0; i < getWrappers().size(); i++) {
+            StageWrapper wrapper = getWrappers().get(i)
             wrapper.start()
         }
         try {
