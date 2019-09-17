@@ -8,6 +8,9 @@ class DryRunPipelineBuilder {
     public DryRunPipelineBuilder() {
         scriptSteps = new ArrayList<>()
         indent = 0
+    }
+
+    public void initialize() {
         addPipelineLine('{')
         increaseIndent()
     }

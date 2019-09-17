@@ -11,6 +11,10 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
         dryRunPipelineBuilder = new DryRunPipelineBuilder()
     }
 
+    public void initialize() {
+        dryRunPipelineBuilder.initialize()
+    }
+
     @Override
     int bat(String command) {
         dryRunPipelineBuilder.addPipelineLine("bat script: ${command}, returnStatus: true")
