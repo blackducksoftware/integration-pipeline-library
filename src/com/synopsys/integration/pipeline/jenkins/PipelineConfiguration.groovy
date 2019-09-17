@@ -3,7 +3,7 @@ package com.synopsys.integration.pipeline.jenkins
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 
 class PipelineConfiguration implements Serializable {
-    public final PipelineLogger logger
+    public PipelineLogger logger
     public JenkinsScriptWrapper scriptWrapper
 
     public PipelineConfiguration(PipelineLogger logger, JenkinsScriptWrapper scriptWrapper) {
@@ -23,4 +23,7 @@ class PipelineConfiguration implements Serializable {
         return logger
     }
 
+    void setLogger(final PipelineLogger logger) {
+        this.logger = logger
+    }
 }
