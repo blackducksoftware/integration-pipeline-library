@@ -1,8 +1,7 @@
 package com.synopsys.integration.pipeline
 
-import com.synopsys.integration.pipeline.jenkins.DryRunPipelineBuilder
+
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
-import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapperDryRun
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapperImpl
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
@@ -46,14 +45,14 @@ class Pipeline implements Serializable {
     }
 
     void run() {
-        DryRunPipelineBuilder dryRunPipelineBuilder = new DryRunPipelineBuilder(getPipelineLogger())
-        dryRunPipelineBuilder.initialize()
-        JenkinsScriptWrapper dryRunWrapper = new JenkinsScriptWrapperDryRun(this.script, dryRunPipelineBuilder)
-        getPipelineLogger().info("Starting dry run")
-        runWithJenkinsWrapper(dryRunWrapper)
-        getPipelineLogger().info("End dry run")
-
-        getPipelineLogger().alwaysLog(dryRunWrapper.getDryRunPipelineBuilder().getPipelineString())
+        //        DryRunPipelineBuilder dryRunPipelineBuilder = new DryRunPipelineBuilder(getPipelineLogger())
+        //        dryRunPipelineBuilder.initialize()
+        //        JenkinsScriptWrapper dryRunWrapper = new JenkinsScriptWrapperDryRun(this.script, dryRunPipelineBuilder)
+        //        getPipelineLogger().info("Starting dry run")
+        //        runWithJenkinsWrapper(dryRunWrapper)
+        //        getPipelineLogger().info("End dry run")
+        //
+        //        getPipelineLogger().alwaysLog(dryRunWrapper.getDryRunPipelineBuilder().getPipelineString())
 
 
         getScriptWrapper().pipelineProperties(pipelineProperties)

@@ -63,9 +63,7 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
     }
 
     @Override
-    void println(String message) {
-        script.println(message)
-    }
+    void println(String message) {}
 
     @Override
     void pipelineProperties(List pipelineOptions) {
