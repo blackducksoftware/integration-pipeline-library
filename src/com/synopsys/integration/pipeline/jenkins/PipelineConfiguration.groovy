@@ -6,9 +6,9 @@ class PipelineConfiguration implements Serializable {
     public final PipelineLogger logger
     public JenkinsScriptWrapper scriptWrapper
 
-    public PipelineConfiguration(PipelineLogger logger) {
+    public PipelineConfiguration(PipelineLogger logger, JenkinsScriptWrapper scriptWrapper) {
         this.logger = logger
-
+        this.scriptWrapper = scriptWrapper
     }
 
     public JenkinsScriptWrapper getScriptWrapper() {

@@ -18,8 +18,7 @@ class Pipeline implements Serializable {
     Pipeline(CpsScript script) {
         this.script = script
         JenkinsScriptWrapper scriptWrapper = new JenkinsScriptWrapperImpl(script)
-        this.pipelineConfiguration = new PipelineConfiguration(new DefaultPipelineLogger(scriptWrapper))
-        this.pipelineConfiguration.setScriptWrapper(scriptWrapper)
+        this.pipelineConfiguration = new PipelineConfiguration(new DefaultPipelineLogger(scriptWrapper), scriptWrapper)
     }
 
     void addStage(Stage stage) {
