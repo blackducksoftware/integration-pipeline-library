@@ -4,13 +4,12 @@ import com.synopsys.integration.ProjectUtils
 import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.exception.PrepareForReleaseException
-import com.synopsys.integration.pipeline.logging.PipelineLogger
+import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.scm.GitStage
 import com.synopsys.integration.utilities.GithubBranchParser
 
 class RemoveSnapshotStage extends Stage {
-    private final PipelineLogger logger
     private final boolean runRelease
 
     private final String buildTool
@@ -21,9 +20,8 @@ class RemoveSnapshotStage extends Stage {
     private boolean checkAllDependencies = false
     private String gitToolName = GitStage.DEFAULT_GIT_TOOL
 
-    RemoveSnapshotStage(PipelineLogger logger, String stageName, boolean runRelease, String buildTool, String exe, String branch) {
-        super(stageName)
-        this.logger = logger
+    RemoveSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, String buildTool, String exe, String branch) {
+        super(pipelineConfiguration, stageName)
         this.runRelease = runRelease
         this.buildTool = buildTool
         this.exe = exe
@@ -33,11 +31,11 @@ class RemoveSnapshotStage extends Stage {
     @Override
     void stageExecution() throws PipelineException, Exception {
         if (!runRelease) {
-            logger.info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
+            getPipelineConfiguration().getLogger().info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
             return
         }
         ProjectUtils projectUtils = new ProjectUtils()
-        projectUtils.initialize(getScriptWrapper().getScript(), buildTool, exe)
+        projectUtils.initialize(getPipelineConfiguration().getScriptWrapper().getScript(), buildTool, exe)
         boolean hasSnapshotDependencies = projectUtils.checkForSnapshotDependencies(checkAllDependencies)
         if (hasSnapshotDependencies) {
             String errorMessage = "Failing release preparation because of ${buildTool} SNAPSHOT dependencies"
@@ -45,20 +43,20 @@ class RemoveSnapshotStage extends Stage {
         }
         def version = projectUtils.getProjectVersion()
         if (version.contains('-SNAPSHOT')) {
-            logger.info("Removing SNAPSHOT from the Project Version")
+            getPipelineConfiguration().getLogger().info("Removing SNAPSHOT from the Project Version")
             String newVersion = projectUtils.removeSnapshotFromProjectVersion()
-            logger.debug("Commiting the release ${newVersion}")
-            String gitPath = getScriptWrapper().tool(gitToolName)
+            getPipelineConfiguration().getLogger().debug("Commiting the release ${newVersion}")
+            String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
 
-            getScriptWrapper().executeCommand("${gitPath} commit -am \"Release ${newVersion}\"")
+            getPipelineConfiguration().getScriptWrapper().executeCommand("${gitPath} commit -am \"Release ${newVersion}\"")
 
             GithubBranchParser githubBranchParser = new GithubBranchParser()
             GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
 
-            getScriptWrapper().executeCommand("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
-            logger.debug("Pushing release to branch ${branch}")
+            getPipelineConfiguration().getScriptWrapper().executeCommand("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
+            getPipelineConfiguration().getLogger().debug("Pushing release to branch ${branch}")
 
-            getScriptWrapper().env().GITHUB_RELEASE_VERSION = newVersion
+            getPipelineConfiguration().getScriptWrapper().env().GITHUB_RELEASE_VERSION = newVersion
         }
     }
 

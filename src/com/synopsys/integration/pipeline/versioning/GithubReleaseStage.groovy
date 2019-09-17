@@ -4,7 +4,7 @@ import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.GitHubReleaseException
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.exception.PrepareForReleaseException
-import com.synopsys.integration.pipeline.logging.PipelineLogger
+import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.scm.GitStage
 import com.synopsys.integration.utilities.GithubBranchParser
@@ -13,8 +13,6 @@ class GithubReleaseStage extends Stage {
     public static final String DEFAULT_GITHUB_OWNER = 'blackducksoftware'
     public static final String DEFAULT_RELEASE_MESSAGE = 'Auto Release'
     public static final String DEFAULT_SCRIPT_URL = 'https://github.com/blackducksoftware/github-auto-release/releases/download/1.2.0/github_auto_release.sh'
-
-    private final PipelineLogger logger
 
     private final boolean runRelease
     private final String artifactFile
@@ -28,9 +26,8 @@ class GithubReleaseStage extends Stage {
     private String releaseScriptUrl = DEFAULT_SCRIPT_URL
     private String project = null
 
-    GithubReleaseStage(PipelineLogger logger, String stageName, boolean runRelease, String branch) {
-        super(stageName)
-        this.logger = logger
+    GithubReleaseStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, String branch) {
+        super(pipelineConfiguration, stageName)
         this.runRelease = runRelease
         this.artifactFile = null
         this.artifactPattern = null
@@ -38,10 +35,9 @@ class GithubReleaseStage extends Stage {
         this.branch = branch
     }
 
-    GithubReleaseStage(PipelineLogger logger, String stageName, boolean runRelease, String artifactFile,
+    GithubReleaseStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, String artifactFile,
                        String branch) {
-        super(stageName)
-        this.logger = logger
+        super(pipelineConfiguration, stageName)
         this.runRelease = runRelease
         this.artifactFile = artifactFile
         this.artifactPattern = null
@@ -49,10 +45,9 @@ class GithubReleaseStage extends Stage {
         this.branch = branch
     }
 
-    GithubReleaseStage(PipelineLogger logger, String stageName, boolean runRelease, String artifactPattern,
+    GithubReleaseStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, String artifactPattern,
                        String artifactDirectory, String branch) {
-        super(stageName)
-        this.logger = logger
+        super(pipelineConfiguration, stageName)
         this.runRelease = runRelease
         this.artifactFile = null
         this.artifactPattern = artifactPattern
@@ -63,10 +58,10 @@ class GithubReleaseStage extends Stage {
     @Override
     void stageExecution() throws PipelineException, Exception {
         if (!runRelease) {
-            logger.info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
+            getPipelineConfiguration().getLogger().info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
             return
         }
-        String version = getScriptWrapper().env().GITHUB_RELEASE_VERSION
+        String version = getPipelineConfiguration().getScriptWrapper().env().GITHUB_RELEASE_VERSION
         if (null == version || version.trim().length() == 0) {
             throw new PrepareForReleaseException('Could not find the "GITHUB_RELEASE_VERSION" environment variable. Will not perform the GitHub release.')
         }
@@ -102,7 +97,7 @@ class GithubReleaseStage extends Stage {
 
         String commandOptions = options.join(' ')
 
-        logger.info("GitHub Auto Release options ${commandOptions}")
+        getPipelineConfiguration().getLogger().info("GitHub Auto Release options ${commandOptions}")
 
         List<String> commandLines = []
         commandLines.add("#!/bin/bash")
@@ -110,7 +105,7 @@ class GithubReleaseStage extends Stage {
         commandLines.add("chmod 777 github_auto_release.sh")
         commandLines.add("./github_auto_release.sh ${commandOptions}")
         try {
-            getScriptWrapper().executeCommand(commandLines.join(" \n"))
+            getPipelineConfiguration().getScriptWrapper().executeCommand(commandLines.join(" \n"))
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")
         }

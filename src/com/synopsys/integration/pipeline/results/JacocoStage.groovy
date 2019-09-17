@@ -1,18 +1,19 @@
 package com.synopsys.integration.pipeline.results
 
 import com.synopsys.integration.pipeline.exception.PipelineException
+import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 class JacocoStage extends Stage {
     private LinkedHashMap jacocoOptions = [changeBuildStatus: false]
 
-    JacocoStage(String name) {
-        super(name)
+    JacocoStage(PipelineConfiguration pipelineConfiguration, String name) {
+        super(pipelineConfiguration, name)
     }
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        getScriptWrapper().jacoco(jacocoOptions)
+        getPipelineConfiguration().getScriptWrapper().jacoco(jacocoOptions)
     }
 
     LinkedHashMap getJacocoOptions() {

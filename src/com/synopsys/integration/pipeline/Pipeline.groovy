@@ -1,11 +1,7 @@
 package com.synopsys.integration.pipeline
 
-import com.synopsys.integration.pipeline.jenkins.DryRunPipelineBuilder
-import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
-import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapperDryRun
-import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapperImpl
-import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
-import com.synopsys.integration.pipeline.logging.PipelineLogger
+import com.synopsys.integration.pipeline.jenkins.*
+import com.synopsys.integration.pipeline.logging.DefaultPipelineLogger
 import com.synopsys.integration.pipeline.model.PipelineWrapper
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.model.Step
@@ -13,8 +9,7 @@ import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class Pipeline implements Serializable {
     public final CpsScript script
-    public final JenkinsScriptWrapper scriptWrapper
-    public final PipelineLogger pipelineLogger
+    public final PipelineConfiguration pipelineConfiguration
 
     public final List<PipelineWrapper> wrappers = new LinkedList<>()
     public final List<Step> steps = new LinkedList<>()
@@ -22,22 +17,23 @@ class Pipeline implements Serializable {
 
     Pipeline(CpsScript script) {
         this.script = script
-        this.scriptWrapper = new JenkinsScriptWrapperImpl(script)
-        pipelineLogger = new DefaultPipelineLoger(scriptWrapper)
+        JenkinsScriptWrapper scriptWrapper = new JenkinsScriptWrapperImpl(script)
+        this.pipelineConfiguration = new PipelineConfiguration(new DefaultPipelineLogger(scriptWrapper))
+        this.pipelineConfiguration.setScriptWrapper(scriptWrapper)
     }
 
     void addStage(Stage stage) {
-        getPipelineLogger().info("Adding stage ${stage.getName()}")
+        getPipelineConfiguration().getLogger().info("Adding stage ${stage.getName()}")
         steps.add(stage)
     }
 
     void addStep(Step step) {
-        getPipelineLogger().info("Adding step")
+        getPipelineConfiguration().getLogger().info("Adding step")
         steps.add(step)
     }
 
     void addPipelineWrapper(PipelineWrapper wrapper) {
-        getPipelineLogger().info("Adding wrapper ${wrapper.getName()}")
+        getPipelineConfiguration().getLogger().info("Adding wrapper ${wrapper.getName()}")
         wrappers.add(wrapper)
     }
 
@@ -46,88 +42,71 @@ class Pipeline implements Serializable {
     }
 
     void run() {
-        DryRunPipelineBuilder dryRunPipelineBuilder = new DryRunPipelineBuilder(getPipelineLogger())
+        JenkinsScriptWrapper originalScriptWrapper = getPipelineConfiguration().getScriptWrapper()
+
+        DryRunPipelineBuilder dryRunPipelineBuilder = new DryRunPipelineBuilder(getPipelineConfiguration())
         dryRunPipelineBuilder.initialize()
         JenkinsScriptWrapper dryRunWrapper = new JenkinsScriptWrapperDryRun(this.script, dryRunPipelineBuilder)
-        getPipelineLogger().info("Starting dry run")
-        runWithJenkinsWrapper(dryRunWrapper)
-        getPipelineLogger().info("End dry run")
+        getPipelineConfiguration().setScriptWrapper(dryRunWrapper)
 
-        getPipelineLogger().alwaysLog(dryRunWrapper.getDryRunPipelineBuilder().getPipelineString())
+        getPipelineConfiguration().getLogger().info("Starting dry run")
+        runWithJenkinsWrapper()
+        getPipelineConfiguration().getLogger().info("End dry run")
+        getPipelineConfiguration().getLogger().alwaysLog(dryRunWrapper.getDryRunPipelineBuilder().getPipelineString())
 
-
-        getScriptWrapper().pipelineProperties(pipelineProperties)
-        getPipelineLogger().info("Starting run")
-        runWithJenkinsWrapper(getScriptWrapper())
+        getPipelineConfiguration().setScriptWrapper(originalScriptWrapper)
+        getPipelineConfiguration().getScriptWrapper().pipelineProperties(pipelineProperties)
+        getPipelineConfiguration().getLogger().info("Starting run")
+        runWithJenkinsWrapper()
     }
 
-    void runWithJenkinsWrapper(JenkinsScriptWrapper currentJenkinsScriptWrapper) {
+    void runWithJenkinsWrapper() {
         for (int i = 0; i < getWrappers().size(); i++) {
             PipelineWrapper wrapper = getWrappers().get(i)
-            wrapper.setScriptWrapper(currentJenkinsScriptWrapper)
-        }
-        for (int i = 0; i < getSteps().size(); i++) {
-            Step currentStep = getSteps().get(i)
-            currentStep.setScriptWrapper(currentJenkinsScriptWrapper)
-            if (currentStep instanceof Stage) {
-                Stage currentStage = (Stage) currentStep
-                for (int x = 0; x < currentStage.getWrappers().size(); x++) {
-                    currentStage.getWrappers().get(x).setScriptWrapper(currentJenkinsScriptWrapper)
-                }
-            }
-        }
-
-
-        for (int i = 0; i < getWrappers().size(); i++) {
-            PipelineWrapper wrapper = getWrappers().get(i)
-            currentJenkinsScriptWrapper.dir(wrapper.getRelativeDirectory()) {
+            getPipelineConfiguration().getScriptWrapper().dir(wrapper.getRelativeDirectory()) {
                 wrapper.start()
             }
         }
         try {
             for (int i = 0; i < getSteps().size(); i++) {
                 Step currentStep = getSteps().get(i)
-                currentJenkinsScriptWrapper.dir(currentStep.getRelativeDirectory()) {
+                getPipelineConfiguration().getScriptWrapper().dir(currentStep.getRelativeDirectory()) {
                     if (currentStep instanceof Stage) {
                         Stage currentStage = (Stage) currentStep
-                        currentJenkinsScriptWrapper.stage(currentStage.getName()) {
-                            getPipelineLogger().info("running stage ${currentStage.getName()}")
+                        getPipelineConfiguration().getScriptWrapper().stage(currentStage.getName()) {
+                            getPipelineConfiguration().getLogger().info("running stage ${currentStage.getName()}")
                             currentStage.run()
                         }
                     } else {
                         try {
                             currentStep.run()
                         } catch (Exception e) {
-                            getPipelineLogger().error(e)
+                            getPipelineConfiguration().getLogger().error(e)
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            currentJenkinsScriptWrapper.currentBuild().result = "FAILURE"
+            getPipelineConfiguration().getScriptWrapper().currentBuild().result = "FAILURE"
             for (int i = 0; i < getWrappers().size(); i++) {
                 PipelineWrapper wrapper = getWrappers().get(i)
-                currentJenkinsScriptWrapper.dir(wrapper.getRelativeDirectory()) {
+                getPipelineConfiguration().getScriptWrapper().dir(wrapper.getRelativeDirectory()) {
                     wrapper.handleException(e)
                 }
             }
-            getPipelineLogger().error("Build failed because ${e.getMessage()}", e)
+            getPipelineConfiguration().getLogger().error("Build failed because ${e.getMessage()}", e)
         } finally {
             for (int i = 0; i < getWrappers().size(); i++) {
                 PipelineWrapper wrapper = getWrappers().get(i)
-                currentJenkinsScriptWrapper.dir(wrapper.getRelativeDirectory()) {
+                getPipelineConfiguration().getScriptWrapper().dir(wrapper.getRelativeDirectory()) {
                     wrapper.end()
                 }
             }
         }
     }
 
-    public JenkinsScriptWrapper getScriptWrapper() {
-        return scriptWrapper
-    }
-
-    public PipelineLogger getPipelineLogger() {
-        return pipelineLogger
+    public PipelineConfiguration getPipelineConfiguration() {
+        return pipelineConfiguration
     }
 
     public List<PipelineWrapper> getWrappers() {

@@ -1,7 +1,7 @@
 package com.synopsys.integration.pipeline.jenkins
 
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
-import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
+import com.synopsys.integration.pipeline.logging.DefaultPipelineLogger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
@@ -58,7 +58,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
 
     @Override
     void executeCommandWithException(String command) throws CommandExecutionException {
-        PipelineLogger logger = new DefaultPipelineLoger(this)
+        PipelineLogger logger = new DefaultPipelineLogger(this)
         int errorStatus
         if (isUnix()) {
             errorStatus = sh(command)

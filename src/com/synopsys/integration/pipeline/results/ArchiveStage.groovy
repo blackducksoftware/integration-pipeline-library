@@ -1,6 +1,7 @@
 package com.synopsys.integration.pipeline.results
 
 import com.synopsys.integration.pipeline.exception.PipelineException
+import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 class ArchiveStage extends Stage {
@@ -8,13 +9,13 @@ class ArchiveStage extends Stage {
 
     private String archiveFilePattern = DEFAULT_ARCHIVE_FILE_PATTERN
 
-    ArchiveStage(String name) {
-        super(name)
+    ArchiveStage(PipelineConfiguration pipelineConfiguration, String name) {
+        super(pipelineConfiguration, name)
     }
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        getScriptWrapper().archiveArtifacts(archiveFilePattern)
+        getPipelineConfiguration().getScriptWrapper().archiveArtifacts(archiveFilePattern)
     }
 
     String getArchiveFilePattern() {

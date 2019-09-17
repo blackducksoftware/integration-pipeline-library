@@ -1,6 +1,7 @@
 package com.synopsys.integration.pipeline.tools
 
 import com.synopsys.integration.pipeline.exception.PipelineException
+import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 class DetectStage extends Stage {
@@ -8,8 +9,8 @@ class DetectStage extends Stage {
 
     private final String detectURL
 
-    DetectStage(String stageName, String detectURL, String detectCommand) {
-        super(stageName)
+    DetectStage(PipelineConfiguration pipelineConfiguration, String stageName, String detectURL, String detectCommand) {
+        super(pipelineConfiguration, stageName)
         this.detectURL = detectURL
         this.detectCommand = detectCommand
     }
@@ -19,7 +20,7 @@ class DetectStage extends Stage {
         def commandLines = []
         commandLines.add("#!/bin/bash")
         commandLines.add("bash <(curl -s ${detectURL}) ${detectCommand}")
-        getScriptWrapper().executeCommand(commandLines.join(" \n"))
+        getPipelineConfiguration().getScriptWrapper().executeCommand(commandLines.join(" \n"))
     }
 
     String getDetectCommand() {

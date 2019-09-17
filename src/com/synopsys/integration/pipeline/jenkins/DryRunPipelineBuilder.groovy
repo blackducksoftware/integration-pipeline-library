@@ -1,16 +1,14 @@
 package com.synopsys.integration.pipeline.jenkins
 
-import com.synopsys.integration.pipeline.logging.PipelineLogger
-
 class DryRunPipelineBuilder implements Serializable {
     private static final String INDENT = "  "
     private final List<String> scriptSteps = new ArrayList<>()
     private int indent = 0
 
-    private final PipelineLogger logger
+    private final PipelineConfiguration pipelineConfiguration
 
-    public DryRunPipelineBuilder(PipelineLogger logger) {
-        this.logger = logger
+    public DryRunPipelineBuilder(PipelineConfiguration pipelineConfiguration) {
+        this.pipelineConfiguration = pipelineConfiguration
         scriptSteps = new ArrayList<>()
         indent = 0
     }

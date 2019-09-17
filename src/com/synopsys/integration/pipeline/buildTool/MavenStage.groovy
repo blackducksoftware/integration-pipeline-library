@@ -1,6 +1,7 @@
 package com.synopsys.integration.pipeline.buildTool
 
 import com.synopsys.integration.pipeline.exception.PipelineException
+import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 class MavenStage extends Stage {
@@ -10,16 +11,15 @@ class MavenStage extends Stage {
     String mavenToolName = DEFAULT_MAVEN_TOOL_NAME
     String mavenOptions = DEFAULT_MAVEN_OPTIONS
 
-    MavenStage(String stageName) {
-        super(stageName)
+    MavenStage(PipelineConfiguration pipelineConfiguration, String stageName) {
+        super(pipelineConfiguration, stageName)
     }
-
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        String mvnHome = getScriptWrapper().tool(mavenToolName)
+        String mvnHome = getPipelineConfiguration().getScriptWrapper().tool(mavenToolName)
 
-        getScriptWrapper().executeCommand("${mvnHome}/bin/mvn ${mavenOptions}")
+        getPipelineConfiguration().getScriptWrapper().executeCommand("${mvnHome}/bin/mvn ${mavenOptions}")
     }
 
     String getMavenToolName() {

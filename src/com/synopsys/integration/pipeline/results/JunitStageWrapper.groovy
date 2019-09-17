@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline.results
 
-
+import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.StageWrapper
 
 class JunitStageWrapper extends StageWrapper {
@@ -8,8 +8,8 @@ class JunitStageWrapper extends StageWrapper {
 
     private LinkedHashMap junitOptions = [allowEmptyResults: false, testResults: DEFAULT_JUNIT_XML_PATTERN]
 
-    JunitStageWrapper(String name) {
-        super(name)
+    JunitStageWrapper(PipelineConfiguration pipelineConfiguration, String name) {
+        super(pipelineConfiguration, name)
     }
 
     @Override
@@ -24,7 +24,7 @@ class JunitStageWrapper extends StageWrapper {
 
     @Override
     void end() {
-        getScriptWrapper().junit(junitOptions)
+        getPipelineConfiguration().getScriptWrapper().junit(junitOptions)
     }
 
     LinkedHashMap getJunitOptions() {

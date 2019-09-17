@@ -2,7 +2,7 @@ package com.synopsys.integration.pipeline.scm
 
 import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.PipelineException
-import com.synopsys.integration.pipeline.logging.PipelineLogger
+import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.utilities.GithubBranchParser
 
@@ -11,7 +11,6 @@ class GitStage extends Stage {
     public static final boolean DEFAULT_GIT_CHANGELOG = false
     public static final boolean DEFAULT_GIT_POLL = false
 
-    private final PipelineLogger logger
     private final String url
     private final String branch
     private String gitToolName = DEFAULT_GIT_TOOL
@@ -19,27 +18,26 @@ class GitStage extends Stage {
     private boolean poll = DEFAULT_GIT_POLL
 
 
-    GitStage(PipelineLogger logger, String stageName, String url, String branch) {
-        super(stageName)
-        this.logger = logger
+    GitStage(PipelineConfiguration pipelineConfiguration, String stageName, String url, String branch) {
+        super(pipelineConfiguration, stageName)
         this.url = url
         this.branch = branch
     }
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        logger.info("Pulling branch '${branch}' from repo '${url}")
-        getScriptWrapper().checkout(url, branch, gitToolName, changelog, poll)
+        getPipelineConfiguration().getLogger().info("Pulling branch '${branch}' from repo '${url}")
+        getPipelineConfiguration().getScriptWrapper().checkout(url, branch, gitToolName, changelog, poll)
 
-        String gitPath = getScriptWrapper().tool(gitToolName)
+        String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
 
         GithubBranchParser githubBranchParser = new GithubBranchParser()
         GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
 
         // Need to do this because Jenkins checks out a detached HEAD
-        getScriptWrapper().executeCommandWithException("${gitPath} checkout ${githubBranchModel.getBranchName()}")
+        getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} checkout ${githubBranchModel.getBranchName()}")
         // Do a hard reset in order to clear out any local changes/commits
-        getScriptWrapper().executeCommandWithException("${gitPath} reset --hard ${githubBranchModel.getBranchName()}")
+        getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} reset --hard ${githubBranchModel.getBranchName()}")
     }
 
     String getGitToolName() {

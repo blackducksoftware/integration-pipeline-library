@@ -1,6 +1,7 @@
 package com.synopsys.integration.pipeline.model
 
 import com.synopsys.integration.pipeline.exception.PipelineException
+import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 
 abstract class Stage extends Step {
     // Fields here must be public or they can't be accessed (in Jenkins at runtime) in sub classes
@@ -8,7 +9,10 @@ abstract class Stage extends Step {
 
     final List<StageWrapper> wrappers = new LinkedList<>()
 
-    Stage(String name) { this.name = name }
+    Stage(PipelineConfiguration pipelineConfiguration, String name) {
+        super(pipelineConfiguration)
+        this.name = name
+    }
 
     void addStageWrapper(StageWrapper wrapper) {
         wrappers.add(wrapper)
@@ -16,11 +20,6 @@ abstract class Stage extends Step {
 
     @Override
     void run() throws PipelineException, Exception {
-        for (int i = 0; i < getWrappers().size(); i++) {
-            StageWrapper wrapper = getWrappers().get(i)
-            wrapper.setScriptWrapper(getScriptWrapper())
-        }
-
         for (int i = 0; i < getWrappers().size(); i++) {
             StageWrapper wrapper = getWrappers().get(i)
             wrapper.start()

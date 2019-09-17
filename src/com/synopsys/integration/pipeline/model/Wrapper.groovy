@@ -1,14 +1,16 @@
 package com.synopsys.integration.pipeline.model
 
-import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
+
+import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 
 abstract class Wrapper implements Serializable {
     // Fields here must be public or they can't be accessed (in Jenkins at runtime) in sub classes
+    public final PipelineConfiguration pipelineConfiguration
     public final String name
     public String relativeDirectory = '.'
-    public JenkinsScriptWrapper scriptWrapper
 
-    Wrapper(String name) {
+    Wrapper(PipelineConfiguration pipelineConfiguration, String name) {
+        this.pipelineConfiguration = pipelineConfiguration;
         this.name = name
     }
 
@@ -30,6 +32,10 @@ abstract class Wrapper implements Serializable {
         return Optional.empty()
     }
 
+    PipelineConfiguration getPipelineConfiguration() {
+        return pipelineConfiguration
+    }
+
     String getName() {
         return name
     }
@@ -42,11 +48,4 @@ abstract class Wrapper implements Serializable {
         this.relativeDirectory = relativeDirectory
     }
 
-    public JenkinsScriptWrapper getScriptWrapper() {
-        return scriptWrapper
-    }
-
-    public void setScriptWrapper(final JenkinsScriptWrapper scriptWrapper) {
-        this.scriptWrapper = scriptWrapper
-    }
 }

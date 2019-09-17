@@ -1,28 +1,24 @@
 package com.synopsys.integration.pipeline.buildTool
 
 import com.synopsys.integration.pipeline.exception.PipelineException
-import com.synopsys.integration.pipeline.logging.PipelineLogger
+import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 class GradleStage extends Stage {
     public static final String DEFAULT_GRADLE_EXE = './gradlew'
     public static final String DEFAULT_GRADLE_OPTIONS = 'clean build'
 
-    private final PipelineLogger pipelineLogger
     private String gradleExe = DEFAULT_GRADLE_EXE
     private String gradleOptions = DEFAULT_GRADLE_OPTIONS
 
-
-    GradleStage(String stageName, PipelineLogger pipelineLogger) {
-        super(stageName)
-        this.pipelineLogger = pipelineLogger
+    GradleStage(PipelineConfiguration pipelineConfiguration, String stageName) {
+        super(pipelineConfiguration, stageName)
     }
-
-
+    
     @Override
     void stageExecution() throws PipelineException, Exception {
-        pipelineLogger.info("running gradle ${gradleExe} ${gradleOptions}")
-        getScriptWrapper().executeCommandWithException("${gradleExe} ${gradleOptions}")
+        getPipelineConfiguration().getLogger().info("running gradle ${gradleExe} ${gradleOptions}")
+        getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gradleExe} ${gradleOptions}")
     }
 
     String getGradleExe() {

@@ -1,13 +1,15 @@
 package com.synopsys.integration.pipeline.model
 
 import com.synopsys.integration.pipeline.exception.PipelineException
-import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
+import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 
 abstract class Step implements Serializable {
+    public final PipelineConfiguration pipelineConfiguration
     public String relativeDirectory = '.'
-    public JenkinsScriptWrapper scriptWrapper
 
-    Step() {}
+    Step(PipelineConfiguration pipelineConfiguration) {
+        this.pipelineConfiguration = pipelineConfiguration
+    }
 
     abstract void run() throws PipelineException, Exception
 
@@ -19,11 +21,7 @@ abstract class Step implements Serializable {
         this.relativeDirectory = relativeDirectory
     }
 
-    public JenkinsScriptWrapper getScriptWrapper() {
-        return scriptWrapper
-    }
-
-    public void setScriptWrapper(final JenkinsScriptWrapper scriptWrapper) {
-        this.scriptWrapper = scriptWrapper
+    PipelineConfiguration getPipelineConfiguration() {
+        return pipelineConfiguration
     }
 }
