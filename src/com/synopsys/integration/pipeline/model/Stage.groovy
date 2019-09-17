@@ -16,14 +16,23 @@ abstract class Stage extends Step {
 
     @Override
     void run() throws PipelineException, Exception {
-        wrappers.each { wrapper -> wrapper.start() }
+        for (int i = 0; i < getWrappers().size(); i++) {
+            StageWrapper wrapper = getWrappers().get(i)
+            wrapper.start()
+        }
         try {
             stageExecution()
         } catch (Exception e) {
-            wrappers.each { wrapper -> wrapper.handleException(e) }
+            for (int i = 0; i < getWrappers().size(); i++) {
+                StageWrapper wrapper = getWrappers().get(i)
+                wrapper.handleException(e)
+            }
             throw e
         } finally {
-            wrappers.each { wrapper -> wrapper.end() }
+            for (int i = 0; i < getWrappers().size(); i++) {
+                StageWrapper wrapper = getWrappers().get(i)
+                wrapper.end()
+            }
         }
     }
 

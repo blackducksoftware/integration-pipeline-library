@@ -8,7 +8,6 @@ import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.PipelineWrapper
 import com.synopsys.integration.pipeline.model.Stage
-import com.synopsys.integration.pipeline.model.StageWrapper
 import com.synopsys.integration.pipeline.model.Step
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
@@ -63,27 +62,31 @@ class Pipeline implements Serializable {
     }
 
     void runWithJenkinsWrapper(JenkinsScriptWrapper currentJenkinsScriptWrapper) {
-        for (PipelineWrapper wrapper : getWrappers()) {
+        for (int i = 0; i < getWrappers().size(); i++) {
+            PipelineWrapper wrapper = getWrappers().get(i)
             wrapper.setScriptWrapper(currentJenkinsScriptWrapper)
         }
-        for (Step currentStep : getSteps()) {
+        for (int i = 0; i < getSteps().size(); i++) {
+            Step currentStep = getSteps().get(i)
             currentStep.setScriptWrapper(currentJenkinsScriptWrapper)
             if (currentStep instanceof Stage) {
                 Stage currentStage = (Stage) currentStep
-                for (StageWrapper stageWrapper : currentStage.getWrappers()) {
-                    stageWrapper.setScriptWrapper(currentJenkinsScriptWrapper)
+                for (int x = 0; x < currentStage.getWrappers().size(); x++) {
+                    currentStage.getWrappers().get(x).setScriptWrapper(currentJenkinsScriptWrapper)
                 }
             }
         }
 
 
-        for (PipelineWrapper wrapper : getWrappers()) {
+        for (int i = 0; i < getWrappers().size(); i++) {
+            PipelineWrapper wrapper = getWrappers().get(i)
             currentJenkinsScriptWrapper.dir(wrapper.getRelativeDirectory()) {
                 wrapper.start()
             }
         }
         try {
-            for (Step currentStep : getSteps()) {
+            for (int i = 0; i < getSteps().size(); i++) {
+                Step currentStep = getSteps().get(i)
                 currentJenkinsScriptWrapper.dir(currentStep.getRelativeDirectory()) {
                     if (currentStep instanceof Stage) {
                         Stage currentStage = (Stage) currentStep
@@ -102,14 +105,16 @@ class Pipeline implements Serializable {
             }
         } catch (Exception e) {
             currentJenkinsScriptWrapper.currentBuild().result = "FAILURE"
-            for (PipelineWrapper wrapper : getWrappers()) {
+            for (int i = 0; i < getWrappers().size(); i++) {
+                PipelineWrapper wrapper = getWrappers().get(i)
                 currentJenkinsScriptWrapper.dir(wrapper.getRelativeDirectory()) {
                     wrapper.handleException(e)
                 }
             }
             getPipelineLogger().error("Build failed because ${e.getMessage()}", e)
         } finally {
-            for (PipelineWrapper wrapper : getWrappers()) {
+            for (int i = 0; i < getWrappers().size(); i++) {
+                PipelineWrapper wrapper = getWrappers().get(i)
                 currentJenkinsScriptWrapper.dir(wrapper.getRelativeDirectory()) {
                     wrapper.end()
                 }
