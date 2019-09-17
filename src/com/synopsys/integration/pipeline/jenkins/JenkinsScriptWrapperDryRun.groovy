@@ -13,53 +13,54 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
 
     @Override
     int bat(String command) {
-        dryRunPipelineBuilder.addPipelineLine("bat script: ${command}, returnStatus: true")
+        getDryRunPipelineBuilder().addPipelineLine("bat script: ${command}, returnStatus: true")
         return 0
     }
 
     @Override
     void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll) {
-        dryRunPipelineBuilder.addPipelineLine("checkout url:${url} branch:${branch} gitTool:${gitToolName} changelog:${changelog} poll:${poll}")
+        getDryRunPipelineBuilder().addPipelineLine("checkout url:${url} branch:${branch} gitTool:${gitToolName} changelog:${changelog} poll:${poll}")
     }
 
     @Override
     BuildWrapper currentBuild() {
-        return new BuildWrapperDryRun(script.currentBuild, dryRunPipelineBuilder)
+        return new BuildWrapperDryRun(script.currentBuild, getDryRunPipelineBuilder())
     }
 
 
     @Override
     void deleteDir() {
-        dryRunPipelineBuilder.addPipelineLine("deleteDir")
+        getDryRunPipelineBuilder().addPipelineLine("deleteDir")
     }
 
     @Override
     void dir(String relativeDirectory, Closure closure) {
-        dryRunPipelineBuilder.addPipelineLine("dir(${relativeDirectory}) {")
-        dryRunPipelineBuilder.increaseIndent()
+        getDryRunPipelineBuilder().addPipelineLine("dir(${relativeDirectory}) {")
+        getDryRunPipelineBuilder().increaseIndent()
         closure.call()
-        dryRunPipelineBuilder.decreaseIndent()
-        dryRunPipelineBuilder.addPipelineLine("}")
+        getDryRunPipelineBuilder().decreaseIndent()
+        getDryRunPipelineBuilder().addPipelineLine("}")
     }
 
     @Override
     void emailext(String content, String subjectLine, String recipientList) {
-        dryRunPipelineBuilder.addPipelineLine("emailext body:${content}, subject:${subjectLine}, to:${recipientList}")
+        getDryRunPipelineBuilder().addPipelineLine("emailext body:${content}, subject:${subjectLine}, to:${recipientList}")
     }
 
     @Override
     EnvActionWrapper env() {
-        return new EnvActionWrapperDryRun(script.env, dryRunPipelineBuilder)
+        script().println("${getDryRunPipelineBuilder()}")
+        return new EnvActionWrapperDryRun(script.env, getDryRunPipelineBuilder())
     }
 
     @Override
     void jacoco(LinkedHashMap jacocoOptions) {
-        dryRunPipelineBuilder.addPipelineLine("jacoco ${jacocoOptions}")
+        getDryRunPipelineBuilder().addPipelineLine("jacoco ${jacocoOptions}")
     }
 
     @Override
     void junit(LinkedHashMap junitOptions) {
-        dryRunPipelineBuilder.addPipelineLine("junit ${junitOptions}")
+        getDryRunPipelineBuilder().addPipelineLine("junit ${junitOptions}")
     }
 
     @Override
@@ -67,17 +68,17 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
 
     @Override
     void pipelineProperties(List pipelineOptions) {
-        dryRunPipelineBuilder.addPipelineLine("properties ${pipelineOptions}")
+        getDryRunPipelineBuilder().addPipelineLine("properties ${pipelineOptions}")
     }
 
     @Override
     void step(String[] fields) {
-        dryRunPipelineBuilder.addPipelineLine("step ${fields}")
+        getDryRunPipelineBuilder().addPipelineLine("step ${fields}")
     }
 
     @Override
     void archiveArtifacts(String artifactPattern) {
-        dryRunPipelineBuilder.addPipelineLine("archiveArtifacts ${artifactPattern}")
+        getDryRunPipelineBuilder().addPipelineLine("archiveArtifacts ${artifactPattern}")
     }
 
     /**
@@ -90,22 +91,22 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
 
     @Override
     int sh(String command) {
-        dryRunPipelineBuilder.addPipelineLine("sh script: ${command}, returnStatus: true")
+        getDryRunPipelineBuilder().addPipelineLine("sh script: ${command}, returnStatus: true")
         return 0
     }
 
     @Override
     void stage(String stageName, Closure closure) {
-        dryRunPipelineBuilder.addPipelineLine("stage(${stageName}) {")
-        dryRunPipelineBuilder.increaseIndent()
+        getDryRunPipelineBuilder().addPipelineLine("stage(${stageName}) {")
+        getDryRunPipelineBuilder().increaseIndent()
         closure.call()
-        dryRunPipelineBuilder.decreaseIndent()
-        dryRunPipelineBuilder.addPipelineLine("}")
+        getDryRunPipelineBuilder().decreaseIndent()
+        getDryRunPipelineBuilder().addPipelineLine("}")
     }
 
     @Override
     String tool(String toolName) {
-        dryRunPipelineBuilder.addPipelineLine("tool name: ${toolName}")
+        getDryRunPipelineBuilder().addPipelineLine("tool name: ${toolName}")
         return script().tool(toolName)
     }
 

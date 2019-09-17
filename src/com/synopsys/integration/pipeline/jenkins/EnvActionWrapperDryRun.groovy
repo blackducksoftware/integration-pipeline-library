@@ -13,7 +13,7 @@ class EnvActionWrapperDryRun extends EnvActionWrapperImpl {
 
     @Override
     public void setProperty(String propertyName, Object newValue) {
-        dryRunPipelineBuilder.addPipelineLine("setProperty(propertName:${propertyName} value:${newValue})")
+        this.dryRunPipelineBuilder.addPipelineLine("setProperty(propertName:${propertyName} value:${newValue})")
     }
 
 }
