@@ -1,19 +1,19 @@
 package com.synopsys.integration.pipeline.jenkins
 
-import com.synopsys.integration.pipeline.logging.PipelineLogger
+
 import org.jenkinsci.plugins.workflow.cps.EnvActionImpl
 
 class EnvActionWrapperDryRun extends EnvActionWrapperImpl {
-    private final PipelineLogger logger
+    public final DryRunPipelineBuilder dryRunPipelineBuilder
 
-    EnvActionWrapperDryRun(EnvActionImpl envAction, PipelineLogger logger) {
+    EnvActionWrapperDryRun(EnvActionImpl envAction, DryRunPipelineBuilder dryRunPipelineBuilder) {
         super(envAction)
-        this.logger = logger
+        this.dryRunPipelineBuilder = dryRunPipelineBuilder
     }
 
     @Override
     public void setProperty(String propertyName, Object newValue) {
-        logger.alwaysLog("setProperty propertName:${propertyName} value:${newValue}")
+        dryRunPipelineBuilder.addPipelineLine("setProperty(propertName:${propertyName} value:${newValue})")
     }
 
 }

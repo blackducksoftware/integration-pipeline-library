@@ -1,30 +1,30 @@
 package com.synopsys.integration.pipeline.jenkins
 
-import com.synopsys.integration.pipeline.logging.PipelineLogger
+
 import hudson.AbortException
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 
 class BuildWrapperDryRun extends BuildWrapperImpl {
-    private final PipelineLogger logger
+    public final DryRunPipelineBuilder dryRunPipelineBuilder
 
-    BuildWrapperDryRun(RunWrapper runWrapper, PipelineLogger logger) {
+    BuildWrapperDryRun(RunWrapper runWrapper, DryRunPipelineBuilder dryRunPipelineBuilder) {
         super(runWrapper)
-        this.logger = logger
+        this.dryRunPipelineBuilder = dryRunPipelineBuilder
     }
 
     @Override
     void setResult(String result) throws AbortException {
-        logger.info("setResult ${result}")
+        dryRunPipelineBuilder.addPipelineLine("setResult ${result}")
     }
 
     @Override
     BuildWrapper getPreviousBuild() throws AbortException {
-        return new BuildWrapperDryRun(getRunWrapper().getPreviousBuild(), logger)
+        return new BuildWrapperDryRun(getRunWrapper().getPreviousBuild(), dryRunPipelineBuilder)
     }
 
     @Override
     BuildWrapper getNextBuild() throws AbortException {
-        return new BuildWrapperDryRun(getRunWrapper().getNextBuild(), logger)
+        return new BuildWrapperDryRun(getRunWrapper().getNextBuild(), dryRunPipelineBuilder)
     }
 
 
