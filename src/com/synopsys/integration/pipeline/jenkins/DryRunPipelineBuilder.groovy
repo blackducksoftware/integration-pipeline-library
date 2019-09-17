@@ -2,7 +2,7 @@ package com.synopsys.integration.pipeline.jenkins
 
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 
-class DryRunPipelineBuilder {
+class DryRunPipelineBuilder implements Serializable {
     private static final String INDENT = "  "
     private final List<String> scriptSteps = new ArrayList<>()
     private int indent = 0

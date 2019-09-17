@@ -3,7 +3,7 @@ package com.synopsys.integration.pipeline.jenkins
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
-interface JenkinsScriptWrapper {
+interface JenkinsScriptWrapper extends Serializable {
     int bat(String command)
 
     void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll)

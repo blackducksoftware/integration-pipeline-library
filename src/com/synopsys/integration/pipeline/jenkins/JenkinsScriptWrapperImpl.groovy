@@ -5,7 +5,7 @@ import com.synopsys.integration.pipeline.logging.DefaultPipelineLoger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
-class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper, Serializable {
+class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     final CpsScript script
 
     JenkinsScriptWrapperImpl(final CpsScript script) {

@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline.jenkins
 
-interface EnvActionWrapper {
+interface EnvActionWrapper extends Serializable {
 
     public String getProperty(String propertyName)
 

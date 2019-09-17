@@ -2,7 +2,7 @@ package com.synopsys.integration.pipeline.jenkins
 
 import hudson.AbortException
 
-interface BuildWrapper {
+interface BuildWrapper extends Serializable {
 
     public void setResult(String result) throws AbortException
 
