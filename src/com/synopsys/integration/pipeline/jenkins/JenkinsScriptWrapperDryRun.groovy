@@ -23,7 +23,7 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
     }
 
     void closure(Closure closure) {
-        getDryRunPipelineBuilder().addPipelineLine("closure ${closure}")
+        getDryRunPipelineBuilder().addPipelineLine("closure {CAN NOT SHOW CUSTOM CLOSURE}")
     }
 
     @Override
