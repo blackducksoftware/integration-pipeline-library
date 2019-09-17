@@ -53,10 +53,10 @@ class Pipeline implements Serializable {
         SilentPipelineLogger silentLogger = new SilentPipelineLogger()
         getPipelineConfiguration().setLogger(silentLogger)
 
-        getPipelineConfiguration().getLogger().info("Starting dry run")
+        originalLogger.info("Starting dry run")
         runWithJenkinsWrapper()
-        getPipelineConfiguration().getLogger().info("End dry run")
-        getPipelineConfiguration().getLogger().alwaysLog(dryRunWrapper.getDryRunPipelineBuilder().getPipelineString())
+        originalLogger.info("End dry run")
+        originalLogger.alwaysLog(dryRunWrapper.getDryRunPipelineBuilder().getPipelineString())
 
         getPipelineConfiguration().setScriptWrapper(originalScriptWrapper)
         getPipelineConfiguration().setLogger(originalLogger)
