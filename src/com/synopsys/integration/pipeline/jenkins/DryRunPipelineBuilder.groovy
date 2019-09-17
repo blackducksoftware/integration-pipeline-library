@@ -10,7 +10,7 @@ class DryRunPipelineBuilder {
     private final PipelineLogger logger
 
     public DryRunPipelineBuilder(PipelineLogger logger) {
-        this.logger = logger;
+        this.logger = logger
         scriptSteps = new ArrayList<>()
         indent = 0
     }
@@ -43,10 +43,10 @@ class DryRunPipelineBuilder {
 
     private String indentString(int currentIndent) {
         String indentString = ''
-        int count = 0
-        while (count < currentIndent) {
+
+        for (int i = 0; i < currentIndent; i++) {
+            logger.info("indent loop ${i} index to reach ${currentIndent}")
             indentString += INDENT
-            count++
         }
         return indentString
     }
