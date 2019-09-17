@@ -47,11 +47,14 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
         getDryRunPipelineBuilder().addPipelineLine("emailext body:${content}, subject:${subjectLine}, to:${recipientList}")
     }
 
-    @Override
-    EnvActionWrapper env() {
-        script().println("${getDryRunPipelineBuilder()}")
-        return new EnvActionWrapperDryRun(script.env, getDryRunPipelineBuilder())
+    String getJenkinsProperty(String propertyName) {
+        getDryRunPipelineBuilder().addPipelineLine("getProperty name: ${propertyName}")
     }
+
+    void setJenkinsProperty(String propertyName, String value) {
+        getDryRunPipelineBuilder().addPipelineLine("setProperty name: ${propertyName} value: ${value}")
+    }
+
 
     @Override
     void jacoco(LinkedHashMap jacocoOptions) {

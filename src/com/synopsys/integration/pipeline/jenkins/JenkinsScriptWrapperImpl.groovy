@@ -1,8 +1,6 @@
 package com.synopsys.integration.pipeline.jenkins
 
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
-import com.synopsys.integration.pipeline.logging.DefaultPipelineLogger
-import com.synopsys.integration.pipeline.logging.PipelineLogger
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
@@ -44,11 +42,6 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    EnvActionWrapper env() {
-        return new EnvActionWrapperImpl(script.env)
-    }
-
-    @Override
     int executeCommand(String command) {
         if (isUnix()) {
             return sh(command)
@@ -58,7 +51,6 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
 
     @Override
     void executeCommandWithException(String command) throws CommandExecutionException {
-        PipelineLogger logger = new DefaultPipelineLogger(this)
         int errorStatus
         if (isUnix()) {
             errorStatus = sh(command)
@@ -69,6 +61,15 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
             throw new CommandExecutionException(errorStatus, "Executing command '${command}', resulted in error status code '${errorStatus}'")
         }
     }
+
+    String getJenkinsProperty(String propertyName) {
+        script.env.getProperty(propertyName)
+    }
+
+    void setJenkinsProperty(String propertyName, String value) {
+        script.env.setProperty(propertyName, value)
+    }
+
 
     @Override
     boolean isUnix() {

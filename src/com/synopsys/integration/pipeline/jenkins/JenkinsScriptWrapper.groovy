@@ -16,7 +16,9 @@ interface JenkinsScriptWrapper extends Serializable {
 
     void emailext(String content, String subjectLine, String recipientList)
 
-    EnvActionWrapper env()
+    String getJenkinsProperty(String propertyName)
+
+    void setJenkinsProperty(String propertyName, String value)
 
     int executeCommand(String command)
 
