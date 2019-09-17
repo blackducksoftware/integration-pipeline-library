@@ -21,7 +21,6 @@ class DryRunPipelineBuilder {
     }
 
     public void addPipelineLine(String line) {
-        logger.info("Adding line ${line}")
         String currentIndentString = indentString(indent)
         scriptSteps.add("${currentIndentString}${line}")
     }
@@ -35,15 +34,11 @@ class DryRunPipelineBuilder {
     }
 
     public void increaseIndent() {
-        logger.info("Increasing the indent from ${indent}")
         indent++
-        logger.info("to ${indent}")
     }
 
     public void decreaseIndent() {
-        logger.info("Decreasing the indent from ${indent}")
         indent--
-        logger.info("to ${indent}")
     }
 
     private String indentString(int currentIndent) {
@@ -51,6 +46,7 @@ class DryRunPipelineBuilder {
         int count = 0
         while (count < currentIndent) {
             indentString += INDENT
+            count++
         }
         return indentString
     }
