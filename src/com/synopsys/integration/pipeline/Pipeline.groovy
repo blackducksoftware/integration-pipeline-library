@@ -92,7 +92,11 @@ class Pipeline implements Serializable {
                             currentStage.run()
                         }
                     } else {
-                        currentStep.run()
+                        try {
+                            currentStep.run()
+                        } catch (NotSerializableException e) {
+                            getPipelineLogger().error(e)
+                        }
                     }
                 }
             }
