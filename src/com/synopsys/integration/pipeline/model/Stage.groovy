@@ -15,6 +15,7 @@ abstract class Stage extends Step {
     }
 
     void addStageWrapper(StageWrapper wrapper) {
+        getPipelineConfiguration().getLogger().debug("Adding stage wrapper ${wrapper.getName()}")
         wrappers.add(wrapper)
     }
 

@@ -24,17 +24,17 @@ class Pipeline implements Serializable {
     }
 
     void addStage(Stage stage) {
-        getPipelineConfiguration().getLogger().info("Adding stage ${stage.getName()}")
+        getPipelineConfiguration().getLogger().debug("Adding stage ${stage.getName()}")
         steps.add(stage)
     }
 
     void addStep(Step step) {
-        getPipelineConfiguration().getLogger().info("Adding step")
+        getPipelineConfiguration().getLogger().debug("Adding step")
         steps.add(step)
     }
 
     void addPipelineWrapper(PipelineWrapper wrapper) {
-        getPipelineConfiguration().getLogger().info("Adding wrapper ${wrapper.getName()}")
+        getPipelineConfiguration().getLogger().debug("Adding pipeline wrapper ${wrapper.getName()}")
         wrappers.add(wrapper)
     }
 
