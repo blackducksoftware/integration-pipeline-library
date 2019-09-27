@@ -45,6 +45,7 @@ class Pipeline implements Serializable {
     void run() {
         JenkinsScriptWrapper originalScriptWrapper = getPipelineConfiguration().getScriptWrapper()
         PipelineLogger originalLogger = getPipelineConfiguration().getLogger()
+        getPipelineConfiguration().getScriptWrapper().pipelineProperties(pipelineProperties)
 
         DryRunPipelineBuilder dryRunPipelineBuilder = new DryRunPipelineBuilder(getPipelineConfiguration())
         dryRunPipelineBuilder.initialize()
@@ -60,7 +61,6 @@ class Pipeline implements Serializable {
 
         getPipelineConfiguration().setScriptWrapper(originalScriptWrapper)
         getPipelineConfiguration().setLogger(originalLogger)
-        getPipelineConfiguration().getScriptWrapper().pipelineProperties(pipelineProperties)
         getPipelineConfiguration().getLogger().info("Starting run")
         runWithJenkinsWrapper()
     }
