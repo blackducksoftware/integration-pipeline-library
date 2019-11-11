@@ -63,7 +63,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.versioning
         }
 
         def finalFileText = splitLines.join('\n')
-        jenkinsScriptWrapper.writeFile("build.gradle", "${finalFileText}")
+        jenkinsScriptWrapper.writeFile("build.gradle", finalFileText)
     }
 
     @Override
@@ -88,7 +88,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.versioning
         splitLines[versionLineIndex] = versionLine
 
         def finalFileText = splitLines.join('\n')
-        jenkinsScriptWrapper.writeFile("build.gradle", "${finalFileText}")
+        jenkinsScriptWrapper.writeFile("build.gradle", finalFileText)
         return modifiedVersion
     }
 
@@ -144,7 +144,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.versioning
         }
 
         String finalFileText = splitLines.join('\n')
-        jenkinsScriptWrapper.writeFile("build.gradle", "${finalFileText}")
+        jenkinsScriptWrapper.writeFile("build.gradle", finalFileText)
         return modifiedVersion
     }
 
