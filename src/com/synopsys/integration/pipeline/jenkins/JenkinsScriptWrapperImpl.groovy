@@ -120,6 +120,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
 
     @Override
     int sh(String command) {
+        println("Running in class ${this.getClass().getSimpleName()}")
         return script.sh(script: command, returnStatus: true)
     }
 

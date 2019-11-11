@@ -98,6 +98,7 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
 
     @Override
     int sh(String command) {
+        println("Running dry run method in class ${this.getClass().getSimpleName()}")
         getDryRunPipelineBuilder().addPipelineLine("sh script: ${command}, returnStatus: true")
         return 0
     }
