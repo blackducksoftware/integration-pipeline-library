@@ -174,6 +174,6 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
 
     @Override
     void writeFile(final String fileName, final String text) {
-        script.writeFile(fileName, text)
+        script.writeFile(file: fileName, text: text)
     }
 }
