@@ -27,7 +27,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.versioning
     @Override
     public String getProjectVersionProcess() {
         try {
-            def version = jenkinsScriptWrapper.sh(script: "${exe} properties -q | grep '^version: '", true)
+            String version = jenkinsScriptWrapper.executeCommand("${exe} properties -q | grep '^version: '", true)
             return version.substring(version.indexOf(':') + 1).trim()
         } catch (Exception e) {
             logger.error("Failed to run the gradle command to get the Project version ${e.getMessage()}")
@@ -37,12 +37,12 @@ public class GradleUtils implements com.synopsys.integration.pipeline.versioning
 
     public void updateCommonGradlePluginVersion(boolean isRelease) {
         String commonGradlePluginLine = ''
-        def fileText = jenkinsScriptWrapper.readFile file: "build.gradle"
+        String fileText = jenkinsScriptWrapper.readFile("build.gradle")
         def splitLines = fileText.split('\n')
         int commonGradlePluginLineIndex = -1
         for (int i = 0; i < splitLines.size(); i++) {
-            def line = splitLines[i]
-            def trimmedLine = line.trim()
+            String line = splitLines[i]
+            String trimmedLine = line.trim()
             if (commonGradlePluginLine.length() == 0 && isRelease && trimmedLine.contains('common-gradle-plugin:')) {
                 commonGradlePluginLineIndex = i
                 String latestVersion = getLatestCommonGradlePluginVersion()
@@ -63,14 +63,14 @@ public class GradleUtils implements com.synopsys.integration.pipeline.versioning
         }
 
         def finalFileText = splitLines.join('\n')
-        jenkinsScriptWrapper.writeFile file: "build.gradle", text: "${finalFileText}"
+        jenkinsScriptWrapper.writeFile("build.gradle", "${finalFileText}")
     }
 
     @Override
     public String removeSnapshotFromProjectVersion() {
         String versionLine = ''
         String modifiedVersion = ''
-        def fileText = jenkinsScriptWrapper.readFile file: "build.gradle"
+        String fileText = jenkinsScriptWrapper.readFile("build.gradle")
         def splitLines = fileText.split('\n')
         int versionLineIndex = 0
         for (int i = 0; i < splitLines.size(); i++) {
@@ -88,24 +88,24 @@ public class GradleUtils implements com.synopsys.integration.pipeline.versioning
         splitLines[versionLineIndex] = versionLine
 
         def finalFileText = splitLines.join('\n')
-        jenkinsScriptWrapper.writeFile file: "build.gradle", text: "${finalFileText}"
+        jenkinsScriptWrapper.writeFile("build.gradle", "${finalFileText}")
         return modifiedVersion
     }
 
     private String getLatestCommonGradlePluginVersion() {
         URL url = new URL("https://repo1.maven.org/maven2/com/blackducksoftware/integration/common-gradle-plugin/maven-metadata.xml")
-        def returnMessage = url.getText()
+        String returnMessage = url.getText()
         def rootNode = new XmlSlurper().parseText(returnMessage)
         return rootNode.versioning.latest.text()
     }
 
     @Override
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
-        def command = "${exe} dependencies -q"
+        String command = "${exe} dependencies -q"
         if (!checkAllDependencies) {
             command = "${command} --configuration compile"
         }
-        def dependencyText = jenkinsScriptWrapper.sh(script: "${command}", true)
+        String dependencyText = jenkinsScriptWrapper.executeCommand(command, true)
         logger.info("Gradle dependencies")
         logger.info("${dependencyText}")
         return dependencyText.contains('-SNAPSHOT')
@@ -113,22 +113,22 @@ public class GradleUtils implements com.synopsys.integration.pipeline.versioning
 
     @Override
     public String increaseSemver() {
-        def versionLine = ''
-        def modifiedVersion = ''
+        String versionLine = ''
+        String modifiedVersion = ''
         String commonGradlePluginLine = ''
-        def fileText = jenkinsScriptWrapper.readFile file: "build.gradle"
+        String fileText = jenkinsScriptWrapper.readFile("build.gradle")
         def splitLines = fileText.split('\n')
         def versionLineIndex = 0
         int commonGradlePluginLineIndex = -1
         for (int i = 0; i < splitLines.size(); i++) {
-            def line = splitLines[i]
-            def trimmedLine = line.trim()
+            String line = splitLines[i]
+            String trimmedLine = line.trim()
             if (versionLine.length() == 0 && trimmedLine.startsWith('version ')) {
                 versionLineIndex = i
                 versionLine = trimmedLine
-                def version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').trim()
+                String version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').trim()
                 int finalVersionPieceIndex = version.lastIndexOf('.') + 1
-                def finalVersionPiece = version.substring(finalVersionPieceIndex)
+                String finalVersionPiece = version.substring(finalVersionPieceIndex)
                 modifiedVersion = version.substring(0, finalVersionPieceIndex)
                 modifiedVersion = "${modifiedVersion}${Integer.valueOf(finalVersionPiece) + 1}-SNAPSHOT"
                 versionLine = versionLine.replace(version, modifiedVersion)
@@ -143,8 +143,8 @@ public class GradleUtils implements com.synopsys.integration.pipeline.versioning
             splitLines[commonGradlePluginLineIndex] = commonGradlePluginLine
         }
 
-        def finalFileText = splitLines.join('\n')
-        jenkinsScriptWrapper.writeFile file: "build.gradle", text: "${finalFileText}"
+        String finalFileText = splitLines.join('\n')
+        jenkinsScriptWrapper.writeFile("build.gradle", "${finalFileText}")
         return modifiedVersion
     }
 
