@@ -70,8 +70,8 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
         getDryRunPipelineBuilder().addPipelineLine("junit ${junitOptions}")
     }
 
-    @Override
-    void println(String message) {}
+//    @Override
+//    void println(String message) {}
 
     @Override
     void pipelineProperties(List pipelineOptions) {
