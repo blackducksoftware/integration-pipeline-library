@@ -1,11 +1,11 @@
 package com.synopsys.integration.pipeline.versioning
 
-import com.synopsys.integration.ProjectUtils
 import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.scm.GitStage
+import com.synopsys.integration.pipeline.versioning.utilities.ProjectUtils
 import com.synopsys.integration.utilities.GithubBranchParser
 
 class NextSnapshotStage extends Stage {
@@ -32,8 +32,8 @@ class NextSnapshotStage extends Stage {
             getPipelineConfiguration().getLogger().info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
             return
         }
-        ProjectUtils projectUtils = new ProjectUtils()
-        projectUtils.initialize(getPipelineConfiguration().getScriptWrapper().script(), buildTool, exe)
+        ProjectUtils projectUtils = new ProjectUtils(getPipelineConfiguration().getLogger(), getPipelineConfiguration().getScriptWrapper())
+        projectUtils.initialize(buildTool, exe)
         String newVersion = projectUtils.increaseSemver()
         if (newVersion.contains('-SNAPSHOT')) {
             getPipelineConfiguration().getLogger().info("Using the next snapshot post release. ${newVersion}")

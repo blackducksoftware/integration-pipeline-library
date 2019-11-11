@@ -1,12 +1,12 @@
 package com.synopsys.integration.pipeline.versioning
 
-import com.synopsys.integration.ProjectUtils
 import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.exception.PrepareForReleaseException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.scm.GitStage
+import com.synopsys.integration.pipeline.versioning.utilities.ProjectUtils
 import com.synopsys.integration.utilities.GithubBranchParser
 
 class RemoveSnapshotStage extends Stage {
@@ -34,8 +34,8 @@ class RemoveSnapshotStage extends Stage {
             getPipelineConfiguration().getLogger().info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
             return
         }
-        ProjectUtils projectUtils = new ProjectUtils()
-        projectUtils.initialize(getPipelineConfiguration().getScriptWrapper().getScript(), buildTool, exe)
+        ProjectUtils projectUtils = new ProjectUtils(getPipelineConfiguration().getLogger(), getPipelineConfiguration().getScriptWrapper())
+        projectUtils.initialize(buildTool, exe)
         boolean hasSnapshotDependencies = projectUtils.checkForSnapshotDependencies(checkAllDependencies)
         if (hasSnapshotDependencies) {
             String errorMessage = "Failing release preparation because of ${buildTool} SNAPSHOT dependencies"

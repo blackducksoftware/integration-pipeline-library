@@ -18,6 +18,13 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
     }
 
     @Override
+    String bat(String command, Boolean returnStdout) throws CommandExecutionException {
+        getDryRunPipelineBuilder().addPipelineLine("bat script: ${command}, returnStdout: ${returnStdout}")
+        return ""
+    }
+
+
+    @Override
     void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll) {
         getDryRunPipelineBuilder().addPipelineLine("checkout url:${url} branch:${branch} gitTool:${gitToolName} changelog:${changelog} poll:${poll}")
     }
@@ -70,12 +77,15 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
         getDryRunPipelineBuilder().addPipelineLine("junit ${junitOptions}")
     }
 
-//    @Override
-//    void println(String message) {}
-
     @Override
     void pipelineProperties(List pipelineOptions) {
         getDryRunPipelineBuilder().addPipelineLine("properties ${pipelineOptions}")
+    }
+
+    @Override
+    String readFile(String fileName) {
+        getDryRunPipelineBuilder().addPipelineLine("readFile file: ${fileName}")
+        return ""
     }
 
     @Override
@@ -98,9 +108,14 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
 
     @Override
     int sh(String command) throws CommandExecutionException {
-        println("Running dry run method in class ${this.getClass().getSimpleName()}  '${command}'")
         getDryRunPipelineBuilder().addPipelineLine("sh script: ${command}, returnStatus: true")
         return 0
+    }
+
+    @Override
+    String sh(String command, Boolean returnStdout) throws CommandExecutionException {
+        getDryRunPipelineBuilder().addPipelineLine("sh script: ${command}, returnStdout: ${returnStdout}")
+        return ""
     }
 
     @Override
@@ -120,5 +135,10 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
 
     DryRunPipelineBuilder getDryRunPipelineBuilder() {
         return dryRunPipelineBuilder
+    }
+
+    @Override
+    void writeFile(String fileName, String text) {
+        getDryRunPipelineBuilder().addPipelineLine("writeFile file: ${fileName}")
     }
 }

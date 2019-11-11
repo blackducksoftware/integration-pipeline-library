@@ -11,10 +11,24 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
+    void archiveArtifacts(String artifactPattern) {
+        script.archiveArtifacts artifactPattern
+    }
+
+    @Override
     int bat(String command) throws CommandExecutionException {
         try {
             return script.bat(script: command, returnStatus: true)
-        } catch(Exception e) {
+        } catch (Exception e) {
+            throw new CommandExecutionException(e.getMessage(), e)
+        }
+    }
+
+    @Override
+    String bat(String command, Boolean returnStdout) throws CommandExecutionException {
+        try {
+            return script.bat(script: command, returnStdout: returnStdout)
+        } catch (Exception e) {
             throw new CommandExecutionException(e.getMessage(), e)
         }
     }
@@ -55,6 +69,14 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
             return sh(command)
         }
         return bat(command)
+    }
+
+    @Override
+    String executeCommand(String command, Boolean returnStdout) {
+        if (isUnix()) {
+            return sh(command, returnStdout)
+        }
+        return bat(command, returnStdout)
     }
 
     @Override
@@ -105,13 +127,13 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    void step(String[] fields) {
-        script.step fields
+    String readFile(String fileName) {
+        return script.readFile(fileName)
     }
 
     @Override
-    void archiveArtifacts(String artifactPattern) {
-        script.archiveArtifacts artifactPattern
+    void step(String[] fields) {
+        script.step fields
     }
 
     /**
@@ -126,7 +148,16 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     int sh(String command) throws CommandExecutionException {
         try {
             return script.sh(script: command, returnStatus: true)
-        } catch(Exception e) {
+        } catch (Exception e) {
+            throw new CommandExecutionException(e.getMessage(), e)
+        }
+    }
+
+    @Override
+    String sh(String command, Boolean returnStdout) throws CommandExecutionException {
+        try {
+            return script.sh(script: command, returnStdout: returnStdout)
+        } catch (Exception e) {
             throw new CommandExecutionException(e.getMessage(), e)
         }
     }
@@ -141,4 +172,8 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         return script.tool(toolName)
     }
 
+    @Override
+    void writeFile(final String fileName, final String text) {
+        script.writeFile(fileName, text)
+    }
 }
