@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline.jenkins
 
-
+import com.synopsys.integration.pipeline.exception.CommandExecutionException
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
@@ -12,7 +12,7 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
     }
 
     @Override
-    int bat(String command) {
+    int bat(String command) throws CommandExecutionException {
         getDryRunPipelineBuilder().addPipelineLine("bat script: ${command}, returnStatus: true")
         return 0
     }
@@ -97,8 +97,8 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
     }
 
     @Override
-    int sh(String command) {
-        println("Running dry run method in class ${this.getClass().getSimpleName()}")
+    int sh(String command) throws CommandExecutionException {
+        println("Running dry run method in class ${this.getClass().getSimpleName()}  '${command}'")
         getDryRunPipelineBuilder().addPipelineLine("sh script: ${command}, returnStatus: true")
         return 0
     }

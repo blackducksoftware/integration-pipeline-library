@@ -11,8 +11,12 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    int bat(String command) {
-        return script.bat(script: command, returnStatus: true)
+    int bat(String command) throws CommandExecutionException {
+        try {
+            return script.bat(script: command, returnStatus: true)
+        } catch(Exception e) {
+            throw new CommandExecutionException(e.getMessage(), e)
+        }
     }
 
     @Override
@@ -119,9 +123,12 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    int sh(String command) {
-        println("Running in class ${this.getClass().getSimpleName()}")
-        return script.sh(script: command, returnStatus: true)
+    int sh(String command) throws CommandExecutionException {
+        try {
+            return script.sh(script: command, returnStatus: true)
+        } catch(Exception e) {
+            throw new CommandExecutionException(e.getMessage(), e)
+        }
     }
 
     @Override

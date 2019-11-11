@@ -4,7 +4,7 @@ import com.synopsys.integration.pipeline.exception.CommandExecutionException
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 interface JenkinsScriptWrapper extends Serializable {
-    int bat(String command)
+    int bat(String command) throws CommandExecutionException
 
     void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll)
 
@@ -42,7 +42,7 @@ interface JenkinsScriptWrapper extends Serializable {
 
     CpsScript script()
 
-    int sh(String command)
+    int sh(String command) throws CommandExecutionException
 
     void stage(String stageName, Closure closure)
 

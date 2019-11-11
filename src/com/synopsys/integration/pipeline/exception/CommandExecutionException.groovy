@@ -13,6 +13,11 @@ class CommandExecutionException extends PipelineException {
         this.errorStatus = errorStatus
     }
 
+    CommandExecutionException(String message, Exception e) {
+        super(message, e)
+        this.errorStatus = -1
+    }
+
     int getErrorStatus() {
         return errorStatus
     }
