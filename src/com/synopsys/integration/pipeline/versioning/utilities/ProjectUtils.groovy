@@ -18,9 +18,9 @@ public class ProjectUtils {
     public void initialize(String tool, String exe) {
         logger.info("Using tool ${tool}")
         if (tool.equalsIgnoreCase(SimplePipeline.MAVEN_BUILD_TOOL)) {
-            toolUtils = new MavenUtils(jenkinsScriptWrapper, exe)
+            toolUtils = new MavenUtils(logger, jenkinsScriptWrapper, exe)
         } else if (tool.equalsIgnoreCase(SimplePipeline.GRADLE_BUILD_TOOL)) {
-            toolUtils = new GradleUtils(jenkinsScriptWrapper, exe)
+            toolUtils = new GradleUtils(logger, jenkinsScriptWrapper, exe)
         }
         if (null != toolUtils) {
             logger.info("Initializing tool ${tool}")
