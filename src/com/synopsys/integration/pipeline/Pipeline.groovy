@@ -49,8 +49,8 @@ class Pipeline implements Serializable {
         dryRunPipelineBuilder.initialize()
         JenkinsScriptWrapper dryRunWrapper = new JenkinsScriptWrapperDryRun(this.script, dryRunPipelineBuilder)
         getPipelineConfiguration().setScriptWrapper(dryRunWrapper)
-        SilentPipelineLogger silentLogger = new SilentPipelineLogger()
-        getPipelineConfiguration().setLogger(silentLogger)
+//        SilentPipelineLogger silentLogger = new SilentPipelineLogger()
+//        getPipelineConfiguration().setLogger(silentLogger)
 
         originalLogger.info("Starting dry run")
         runWithJenkinsWrapper()
@@ -91,13 +91,13 @@ class Pipeline implements Serializable {
             }
         } catch (Exception e) {
             getPipelineConfiguration().getScriptWrapper().currentBuild().result = "FAILURE"
+            getPipelineConfiguration().getLogger().error("Build failed because ${e.getMessage()}", e)
             for (int i = 0; i < getWrappers().size(); i++) {
                 PipelineWrapper wrapper = getWrappers().get(i)
                 getPipelineConfiguration().getScriptWrapper().dir(wrapper.getRelativeDirectory()) {
                     wrapper.handleException(e)
                 }
             }
-            getPipelineConfiguration().getLogger().error("Build failed because ${e.getMessage()}", e)
         } finally {
             for (int i = 0; i < getWrappers().size(); i++) {
                 PipelineWrapper wrapper = getWrappers().get(i)
