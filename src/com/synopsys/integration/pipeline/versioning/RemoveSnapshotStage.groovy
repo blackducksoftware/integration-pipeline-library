@@ -41,10 +41,17 @@ class RemoveSnapshotStage extends Stage {
             String errorMessage = "Failing release preparation because of ${buildTool} SNAPSHOT dependencies"
             throw new PrepareForReleaseException(errorMessage)
         }
-        def version = projectUtils.getProjectVersion()
+        String version = projectUtils.getProjectVersion()
+
         if (version.contains('-SNAPSHOT')) {
             getPipelineConfiguration().getLogger().info("Removing SNAPSHOT from the Project Version")
             String newVersion = projectUtils.removeSnapshotFromProjectVersion()
+
+            if (projectUtils instanceof GradleUtils) {
+                GradleUtils gradleUtils = (GradleUtils) projectUtils
+                gradleUtils.updateCommonGradlePluginVersion(true)
+            }
+
             getPipelineConfiguration().getLogger().debug("Commiting the release ${newVersion}")
             String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
 

@@ -35,6 +35,12 @@ class NextSnapshotStage extends Stage {
         ProjectUtils projectUtils = new ProjectUtils(getPipelineConfiguration().getLogger(), getPipelineConfiguration().getScriptWrapper())
         projectUtils.initialize(buildTool, exe)
         String newVersion = projectUtils.increaseSemver()
+
+        if (projectUtils instanceof GradleUtils) {
+            GradleUtils gradleUtils = (GradleUtils) projectUtils
+            gradleUtils.updateCommonGradlePluginVersion(false)
+        }
+
         if (newVersion.contains('-SNAPSHOT')) {
             getPipelineConfiguration().getLogger().info("Using the next snapshot post release. ${newVersion}")
             def commitMessage = "Using the next snapshot post release ${newVersion}"
