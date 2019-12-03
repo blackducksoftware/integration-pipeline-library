@@ -5,6 +5,7 @@ import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.scm.GitStage
+import com.synopsys.integration.pipeline.versioning.utilities.GradleUtils
 import com.synopsys.integration.pipeline.versioning.utilities.ProjectUtils
 import com.synopsys.integration.utilities.GithubBranchParser
 
