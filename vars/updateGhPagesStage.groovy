@@ -38,14 +38,14 @@ def call(String stageName = 'Update gh-pages', Closure body) {
 
     String directory = "${WORKSPACE}/${targetDir}"
     dir(directory) {
-        if (!filesToUpdate.isEmpty()) {
+        if (filesToUpdate != null && !filesToUpdate.isEmpty()) {
             for (String fileToUpdate : filesToUpdate) {
                 String file = "${directory}/${fileToUpdate}"
                 fileToNewPath.put(file, ghPagesDirectory)
                 println "Moving file '${file}' to '${ghPagesDirectory}'"
             }
         }
-        if (!mappedFilesToUpdate.isEmpty()) {
+        if (mappedFilesToUpdate != null && !mappedFilesToUpdate.isEmpty()) {
             for (Map.Entry<String, String> entry : mappedFilesToUpdate.entrySet()) {
                 String file = "${directory}/${entry.getKey()}"
                 String finalLocation = "${ghPagesDirectory}${entry.getValue()}"
