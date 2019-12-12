@@ -28,7 +28,7 @@ def call(String stageName = 'Update gh-pages', Closure body) {
         }
     }
 
-    String directoryToRunIn = "${WORKSPACE}/${ghPageTargetDir}/"
+    String ghPagesDirectory = "${WORKSPACE}/${ghPageTargetDir}/"
 
     List<String> filesToUpdate = config.filesToUpdate
 
@@ -41,14 +41,14 @@ def call(String stageName = 'Update gh-pages', Closure body) {
         if (!filesToUpdate.isEmpty()) {
             for (String fileToUpdate : filesToUpdate) {
                 String file = "${directory}/${fileToUpdate}"
-                fileToNewPath.put(file, directoryToRunIn)
-                println "Moving file '${file}' to '${directoryToRunIn}'"
+                fileToNewPath.put(file, ghPagesDirectory)
+                println "Moving file '${file}' to '${ghPagesDirectory}'"
             }
         }
         if (!mappedFilesToUpdate.isEmpty()) {
             for (Map.Entry<String, String> entry : mappedFilesToUpdate.entrySet()) {
                 String file = "${directory}/${entry.getKey()}"
-                String finalLocation = "${directoryToRunIn}${entry.getValue()}"
+                String finalLocation = "${ghPagesDirectory}${entry.getValue()}"
                 fileToNewPath.put(file, finalLocation)
                 println "Moving file '${file}' to '${finalLocation}'"
             }
@@ -60,7 +60,7 @@ def call(String stageName = 'Update gh-pages', Closure body) {
         } else {
             // add the latest commit id to gh-pages to indicate a functionally new build (the next shell script will commit it)
             sh 'git rev-parse HEAD > ../latest-commit-id.txt'
-            dir(directoryToRunIn) {
+            dir(ghPagesDirectory) {
                 String checkedInCommitId = readFile file: "latest-commit-id.txt"
                 String currentCommitId = readFile file: "../latest-commit-id.txt"
                 println "Checked in commit Id ${checkedInCommitId}"
