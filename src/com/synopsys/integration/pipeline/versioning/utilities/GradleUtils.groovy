@@ -126,7 +126,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.versioning
             if (versionLine.length() == 0 && trimmedLine.startsWith('version ')) {
                 versionLineIndex = i
                 versionLine = trimmedLine
-                String version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').trim()
+                String version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').replace('"', '').trim()
                 int finalVersionPieceIndex = version.lastIndexOf('.') + 1
                 String finalVersionPiece = version.substring(finalVersionPieceIndex)
                 modifiedVersion = version.substring(0, finalVersionPieceIndex)
