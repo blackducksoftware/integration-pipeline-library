@@ -49,8 +49,11 @@ class RemoveSnapshotStage extends Stage {
             String newVersion = projectUtils.removeSnapshotFromProjectVersion()
 
             if (projectUtils instanceof GradleUtils) {
-                GradleUtils gradleUtils = (GradleUtils) projectUtils
-                gradleUtils.updateCommonGradlePluginVersion(true)
+                Boolean doNotChangeCGP = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty("DO_NOT_CHANGE_CGP")) ? true : false
+                if (!doNotChangeCGP) {
+                    GradleUtils gradleUtils = (GradleUtils) projectUtils
+                    gradleUtils.updateCommonGradlePluginVersion(true)
+                }
             }
 
             getPipelineConfiguration().getLogger().debug("Commiting the release ${newVersion}")
@@ -65,6 +68,8 @@ class RemoveSnapshotStage extends Stage {
             getPipelineConfiguration().getLogger().debug("Pushing release to branch ${branch}")
 
             getPipelineConfiguration().getScriptWrapper().setJenkinsProperty('GITHUB_RELEASE_VERSION', newVersion)
+        } else {
+            getPipelineConfiguration().getScriptWrapper().setJenkinsProperty('GITHUB_RELEASE_VERSION', version)
         }
     }
 
