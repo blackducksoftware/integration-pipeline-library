@@ -79,7 +79,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.versioning
             if (versionLine.length() == 0 && trimmedLine.startsWith('version ')) {
                 versionLineIndex = i
                 versionLine = trimmedLine
-                def version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').trim()
+                def version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').replace('"', '').trim()
                 modifiedVersion = version.replace('-SNAPSHOT', '')
                 versionLine = versionLine.replace(version, modifiedVersion)
                 break;
