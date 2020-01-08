@@ -48,12 +48,14 @@ public class GradleUtils implements com.synopsys.integration.pipeline.versioning
                 String latestVersion = getLatestCommonGradlePluginVersion()
                 String currentVersion = parseLineForCGPVersion(trimmedLine)
                 if (!currentVersion.equals(latestVersion)) {
+                    logger.debug("Changing the common-gradle-plugin version to '${latestVersion}'")
                     commonGradlePluginLine = line.replace(currentVersion, latestVersion)
                 }
                 break
             } else if (commonGradlePluginLine.length() == 0 && !isRelease && trimmedLine.contains('common-gradle-plugin:') && !trimmedLine.contains('common-gradle-plugin:0.0.+')) {
                 commonGradlePluginLineIndex = i
                 String currentVersion = parseLineForCGPVersion(trimmedLine)
+                logger.debug("Changing the common-gradle-plugin version back to '0.0.+'")
                 commonGradlePluginLine = line.replace(currentVersion, '0.0.+')
                 break
             }
