@@ -1,16 +1,16 @@
-package com.synopsys.integration.pipeline.versioning.utilities
+package com.synopsys.integration.pipeline.utilities
 
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 
-public class GradleUtils implements com.synopsys.integration.pipeline.versioning.utilities.ToolUtils, Serializable {
+public class GradleUtils implements com.synopsys.integration.pipeline.utilities.ToolUtils, Serializable {
     private final PipelineLogger logger
     private final JenkinsScriptWrapper jenkinsScriptWrapper
 
     private String exe
 
     public GradleUtils(PipelineLogger logger, JenkinsScriptWrapper jenkinsScriptWrapper, String exe) {
-        this.logger = logger;
+        this.logger = logger
         this.jenkinsScriptWrapper = jenkinsScriptWrapper
         this.exe = exe
     }
@@ -82,9 +82,9 @@ public class GradleUtils implements com.synopsys.integration.pipeline.versioning
                 versionLineIndex = i
                 versionLine = trimmedLine
                 def version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').replace('"', '').trim()
-                modifiedVersion = version.replace('-SNAPSHOT', '')
+                modifiedVersion = version.substring(0, versionLine.indexOf('-SNAPSHOT'))
                 versionLine = versionLine.replace(version, modifiedVersion)
-                break;
+                break
             }
         }
         splitLines[versionLineIndex] = versionLine

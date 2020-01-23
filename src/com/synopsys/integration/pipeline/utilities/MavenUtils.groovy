@@ -1,9 +1,9 @@
-package com.synopsys.integration.pipeline.versioning.utilities
+package com.synopsys.integration.pipeline.utilities
 
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 
-public class MavenUtils implements com.synopsys.integration.pipeline.versioning.utilities.ToolUtils, Serializable {
+public class MavenUtils implements ToolUtils, Serializable {
     private final PipelineLogger logger
     private final JenkinsScriptWrapper jenkinsScriptWrapper
     private String exe

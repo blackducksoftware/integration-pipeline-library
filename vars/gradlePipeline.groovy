@@ -1,6 +1,10 @@
 #!/usr/bin/groovy
 import com.synopsys.integration.ConfigUtils
-import com.synopsys.integration.tools.GradleUtils
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapperImpl
+import com.synopsys.integration.pipeline.logging.DefaultPipelineLogger
+import com.synopsys.integration.pipeline.logging.PipelineLogger
+import com.synopsys.integration.pipeline.utilities.GradleUtils
 
 def call(Closure body) {
     def config = [:]
@@ -28,7 +32,10 @@ def call(Closure body) {
         dontChangeCGP = false
     }
 
-    GradleUtils gradleUtils = new GradleUtils(this, exe)
+    JenkinsScriptWrapper jenkinsScriptWrapper = new JenkinsScriptWrapperImpl(this)
+    PipelineLogger pipelineLogger = new DefaultPipelineLogger(jenkinsScriptWrapper)
+
+    GradleUtils gradleUtils = new GradleUtils(pipelineLogger, jenkinsScriptWrapper, exe)
     Closure initialBody = {
         if (!dontChangeCGP) {
             gradleUtils.updateCommonGradlePluginVersion(runReleaseVar)

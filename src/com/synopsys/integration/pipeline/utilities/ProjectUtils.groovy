@@ -1,8 +1,7 @@
-package com.synopsys.integration.pipeline.versioning.utilities
+package com.synopsys.integration.pipeline.utilities
 
 import com.synopsys.integration.pipeline.SimplePipeline
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
-import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 
 public class ProjectUtils {

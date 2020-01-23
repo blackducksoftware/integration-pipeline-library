@@ -1,9 +1,14 @@
 package com.synopsys.integration
 
 import com.synopsys.integration.pipeline.SimplePipeline
-import com.synopsys.integration.tools.GradleUtils
-import com.synopsys.integration.tools.MavenUtils
-import com.synopsys.integration.tools.ToolUtils
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapperImpl
+import com.synopsys.integration.pipeline.logging.DefaultPipelineLogger
+import com.synopsys.integration.pipeline.logging.PipelineLogger
+import com.synopsys.integration.pipeline.utilities.GradleUtils
+import com.synopsys.integration.pipeline.utilities.MavenUtils
+import com.synopsys.integration.pipeline.utilities.ToolUtils
+
 
 public class ProjectUtils {
     private ToolUtils toolUtils = null
@@ -12,10 +17,13 @@ public class ProjectUtils {
 
     public void initialize(script, String tool, String exe) {
         script.println "Using tool ${tool}"
+        JenkinsScriptWrapper jenkinsScriptWrapper = new JenkinsScriptWrapperImpl(script)
+        PipelineLogger pipelineLogger = new DefaultPipelineLogger(jenkinsScriptWrapper)
+
         if (tool.equalsIgnoreCase(SimplePipeline.MAVEN_BUILD_TOOL)) {
-            toolUtils = new MavenUtils(script, exe)
+            toolUtils = new MavenUtils(pipelineLogger, jenkinsScriptWrapper, exe)
         } else if (tool.equalsIgnoreCase(SimplePipeline.GRADLE_BUILD_TOOL)) {
-            toolUtils = new GradleUtils(script, exe)
+            toolUtils = new GradleUtils(pipelineLogger, jenkinsScriptWrapper, exe)
         }
         if (null != toolUtils) {
             script.println "Initializing tool ${tool}"

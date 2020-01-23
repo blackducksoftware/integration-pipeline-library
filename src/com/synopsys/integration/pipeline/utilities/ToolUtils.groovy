@@ -1,4 +1,4 @@
-package com.synopsys.integration.pipeline.versioning.utilities
+package com.synopsys.integration.pipeline.utilities
 
 public interface ToolUtils {
     public String getProjectVersionProcess()
