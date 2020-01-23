@@ -43,7 +43,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
         for (int i = 0; i < splitLines.size(); i++) {
             String line = splitLines[i]
             String trimmedLine = line.trim()
-            if (commonGradlePluginLine.length() == 0 && isRelease && trimmedLine.contains('common-gradle-plugin:')) {
+            if (commonGradlePluginLine.length() == 0 && isRelease && trimmedLine.contains('com.blackducksoftware.integration') && trimmedLine.contains('common-gradle-plugin:0.0.+')) {
                 commonGradlePluginLineIndex = i
                 String latestVersion = getLatestCommonGradlePluginVersion()
                 String currentVersion = parseLineForCGPVersion(trimmedLine)
@@ -52,7 +52,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
                     commonGradlePluginLine = line.replace(currentVersion, latestVersion)
                 }
                 break
-            } else if (commonGradlePluginLine.length() == 0 && !isRelease && trimmedLine.contains('common-gradle-plugin:') && !trimmedLine.contains('common-gradle-plugin:0.0.+')) {
+            } else if (commonGradlePluginLine.length() == 0 && !isRelease && trimmedLine.contains('com.blackducksoftware.integration') && trimmedLine.contains('common-gradle-plugin:') && !trimmedLine.contains('common-gradle-plugin:0.0.+')) {
                 commonGradlePluginLineIndex = i
                 String currentVersion = parseLineForCGPVersion(trimmedLine)
                 logger.debug("Changing the common-gradle-plugin version back to '0.0.+'")
@@ -134,7 +134,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
                 modifiedVersion = version.substring(0, finalVersionPieceIndex)
                 modifiedVersion = "${modifiedVersion}${Integer.valueOf(finalVersionPiece) + 1}-SNAPSHOT"
                 versionLine = versionLine.replace(version, modifiedVersion)
-            } else if (commonGradlePluginLine.length() == 0 && trimmedLine.contains('common-gradle-plugin:0')) {
+            } else if (commonGradlePluginLine.length() == 0 && trimmedLine.contains('com.blackducksoftware.integration') && trimmedLine.contains('common-gradle-plugin:0')) {
                 commonGradlePluginLineIndex = i
                 String currentVersion = parseLineForCGPVersion(trimmedLine)
                 commonGradlePluginLine = line.replace(currentVersion, '0.0.+')
