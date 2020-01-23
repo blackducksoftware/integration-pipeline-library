@@ -3,7 +3,7 @@ package com.synopsys.integration.pipeline.logging
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 
 class DefaultPipelineLogger extends PipelineLogger {
-    LogLevel currentLogLevel = LogLevel.INFO
+    private LogLevel currentLogLevel = LogLevel.INFO
     final JenkinsScriptWrapper scriptWrapper
 
     DefaultPipelineLogger(JenkinsScriptWrapper scriptWrapper) {
