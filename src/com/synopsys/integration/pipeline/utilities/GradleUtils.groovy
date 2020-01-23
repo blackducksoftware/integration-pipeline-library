@@ -134,7 +134,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
                 modifiedVersion = version.substring(0, finalVersionPieceIndex)
                 modifiedVersion = "${modifiedVersion}${Integer.valueOf(finalVersionPiece) + 1}-SNAPSHOT"
                 versionLine = versionLine.replace(version, modifiedVersion)
-            } else if (commonGradlePluginLine.length() == 0 && trimmedLine.contains('common-gradle-plugin:')) {
+            } else if (commonGradlePluginLine.length() == 0 && trimmedLine.contains('common-gradle-plugin:0')) {
                 commonGradlePluginLineIndex = i
                 String currentVersion = parseLineForCGPVersion(trimmedLine)
                 commonGradlePluginLine = line.replace(currentVersion, '0.0.+')
