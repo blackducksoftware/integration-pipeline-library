@@ -82,7 +82,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
                 versionLineIndex = i
                 versionLine = trimmedLine
                 def version = versionLine.substring(versionLine.indexOf('=') + 1).replace("'", '').replace('"', '').trim()
-                modifiedVersion = version.substring(0, versionLine.indexOf('-SNAPSHOT'))
+                modifiedVersion = version.substring(0, version.indexOf('-SNAPSHOT'))
                 versionLine = versionLine.replace(version, modifiedVersion)
                 break
             }
