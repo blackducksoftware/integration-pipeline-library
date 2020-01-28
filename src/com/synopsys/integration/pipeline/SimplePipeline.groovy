@@ -214,28 +214,37 @@ class SimplePipeline extends Pipeline {
     }
 
     NextSnapshotStage addNextSnapshotStage(String buildTool, String exe, String branch) {
-        NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getPipelineConfiguration(), 'Next Snapshot', Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('RUN_RELEASE')), buildTool, exe, branch)
+        boolean runRelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('RUN_RELEASE'))
+        boolean runQARelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('RELEASE_QA_BUILD'))
+
+        NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getPipelineConfiguration(), 'Next Snapshot', runRelease, runQARelease, buildTool, exe, branch)
         nextSnapshotStage.setRelativeDirectory(commonRunDirectory)
         addStage(nextSnapshotStage)
         return nextSnapshotStage
     }
 
     NextSnapshotStage addNextSnapshotStage(String stageName, String buildTool, String exe, String branch) {
-        NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getPipelineConfiguration(), stageName, Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('RUN_RELEASE')), buildTool, exe, branch)
+        boolean runRelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('RUN_RELEASE'))
+        boolean runQARelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('RELEASE_QA_BUILD'))
+        NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getPipelineConfiguration(), stageName, runRelease, runQARelease, buildTool, exe, branch)
         nextSnapshotStage.setRelativeDirectory(commonRunDirectory)
         addStage(nextSnapshotStage)
         return nextSnapshotStage
     }
 
     RemoveSnapshotStage addRemoveSnapshotStage(String buildTool, String exe, String branch) {
-        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getPipelineConfiguration(), 'Remove Snapshot', Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('RUN_RELEASE')), buildTool, exe, branch)
+        boolean runRelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('RUN_RELEASE'))
+        boolean runQARelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('RELEASE_QA_BUILD'))
+        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getPipelineConfiguration(), 'Remove Snapshot', runRelease, runQARelease, buildTool, exe, branch)
         removeSnapshotStage.setRelativeDirectory(commonRunDirectory)
         addStage(removeSnapshotStage)
         return removeSnapshotStage
     }
 
     RemoveSnapshotStage addRemoveSnapshotStage(String stageName, String buildTool, String exe, String branch) {
-        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getPipelineConfiguration(), stageName, Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('RUN_RELEASE')), buildTool, exe, branch)
+        boolean runRelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('RUN_RELEASE'))
+        boolean runQARelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('RELEASE_QA_BUILD'))
+        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getPipelineConfiguration(), stageName, runRelease, runQARelease, buildTool, exe, branch)
         removeSnapshotStage.setRelativeDirectory(commonRunDirectory)
         addStage(removeSnapshotStage)
         return removeSnapshotStage

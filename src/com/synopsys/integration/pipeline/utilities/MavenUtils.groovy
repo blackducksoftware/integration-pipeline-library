@@ -27,7 +27,7 @@ public class MavenUtils implements ToolUtils, Serializable {
     }
 
     @Override
-    public String getProjectVersionProcess() {
+    public String getProjectVersion() {
         try {
             jenkinsScriptWrapper.sh "${exe} help:evaluate -Dexpression=project.version -Doutput=version.txt"
             String versionText = jenkinsScriptWrapper.readFile("version.txt")
@@ -40,8 +40,8 @@ public class MavenUtils implements ToolUtils, Serializable {
     }
 
     @Override
-    public String removeSnapshotFromProjectVersion() {
-        String version = getProjectVersionProcess()
+    public String updateVersionForRelease(boolean runRelease, boolean runQARelease) {
+        String version = getProjectVersion()
         jenkinsScriptWrapper.println "Maven version ${version}"
         String modifiedVersion = version.replace('-SNAPSHOT', '')
         logger.info("Maven updated version ${modifiedVersion}")
@@ -73,8 +73,8 @@ public class MavenUtils implements ToolUtils, Serializable {
     }
 
     @Override
-    public String increaseSemver() {
-        String version = getProjectVersionProcess()
+    public String increaseSemver(boolean runRelease, boolean runQARelease) {
+        String version = getProjectVersion()
         logger.info("Maven version ${version}")
 
         int finalVersionPieceIndex = version.lastIndexOf('.') + 1

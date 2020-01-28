@@ -1,13 +1,13 @@
 package com.synopsys.integration.pipeline.utilities
 
 public interface ToolUtils {
-    public String getProjectVersionProcess()
+    public String getProjectVersion()
 
-    public String removeSnapshotFromProjectVersion()
+    public String updateVersionForRelease(boolean runRelease, boolean runQARelease)
 
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies)
 
-    public String increaseSemver()
+    public String increaseSemver(boolean runRelease, boolean runQARelease)
 
     public void initialize()
 }

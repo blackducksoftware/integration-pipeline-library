@@ -30,7 +30,7 @@ public class ProjectUtils {
     public String getProjectVersion() {
         def version = ""
         if (null != toolUtils) {
-            version = toolUtils.getProjectVersionProcess()
+            version = toolUtils.getProjectVersion()
         }
         return version
     }
@@ -42,18 +42,18 @@ public class ProjectUtils {
         return false
     }
 
-    public String removeSnapshotFromProjectVersion() {
+    public String updateVersionForRelease(boolean runRelease, boolean runQARelease) {
         def version = ""
         if (null != toolUtils) {
-            version = toolUtils.removeSnapshotFromProjectVersion()
+            version = toolUtils.updateVersionForRelease(runRelease, runQARelease)
         }
         return version
     }
 
-    public String increaseSemver() {
+    public String increaseSemver(boolean runRelease, boolean runQARelease) {
         def version = ""
         if (null != toolUtils) {
-            version = toolUtils.increaseSemver()
+            version = toolUtils.increaseSemver(runRelease, runQARelease)
         }
         return version
     }

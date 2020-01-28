@@ -1,6 +1,12 @@
 #!/usr/bin/groovy
+import com.synopsys.integration.ConfigUtils
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapperImpl
+import com.synopsys.integration.pipeline.logging.DefaultPipelineLogger
+import com.synopsys.integration.pipeline.logging.LogLevel
+import com.synopsys.integration.pipeline.logging.PipelineLogger
+import com.synopsys.integration.pipeline.utilities.ProjectUtils
 
-import com.synopsys.integration.ProjectUtils
 
 def call(String stageName = 'Post-Release Stage', Closure body) {
     def config = [:]
@@ -14,9 +20,29 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
     String branch = config.branch
 
     stage(stageName) {
-        ProjectUtils projectUtils = new ProjectUtils()
-        projectUtils.initialize(this, buildTool, exe)
-        def newVersion = projectUtils.increaseSemver()
+        JenkinsScriptWrapper jenkinsScriptWrapper = new JenkinsScriptWrapperImpl(this)
+        PipelineLogger pipelineLogger = new DefaultPipelineLogger(jenkinsScriptWrapper)
+        pipelineLogger.setLogLevel(LogLevel.DEBUG)
+
+        ConfigUtils configUtils = new ConfigUtils(config)
+        boolean runReleaseVar
+        try {
+            runReleaseVar = configUtils.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+        } catch (MissingPropertyException e) {
+            runReleaseVar = false
+        }
+
+        boolean runQAReleaseVar
+        try {
+            runQAReleaseVar = configUtils.get('runQARelease', Boolean.valueOf("${RELEASE_QA_BUILD}"))
+        } catch (MissingPropertyException e) {
+            runQAReleaseVar = false
+        }
+
+
+        ProjectUtils projectUtils = new ProjectUtils(pipelineLogger, jenkinsScriptWrapper)
+        projectUtils.initialize(buildTool, exe)
+        def newVersion = projectUtils.increaseSemver(runReleaseVar, runQAReleaseVar)
         if (newVersion.contains('-SNAPSHOT')) {
             println "Using the next snapshot post release. ${newVersion}"
             def commitMessage = "Using the next snapshot post release ${newVersion}"

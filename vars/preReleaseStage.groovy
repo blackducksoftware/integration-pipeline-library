@@ -1,6 +1,12 @@
 #!/usr/bin/groovy
+import com.synopsys.integration.ConfigUtils
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapperImpl
+import com.synopsys.integration.pipeline.logging.DefaultPipelineLogger
+import com.synopsys.integration.pipeline.logging.LogLevel
+import com.synopsys.integration.pipeline.logging.PipelineLogger
+import com.synopsys.integration.pipeline.utilities.ProjectUtils
 
-import com.synopsys.integration.ProjectUtils
 
 def call(String stageName = 'Pre-Release Stage', Closure body) {
     def config = [:]
@@ -15,8 +21,27 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
     String branch = config.branch
 
     stage(stageName) {
-        ProjectUtils projectUtils = new ProjectUtils()
-        projectUtils.initialize(this, buildTool, exe)
+        JenkinsScriptWrapper jenkinsScriptWrapper = new JenkinsScriptWrapperImpl(this)
+        PipelineLogger pipelineLogger = new DefaultPipelineLogger(jenkinsScriptWrapper)
+        pipelineLogger.setLogLevel(LogLevel.DEBUG)
+
+        ConfigUtils configUtils = new ConfigUtils(config)
+        boolean runReleaseVar
+        try {
+            runReleaseVar = configUtils.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+        } catch (MissingPropertyException e) {
+            runReleaseVar = false
+        }
+
+        boolean runQAReleaseVar
+        try {
+            runQAReleaseVar = configUtils.get('runQARelease', Boolean.valueOf("${RELEASE_QA_BUILD}"))
+        } catch (MissingPropertyException e) {
+            runQAReleaseVar = false
+        }
+
+        ProjectUtils projectUtils = new ProjectUtils(pipelineLogger, jenkinsScriptWrapper)
+        projectUtils.initialize(buildTool, exe)
         def hasSnapshotDependencies = projectUtils.checkForSnapshotDependencies(checkAllDependencies)
         if (hasSnapshotDependencies) {
             def errorMessage = "Failing release build because of ${buildTool} SNAPSHOT dependencies"
@@ -25,7 +50,7 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
         def version = projectUtils.getProjectVersion()
         if (version.contains('-SNAPSHOT')) {
             println "Removing SNAPSHOT from the Project Version"
-            def newVersion = projectUtils.removeSnapshotFromProjectVersion()
+            def newVersion = projectUtils.updateVersionForRelease(runReleaseVar, runQAReleaseVar)
             println "Commiting the release ${newVersion}"
             sh "git commit -am \"Release ${newVersion}\""
             sh "git push origin ${branch}"

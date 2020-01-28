@@ -6,12 +6,12 @@ import com.synopsys.integration.pipeline.exception.PrepareForReleaseException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.scm.GitStage
-import com.synopsys.integration.pipeline.utilities.GradleUtils
 import com.synopsys.integration.pipeline.utilities.ProjectUtils
 import com.synopsys.integration.utilities.GithubBranchParser
 
 class RemoveSnapshotStage extends Stage {
     private final boolean runRelease
+    private final boolean runQARelease
 
     private final String buildTool
     private final String exe
@@ -21,9 +21,10 @@ class RemoveSnapshotStage extends Stage {
     private boolean checkAllDependencies = false
     private String gitToolName = GitStage.DEFAULT_GIT_TOOL
 
-    RemoveSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, String buildTool, String exe, String branch) {
+    RemoveSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch) {
         super(pipelineConfiguration, stageName)
         this.runRelease = runRelease
+        this.runQARelease = runQARelease
         this.buildTool = buildTool
         this.exe = exe
         this.branch = branch
@@ -31,7 +32,7 @@ class RemoveSnapshotStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        if (!runRelease) {
+        if (!runRelease && !runQARelease) {
             getPipelineConfiguration().getLogger().info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
             return
         }
@@ -46,15 +47,7 @@ class RemoveSnapshotStage extends Stage {
 
         if (version.contains('-SNAPSHOT')) {
             getPipelineConfiguration().getLogger().info("Removing SNAPSHOT from the Project Version")
-            String newVersion = projectUtils.removeSnapshotFromProjectVersion()
-
-            if (projectUtils instanceof GradleUtils) {
-                Boolean doNotChangeCGP = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty("DO_NOT_CHANGE_CGP")) ? true : false
-                if (!doNotChangeCGP) {
-                    GradleUtils gradleUtils = (GradleUtils) projectUtils
-                    gradleUtils.updateCommonGradlePluginVersion(true)
-                }
-            }
+            String newVersion = projectUtils.updateVersionForRelease(runRelease, runQARelease)
 
             getPipelineConfiguration().getLogger().debug("Commiting the release ${newVersion}")
             String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)

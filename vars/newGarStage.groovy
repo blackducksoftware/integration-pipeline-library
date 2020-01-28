@@ -1,6 +1,11 @@
 #!/usr/bin/groovy
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapperImpl
+import com.synopsys.integration.pipeline.logging.DefaultPipelineLogger
+import com.synopsys.integration.pipeline.logging.LogLevel
+import com.synopsys.integration.pipeline.logging.PipelineLogger
+import com.synopsys.integration.pipeline.utilities.ProjectUtils
 
-import com.synopsys.integration.ProjectUtils
 
 def call(String stageName = 'GitHub auto release', Closure body) {
     def config = [:]
@@ -22,8 +27,12 @@ def call(String stageName = 'GitHub auto release', Closure body) {
     }
     if (null == releaseVersion || releaseVersion.trim().length() == 0) {
         def exe = config.exe
-        ProjectUtils projectUtils = new ProjectUtils()
-        projectUtils.initialize(this, buildTool, exe)
+        JenkinsScriptWrapper jenkinsScriptWrapper = new JenkinsScriptWrapperImpl(this)
+        PipelineLogger pipelineLogger = new DefaultPipelineLogger(jenkinsScriptWrapper)
+        pipelineLogger.setLogLevel(LogLevel.DEBUG)
+
+        ProjectUtils projectUtils = new ProjectUtils(pipelineLogger, jenkinsScriptWrapper)
+        projectUtils.initialize(buildTool, exe)
         releaseVersion = projectUtils.getProjectVersion()
     }
 
