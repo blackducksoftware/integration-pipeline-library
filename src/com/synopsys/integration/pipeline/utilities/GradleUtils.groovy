@@ -24,6 +24,13 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
         }
     }
 
+    @Deprecated
+    @Override
+    public String getProjectVersionProcess() {
+        logger.warn("DO NO USE THE getProjectVersionProcess() method anymore. Please use getProjectVersion() instead.")
+        return getProjectVersion()
+    }
+
     @Override
     public String getProjectVersion() {
         try {

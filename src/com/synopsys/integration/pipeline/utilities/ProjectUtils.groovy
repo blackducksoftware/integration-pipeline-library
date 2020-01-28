@@ -27,6 +27,12 @@ public class ProjectUtils {
         }
     }
 
+    @Deprecated
+    public String getProjectVersionProcess() {
+        logger.warn("DO NO USE THE getProjectVersionProcess() method anymore. Please use getProjectVersion() instead.")
+        return getProjectVersion()
+    }
+
     public String getProjectVersion() {
         def version = ""
         if (null != toolUtils) {
