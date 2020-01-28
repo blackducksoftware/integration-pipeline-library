@@ -1,6 +1,7 @@
 #!/usr/bin/groovy
 
 import com.synopsys.integration.ConfigUtils
+import com.synopsys.integration.pipeline.SimplePipeline
 
 def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
     def config = [:]
@@ -68,7 +69,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Map config) {
     if (additionalParameters) {
         params = new ArrayList(additionalParameters)
     }
-    params.add(booleanParam(defaultValue: false, description: 'If you want to release the project, set this to true', name: 'RUN_RELEASE'))
+    params.add(booleanParam(defaultValue: false, description: 'If you want to release the project, set this to true', name: SimplePipeline.RUN_RELEASE))
     params.add(string(defaultValue: 'Auto Release', description: 'The release note that you want the Auto Release tool to display.', name: 'COMMIT_MESSAGE', trim: true))
 
     params.add(gitParameter(branch: '',

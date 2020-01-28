@@ -33,11 +33,11 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
             runReleaseVar = false
         }
 
-        boolean runQAReleaseVar
+        boolean runQABuildVar
         try {
-            runQAReleaseVar = configUtils.get('runQARelease', Boolean.valueOf("${RELEASE_QA_BUILD}"))
+            runQABuildVar = configUtils.get('runQABuild', Boolean.valueOf("${RELEASE_QA_BUILD}"))
         } catch (MissingPropertyException e) {
-            runQAReleaseVar = false
+            runQABuildVar = false
         }
 
         ProjectUtils projectUtils = new ProjectUtils(pipelineLogger, jenkinsScriptWrapper)
@@ -50,7 +50,7 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
         def version = projectUtils.getProjectVersion()
         if (version.contains('-SNAPSHOT')) {
             println "Removing SNAPSHOT from the Project Version"
-            def newVersion = projectUtils.updateVersionForRelease(runReleaseVar, runQAReleaseVar)
+            def newVersion = projectUtils.updateVersionForRelease(runReleaseVar, runQABuildVar)
             println "Commiting the release ${newVersion}"
             sh "git commit -am \"Release ${newVersion}\""
             sh "git push origin ${branch}"

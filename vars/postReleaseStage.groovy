@@ -32,17 +32,17 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
             runReleaseVar = false
         }
 
-        boolean runQAReleaseVar
+        boolean runQABuildVar
         try {
-            runQAReleaseVar = configUtils.get('runQARelease', Boolean.valueOf("${RELEASE_QA_BUILD}"))
+            runQABuildVar = configUtils.get('runQABuild', Boolean.valueOf("${RUN_QA_BUILD}"))
         } catch (MissingPropertyException e) {
-            runQAReleaseVar = false
+            runQABuildVar = false
         }
 
 
         ProjectUtils projectUtils = new ProjectUtils(pipelineLogger, jenkinsScriptWrapper)
         projectUtils.initialize(buildTool, exe)
-        def newVersion = projectUtils.increaseSemver(runReleaseVar, runQAReleaseVar)
+        def newVersion = projectUtils.increaseSemver(runReleaseVar, runQABuildVar)
         if (newVersion.contains('-SNAPSHOT')) {
             println "Using the next snapshot post release. ${newVersion}"
             def commitMessage = "Using the next snapshot post release ${newVersion}"
