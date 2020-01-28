@@ -64,7 +64,7 @@ class SimplePipeline extends Pipeline {
     }
 
     DetectStage addDetectStage(String detectCommand) {
-        detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.blackduck.signature.scanner.disabled=true --detect.force.success=true'
+        detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.tools.excluded=SIGNATURE_SCAN --detect.force.success=true'
 
         DetectStage detectStage = new DetectStage(getPipelineConfiguration(), 'Detect', getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(HUB_DETECT_URL), detectCommand)
         detectStage.setRelativeDirectory(commonRunDirectory)
@@ -73,7 +73,7 @@ class SimplePipeline extends Pipeline {
     }
 
     DetectStage addDetectStage(String stageName, String detectCommand) {
-        detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.blackduck.signature.scanner.disabled=true --detect.force.success=true'
+        detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.tools.excluded=SIGNATURE_SCAN --detect.force.success=true'
 
         DetectStage detectStage = new DetectStage(getPipelineConfiguration(), stageName, getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(HUB_DETECT_URL), detectCommand)
         detectStage.setRelativeDirectory(commonRunDirectory)
