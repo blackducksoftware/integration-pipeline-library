@@ -49,17 +49,18 @@ class RemoveSnapshotStage extends Stage {
         getPipelineConfiguration().getLogger().info("Removing SNAPSHOT from the Project Version")
         String newVersion = projectUtils.updateVersionForRelease(runRelease, runQARelease)
 
-        getPipelineConfiguration().getLogger().debug("Commiting the release ${newVersion}")
-        String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
+        if (!newVersion.equals(version)) {
+            getPipelineConfiguration().getLogger().debug("Commiting the release ${newVersion}")
+            String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
 
-        getPipelineConfiguration().getScriptWrapper().executeCommand("${gitPath} commit -am \"Release ${newVersion}\"")
+            getPipelineConfiguration().getScriptWrapper().executeCommand("${gitPath} commit -am \"Release ${newVersion}\"")
 
-        GithubBranchParser githubBranchParser = new GithubBranchParser()
-        GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
+            GithubBranchParser githubBranchParser = new GithubBranchParser()
+            GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
 
-        getPipelineConfiguration().getScriptWrapper().executeCommand("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
-        getPipelineConfiguration().getLogger().debug("Pushing release to branch ${branch}")
-
+            getPipelineConfiguration().getScriptWrapper().executeCommand("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
+            getPipelineConfiguration().getLogger().debug("Pushing release to branch ${branch}")
+        }
         getPipelineConfiguration().getScriptWrapper().setJenkinsProperty('GITHUB_RELEASE_VERSION', newVersion)
     }
 
