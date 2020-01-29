@@ -40,9 +40,9 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
     @Override
     public String updateVersionForRelease(boolean runRelease, boolean runQARelease) {
         if (runRelease) {
-            jenkinsScriptWrapper.executeCommand("${exe} jaloja ")
+            jenkinsScriptWrapper.executeCommandWithException("${exe} jaloja ")
         } else if (runQARelease) {
-            jenkinsScriptWrapper.executeCommand("${exe} qaJaloja ")
+            jenkinsScriptWrapper.executeCommandWithException("${exe} qaJaloja ")
         }
         return getProjectVersion()
     }
@@ -61,7 +61,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
 
     @Override
     public String increaseSemver(boolean runRelease, boolean runQARelease) {
-        jenkinsScriptWrapper.executeCommand("${exe} snapshotJaloja")
+        jenkinsScriptWrapper.executeCommandWithException("${exe} snapshotJaloja")
         return getProjectVersion()
     }
 }
