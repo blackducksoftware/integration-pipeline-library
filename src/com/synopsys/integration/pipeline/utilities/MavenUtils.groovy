@@ -50,12 +50,15 @@ public class MavenUtils implements ToolUtils, Serializable {
     public String updateVersionForRelease(boolean runRelease, boolean runQARelease) {
         String version = getProjectVersion()
         jenkinsScriptWrapper.println "Maven version ${version}"
-        String modifiedVersion = version.replace('-SNAPSHOT', '')
-        logger.info("Maven updated version ${modifiedVersion}")
+        if (version.contains('-SNAPSHOT')) {
+            String modifiedVersion = version.replace('-SNAPSHOT', '')
+            logger.info("Maven updated version ${modifiedVersion}")
 
-        jenkinsScriptWrapper.executeCommand("${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", false)
-        logger.info("Maven pom updated with version ${modifiedVersion}")
-        return modifiedVersion
+            jenkinsScriptWrapper.executeCommand("${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", false)
+            logger.info("Maven pom updated with version ${modifiedVersion}")
+            return modifiedVersion
+        }
+        return version
     }
 
 
@@ -83,16 +86,18 @@ public class MavenUtils implements ToolUtils, Serializable {
     public String increaseSemver(boolean runRelease, boolean runQARelease) {
         String version = getProjectVersion()
         logger.info("Maven version ${version}")
+        if (!version.contains('-SNAPSHOT')) {
+            int finalVersionPieceIndex = version.lastIndexOf('.') + 1
+            String finalVersionPiece = version.substring(finalVersionPieceIndex)
+            String modifiedVersion = version.substring(0, finalVersionPieceIndex)
+            logger.info("FINAL VERSION PIECE ${finalVersionPiece}")
+            Integer incrementedPiece = Integer.valueOf(finalVersionPiece) + 1
+            modifiedVersion = "${modifiedVersion}${incrementedPiece}-SNAPSHOT"
 
-        int finalVersionPieceIndex = version.lastIndexOf('.') + 1
-        String finalVersionPiece = version.substring(finalVersionPieceIndex)
-        String modifiedVersion = version.substring(0, finalVersionPieceIndex)
-        logger.info("FINAL VERSION PIECE ${finalVersionPiece}")
-        Integer incrementedPiece = Integer.valueOf(finalVersionPiece) + 1
-        modifiedVersion = "${modifiedVersion}${incrementedPiece}-SNAPSHOT"
-
-        jenkinsScriptWrapper.executeCommand("${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", false)
-        logger.info("Maven pom updated with version ${modifiedVersion}")
-        return modifiedVersion
+            jenkinsScriptWrapper.executeCommand("${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", false)
+            logger.info("Maven pom updated with version ${modifiedVersion}")
+            return modifiedVersion
+        }
+        return version
     }
 }

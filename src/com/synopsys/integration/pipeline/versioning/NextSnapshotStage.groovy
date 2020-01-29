@@ -36,9 +36,12 @@ class NextSnapshotStage extends Stage {
         }
         ProjectUtils projectUtils = new ProjectUtils(getPipelineConfiguration().getLogger(), getPipelineConfiguration().getScriptWrapper())
         projectUtils.initialize(buildTool, exe)
-        String newVersion = projectUtils.increaseSemver(runRelease, runQARelease)
 
-        if (newVersion.contains('-SNAPSHOT')) {
+        String version = projectUtils.getProjectVersion()
+        getPipelineConfiguration().getLogger().info("Post release updating the Project version '${version}'. Release: ${runRelease}, QA release: ${runQARelease}")
+
+        String newVersion = projectUtils.increaseSemver(runRelease, runQARelease)
+        if (!newVersion.equals(version)) {
             getPipelineConfiguration().getLogger().info("Using the next snapshot post release. ${newVersion}")
             def commitMessage = "Using the next snapshot post release ${newVersion}"
             String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
@@ -49,8 +52,6 @@ class NextSnapshotStage extends Stage {
             GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
 
             getPipelineConfiguration().getScriptWrapper().executeCommand("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
-        } else {
-            getPipelineConfiguration().getLogger().warn("Could not update the version to the next SNAPSHOT version.")
         }
     }
 
