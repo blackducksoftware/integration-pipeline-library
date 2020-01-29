@@ -33,13 +33,8 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
 
     @Override
     public String getProjectVersion() {
-        try {
-            String version = jenkinsScriptWrapper.executeCommand("${exe} properties -q | grep '^version: '", true)
-            return version.substring(version.indexOf(':') + 1).trim()
-        } catch (Exception e) {
-            logger.error("Failed to run the gradle command to get the Project version ${e.getMessage()}")
-        }
-        return null
+        String version = jenkinsScriptWrapper.executeCommand("${exe} properties -q | grep '^version: '", true)
+        return version.substring(version.indexOf(':') + 1).trim()
     }
 
     @Override
