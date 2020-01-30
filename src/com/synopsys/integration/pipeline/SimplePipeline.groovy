@@ -16,6 +16,7 @@ import com.synopsys.integration.pipeline.tools.DetectStage
 import com.synopsys.integration.pipeline.versioning.GithubReleaseStage
 import com.synopsys.integration.pipeline.versioning.NextSnapshotStage
 import com.synopsys.integration.pipeline.versioning.RemoveSnapshotStage
+import org.apache.commons.lang3.StringUtils
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class SimplePipeline extends Pipeline {
@@ -307,5 +308,13 @@ class SimplePipeline extends Pipeline {
 
     void setCommonRunDirectory(final String commonRunDirectory) {
         this.commonRunDirectory = commonRunDirectory
+    }
+
+    void setDirectoryFromBranch(final String branch) {
+        String directory = branch
+        if (branch.contains('/')) {
+            directory = StringUtils.substringAfterLast(branch, '/')
+        }
+        this.commonRunDirectory = directory
     }
 }
