@@ -8,6 +8,7 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.scm.GitStage
 import com.synopsys.integration.utilities.GithubBranchParser
+import org.apache.commons.lang3.StringUtils
 
 class GithubReleaseStage extends Stage {
     public static final String DEFAULT_GITHUB_OWNER = 'blackducksoftware'
@@ -62,7 +63,7 @@ class GithubReleaseStage extends Stage {
             return
         }
         String version = getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('GITHUB_RELEASE_VERSION')
-        if (null == version || version.trim().length() == 0) {
+        if (StringUtils.isBlank(version)) {
             throw new PrepareForReleaseException('Could not find the "GITHUB_RELEASE_VERSION" environment variable. Will not perform the GitHub release.')
         }
         List<String> options = []
@@ -70,19 +71,19 @@ class GithubReleaseStage extends Stage {
         options.add(owner)
         options.add('-v')
         options.add(version)
-        if (null != artifactFile && artifactFile.trim().length() > 0) {
+        if (StringUtils.isNotBlank(artifactFile)) {
             options.add('-f')
             options.add(artifactFile)
         }
-        if (null != artifactPattern && artifactPattern.trim().length() > 0) {
+        if (StringUtils.isNotBlank(artifactPattern)) {
             options.add('-t')
             options.add(artifactPattern)
         }
-        if (null != artifactDirectory && artifactDirectory.trim().length() > 0) {
+        if (StringUtils.isNotBlank(artifactDirectory)) {
             options.add('-d')
             options.add(artifactDirectory)
         }
-        if (null != project && project.trim().length() > 0) {
+        if (StringUtils.isNotBlank(project)) {
             options.add('-p')
             options.add(project)
         }

@@ -9,10 +9,6 @@ public class ConfigUtils {
     }
 
     public Object get(String key, Object defaultValue) {
-        Object value = config.get(key)
-        if (value == null) {
-            value = defaultValue
-        }
-        return value
+        return Optional.ofNullable(config.get(key)).orElse(defaultValue)
     }
 }

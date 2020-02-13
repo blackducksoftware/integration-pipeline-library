@@ -86,19 +86,15 @@ class BuildWrapperImpl implements BuildWrapper {
     }
 
     @Override
-    BuildWrapper getPreviousBuild() throws AbortException {
-        if (null == runWrapper.getPreviousBuild()) {
-            return null
-        }
-        return new BuildWrapperImpl(runWrapper.getPreviousBuild())
+    Optional<BuildWrapper> getPreviousBuild() throws AbortException {
+        return Optional.ofNullable(getRunWrapper().getPreviousBuild())
+                .map({ previousBuild -> new BuildWrapperImpl(previousBuild) })
     }
 
     @Override
-    BuildWrapper getNextBuild() throws AbortException {
-        if (null == runWrapper.getNextBuild()) {
-            return null
-        }
-        return new BuildWrapperImpl(runWrapper.getNextBuild())
+    Optional<BuildWrapper> getNextBuild() throws AbortException {
+        return Optional.ofNullable(getRunWrapper().getNextBuild())
+                .map({ nextBuild -> new BuildWrapperImpl(nextBuild) })
     }
 
     @Override

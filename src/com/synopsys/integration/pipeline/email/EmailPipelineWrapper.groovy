@@ -39,17 +39,19 @@ class EmailPipelineWrapper extends PipelineWrapper {
         String CONTENT = '$DEFAULT_CONTENT'
 
         BuildWrapper currentBuild = getPipelineConfiguration().getScriptWrapper().currentBuild()
-        BuildWrapper previousBuild = currentBuild.getPreviousBuild()
-        if (currentBuild.result == "FAILURE") {
+        Optional<BuildWrapper> previousBuild = currentBuild.getPreviousBuild()
+        if (currentBuild.getResult() == "FAILURE") {
             getPipelineConfiguration().getLogger().error("Sending out Build Failure email: ${SUBJECT}")
             getPipelineConfiguration().getScriptWrapper().emailext(CONTENT, SUBJECT, TO)
-        } else if (null != previousBuild) {
-            String previousResult = previousBuild.result
-            if (null != previousResult && previousResult != "SUCCESS" && currentBuild.resultIsBetterOrEqualTo(previousResult)) {
-                SUBJECT = "${jobName} - Build #${buildNumber} - Fixed!"
-                CONTENT = "${jobName} - Build #${buildNumber} - Fixed!\nCheck console output at ${buildURL} to view the results."
-                getPipelineConfiguration().getLogger().info("Sending out Build Fixed email: ${SUBJECT}")
-                getPipelineConfiguration().getScriptWrapper().emailext(CONTENT, SUBJECT, TO)
+        } else if (previousBuild.isPresent()) {
+            Optional<String> previousResultOptional = previousBuild.map({ build -> build.getResult() })
+            previousResultOptional.ifPresent { previousResult ->
+                if (previousResult != "SUCCESS" && currentBuild.resultIsBetterOrEqualTo(previousResult)) {
+                    SUBJECT = "${jobName} - Build #${buildNumber} - Fixed!"
+                    CONTENT = "${jobName} - Build #${buildNumber} - Fixed!\nCheck console output at ${buildURL} to view the results."
+                    getPipelineConfiguration().getLogger().info("Sending out Build Fixed email: ${SUBJECT}")
+                    getPipelineConfiguration().getScriptWrapper().emailext(CONTENT, SUBJECT, TO)
+                }
             }
         }
     }
