@@ -1,6 +1,5 @@
 package com.synopsys.integration.pipeline.jenkins
 
-import com.cloudbees.groovy.cps.NonCPS
 import hudson.AbortException
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 
@@ -17,14 +16,12 @@ class BuildWrapperDryRun extends BuildWrapperImpl {
         dryRunPipelineBuilder.addPipelineLine("setResult ${result}")
     }
 
-    @NonCPS
     @Override
     Optional<BuildWrapper> getPreviousBuild() throws AbortException {
         return Optional.ofNullable(getRunWrapper().getPreviousBuild())
                 .map({ previousBuild -> new BuildWrapperDryRun(previousBuild, this.dryRunPipelineBuilder) })
     }
 
-    @NonCPS
     @Override
     Optional<BuildWrapper> getNextBuild() throws AbortException {
         return Optional.ofNullable(getRunWrapper().getNextBuild())

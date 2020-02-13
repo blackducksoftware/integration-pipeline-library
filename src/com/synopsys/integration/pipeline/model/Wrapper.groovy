@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline.model
 
-import com.cloudbees.groovy.cps.NonCPS
+
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 
 abstract class Wrapper implements Serializable {
@@ -16,21 +16,18 @@ abstract class Wrapper implements Serializable {
 
     abstract void start()
 
-    @NonCPS
     Optional<String> startMessage() {
         return Optional.empty()
     }
 
     abstract void handleException(Exception e)
 
-    @NonCPS
     Optional<String> exceptionMessage() {
         return Optional.empty()
     }
 
     abstract void end()
 
-    @NonCPS
     Optional<String> endMessage() {
         return Optional.empty()
     }

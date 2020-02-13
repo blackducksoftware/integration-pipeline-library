@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline.utilities
 
-import com.cloudbees.groovy.cps.NonCPS
+
 import com.synopsys.integration.pipeline.SimplePipeline
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
@@ -16,7 +16,6 @@ public class ProjectUtils {
         this.jenkinsScriptWrapper = jenkinsScriptWrapper
     }
 
-    @NonCPS
     public void initialize(String tool, String exe) {
         Objects.requireNonNull(tool, "You must provide a build tool. tool = '${tool}'")
         Objects.requireNonNull(exe, "You must provide an exe for the build tool. exe = '${exe}'")
@@ -39,28 +38,24 @@ public class ProjectUtils {
         return getProjectVersion()
     }
 
-    @NonCPS
     public String getProjectVersion() {
         return Optional.ofNullable(toolUtils)
                 .map({ toolUtils -> toolUtils.getProjectVersion() })
                 .orElse("")
     }
 
-    @NonCPS
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
         return Optional.ofNullable(toolUtils)
                 .map({ toolUtils -> toolUtils.checkForSnapshotDependencies(checkAllDependencies) })
                 .orElse(false)
     }
 
-    @NonCPS
     public String updateVersionForRelease(boolean runRelease, boolean runQARelease) {
         return Optional.ofNullable(toolUtils)
                 .map({ toolUtils -> updateVersionForRelease(runRelease, runQARelease) })
                 .orElse("")
     }
 
-    @NonCPS
     public String increaseSemver(boolean runRelease, boolean runQARelease) {
         return Optional.ofNullable(toolUtils)
                 .map({ toolUtils -> increaseSemver(runRelease, runQARelease) })

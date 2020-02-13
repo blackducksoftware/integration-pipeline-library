@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline
 
-import com.cloudbees.groovy.cps.NonCPS
+
 import com.synopsys.integration.pipeline.jenkins.*
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLogger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
@@ -64,7 +64,6 @@ class Pipeline implements Serializable {
         runWithJenkinsWrapper()
     }
 
-    @NonCPS
     void runWithJenkinsWrapper() {
         JenkinsScriptWrapper scriptWrapper = getPipelineConfiguration().getScriptWrapper()
         PipelineLogger logger = getPipelineConfiguration().getLogger()
@@ -122,17 +121,14 @@ class Pipeline implements Serializable {
         }
     }
 
-    @NonCPS
     public PipelineConfiguration getPipelineConfiguration() {
         return pipelineConfiguration
     }
 
-    @NonCPS
     public List<PipelineWrapper> getWrappers() {
         return wrappers
     }
 
-    @NonCPS
     public List<Step> getSteps() {
         return steps
     }
