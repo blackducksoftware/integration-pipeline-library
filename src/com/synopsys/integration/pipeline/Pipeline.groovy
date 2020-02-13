@@ -122,14 +122,17 @@ class Pipeline implements Serializable {
         }
     }
 
+    @NonCPS
     public PipelineConfiguration getPipelineConfiguration() {
         return pipelineConfiguration
     }
 
+    @NonCPS
     public List<PipelineWrapper> getWrappers() {
         return wrappers
     }
 
+    @NonCPS
     public List<Step> getSteps() {
         return steps
     }

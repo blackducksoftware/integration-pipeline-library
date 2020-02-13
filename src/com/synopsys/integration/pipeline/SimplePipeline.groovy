@@ -71,26 +71,26 @@ class SimplePipeline extends Pipeline {
     DetectStage addDetectStage(String detectCommand) {
         detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.tools.excluded=SIGNATURE_SCAN --detect.force.success=true'
 
-        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), 'Detect', getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(HUB_DETECT_URL), detectCommand)
+        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), 'Detect', getJenkinsProperty(HUB_DETECT_URL), detectCommand)
         return addCommonStage(detectStage)
     }
 
     DetectStage addDetectStage(String stageName, String detectCommand) {
         detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.tools.excluded=SIGNATURE_SCAN --detect.force.success=true'
 
-        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), stageName, getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(HUB_DETECT_URL), detectCommand)
+        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), stageName, getJenkinsProperty(HUB_DETECT_URL), detectCommand)
         return addCommonStage(detectStage)
     }
 
     EmailPipelineWrapper addEmailPipelineWrapper(String recipientList) {
-        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), recipientList, getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(JOB_NAME), getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(BUILD_NUMBER), getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(BUILD_URL))
+        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), recipientList, getJenkinsProperty(JOB_NAME), getJenkinsProperty(BUILD_NUMBER), getJenkinsProperty(BUILD_URL))
         emailPipelineWrapper.setRelativeDirectory(commonRunDirectory)
         addPipelineWrapper(emailPipelineWrapper)
         return emailPipelineWrapper
     }
 
     EmailPipelineWrapper addEmailPipelineWrapper(String wrapperName, String recipientList) {
-        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), wrapperName, recipientList, getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(JOB_NAME), getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(BUILD_NUMBER), getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(BUILD_URL))
+        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), wrapperName, recipientList, getJenkinsProperty(JOB_NAME), getJenkinsProperty(BUILD_NUMBER), getJenkinsProperty(BUILD_URL))
         emailPipelineWrapper.setRelativeDirectory(commonRunDirectory)
         addPipelineWrapper(emailPipelineWrapper)
         return emailPipelineWrapper
