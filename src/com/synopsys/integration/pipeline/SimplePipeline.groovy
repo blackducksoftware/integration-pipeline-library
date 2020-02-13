@@ -254,6 +254,8 @@ class SimplePipeline extends Pipeline {
     }
 
     private boolean getJenkinsBooleanProperty(String propertyName) {
+        Optional<String> property = getJenkinsProperty(propertyName)
+        getPipelineConfiguration().getScriptWrapper().println("Property ${property}. Class ${property.getClass()}")
         return getJenkinsProperty(propertyName)
                 .map({ value -> Boolean.valueOf(value) })
                 .orElse(Boolean.FALSE)
