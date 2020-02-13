@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline
 
+import com.cloudbees.groovy.cps.NonCPS
 import com.synopsys.integration.pipeline.buildTool.GradleStage
 import com.synopsys.integration.pipeline.buildTool.MavenStage
 import com.synopsys.integration.pipeline.email.EmailPipelineWrapper
@@ -247,12 +248,14 @@ class SimplePipeline extends Pipeline {
         return addCommonStep(new ClosureStep(getPipelineConfiguration(), closure))
     }
 
+    @NonCPS
     private Optional<String> getJenkinsProperty(String propertyName) {
         Objects.requireNonNull(propertyName, "You must provide a property name. Property: '${propertyName}'")
         return Optional.ofNullable(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(propertyName))
                 .map({ value -> StringUtils.trimToNull(value) })
     }
 
+    @NonCPS
     private boolean getJenkinsBooleanProperty(String propertyName) {
         Optional<String> property = getJenkinsProperty(propertyName)
         getPipelineConfiguration().getScriptWrapper().println("Property ${property}. Class ${property.getClass()}")

@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.jenkins
 
+import com.cloudbees.groovy.cps.NonCPS
 import hudson.AbortException
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 
@@ -85,12 +86,14 @@ class BuildWrapperImpl implements BuildWrapper {
         return runWrapper.getFullProjectName()
     }
 
+    @NonCPS
     @Override
     Optional<BuildWrapper> getPreviousBuild() throws AbortException {
         return Optional.ofNullable(getRunWrapper().getPreviousBuild())
                 .map({ previousBuild -> new BuildWrapperImpl(previousBuild) })
     }
 
+    @NonCPS
     @Override
     Optional<BuildWrapper> getNextBuild() throws AbortException {
         return Optional.ofNullable(getRunWrapper().getNextBuild())

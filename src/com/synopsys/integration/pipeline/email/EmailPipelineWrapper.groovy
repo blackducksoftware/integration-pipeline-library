@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.email
 
+import com.cloudbees.groovy.cps.NonCPS
 import com.synopsys.integration.pipeline.jenkins.BuildWrapper
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.PipelineWrapper
@@ -32,6 +33,7 @@ class EmailPipelineWrapper extends PipelineWrapper {
 
     }
 
+    @NonCPS
     @Override
     void end() {
         String TO = "${recipientList}"

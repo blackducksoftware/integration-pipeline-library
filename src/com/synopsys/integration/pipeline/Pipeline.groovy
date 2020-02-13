@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline
 
+import com.cloudbees.groovy.cps.NonCPS
 import com.synopsys.integration.pipeline.jenkins.*
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLogger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
@@ -63,45 +64,58 @@ class Pipeline implements Serializable {
         runWithJenkinsWrapper()
     }
 
+    @NonCPS
     void runWithJenkinsWrapper() {
+        JenkinsScriptWrapper scriptWrapper = getPipelineConfiguration().getScriptWrapper()
+        PipelineLogger logger = getPipelineConfiguration().getLogger()
+
         for (int i = 0; i < getWrappers().size(); i++) {
             PipelineWrapper wrapper = getWrappers().get(i)
-            getPipelineConfiguration().getScriptWrapper().dir(wrapper.getRelativeDirectory()) {
+            scriptWrapper.dir(wrapper.getRelativeDirectory()) {
+                wrapper.startMessage()
+                        .ifPresent { message -> logger.info(message)
+                        }
                 wrapper.start()
             }
         }
         try {
             for (int i = 0; i < getSteps().size(); i++) {
                 Step currentStep = getSteps().get(i)
-                getPipelineConfiguration().getScriptWrapper().dir(currentStep.getRelativeDirectory()) {
+                scriptWrapper.dir(currentStep.getRelativeDirectory()) {
                     if (currentStep instanceof Stage) {
                         Stage currentStage = (Stage) currentStep
-                        getPipelineConfiguration().getScriptWrapper().stage(currentStage.getName()) {
-                            getPipelineConfiguration().getLogger().info("running stage ${currentStage.getName()}")
+                        scriptWrapper.stage(currentStage.getName()) {
+                            logger.info("running stage ${currentStage.getName()}")
                             currentStage.run()
                         }
                     } else {
                         try {
                             currentStep.run()
                         } catch (Exception e) {
-                            getPipelineConfiguration().getLogger().error(e)
+                            logger.error(e)
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            getPipelineConfiguration().getScriptWrapper().currentBuild().result = "FAILURE"
-            getPipelineConfiguration().getLogger().error("Build failed because ${e.getMessage()}", e)
+            scriptWrapper.currentBuild().result = "FAILURE"
+            logger.error("Build failed because ${e.getMessage()}", e)
             for (int i = 0; i < getWrappers().size(); i++) {
                 PipelineWrapper wrapper = getWrappers().get(i)
-                getPipelineConfiguration().getScriptWrapper().dir(wrapper.getRelativeDirectory()) {
+                scriptWrapper.dir(wrapper.getRelativeDirectory()) {
+                    wrapper.exceptionMessage()
+                            .ifPresent { message -> logger.error(message)
+                            }
                     wrapper.handleException(e)
                 }
             }
         } finally {
             for (int i = 0; i < getWrappers().size(); i++) {
                 PipelineWrapper wrapper = getWrappers().get(i)
-                getPipelineConfiguration().getScriptWrapper().dir(wrapper.getRelativeDirectory()) {
+                scriptWrapper.dir(wrapper.getRelativeDirectory()) {
+                    wrapper.endMessage()
+                            .ifPresent { message -> logger.info(message)
+                            }
                     wrapper.end()
                 }
             }
