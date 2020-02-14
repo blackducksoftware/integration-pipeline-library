@@ -8,7 +8,7 @@ public class ConfigUtils {
         this.config = config
     }
 
-    public Object get(String key, Object defaultValue) {
+    public <T> T get(String key, T defaultValue) {
         String result = defaultValue
         if (config.containsKey(key)) {
             result = config.get(key)

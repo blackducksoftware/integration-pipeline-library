@@ -35,7 +35,14 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Map config) {
 
     String detectCommandVar = config.detectCommand
 
-    boolean runGitHubReleaseVar = configUtils.get('runGitHubRelease', true)
+    boolean runGitHubReleaseVar
+    try {
+        String runGitHubReleaseString = configUtils.get('runGitHubRelease', "true")
+        runGitHubReleaseVar = Boolean.valueOf(runGitHubReleaseString)
+    } catch (MissingPropertyException e) {
+        runGitHubReleaseVar = true
+    }
+
 
     String releaseVersionVar = config.releaseVersion
     String ownerVar = config.owner
@@ -45,13 +52,31 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Map config) {
     String projectVar = config.project
     String releaseDescriptionVar = config.releaseDescription
 
-    boolean runArchiveVar = configUtils.get('runArchive', true)
+    boolean runArchiveVar
+    try {
+        String runArchiveString = configUtils.get('runArchive', "true")
+        runArchiveVar = Boolean.valueOf(runArchiveString)
+    } catch (MissingPropertyException e) {
+        runArchiveVar = true
+    }
     String archivePatternVar = config.archivePattern
 
-    boolean runJunitVar = configUtils.get('runJunit', true)
+    boolean runJunitVar
+    try {
+        String runJunitString = configUtils.get('runJunit', "true")
+        runJunitVar = Boolean.valueOf(runJunitString)
+    } catch (MissingPropertyException e) {
+        runJunitVar = true
+    }
     String junitXmlPatternVar = config.junitXmlPattern
 
-    boolean runJacocoVar = configUtils.get('runJacoco', true)
+    boolean runJacocoVar
+    try {
+        String runJacocoString = configUtils.get('runJacoco', "true")
+        runJacocoVar = Boolean.valueOf(runJacocoString)
+    } catch (MissingPropertyException e) {
+        runJacocoVar = true
+    }
 
     boolean runReleaseVar
     try {
@@ -60,10 +85,23 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Map config) {
     } catch (MissingPropertyException e) {
         runReleaseVar = false
     }
-    boolean checkAllDependenciesVar = configUtils.get('checkAllDependencies', false)
+
+    boolean checkAllDependenciesVar
+    try {
+        String checkAllDependenciesString = configUtils.get('checkAllDependencies', "false")
+        checkAllDependenciesVar = Boolean.valueOf(checkAllDependenciesString)
+    } catch (MissingPropertyException e) {
+        checkAllDependenciesVar = false
+    }
     println "Going to run the Release ${runReleaseVar}"
 
-    boolean runDetectVar = configUtils.get('runDetect', true)
+    boolean runDetectVar
+    try {
+        String runDetectString = configUtils.get('runDetect', "true")
+        runDetectVar = Boolean.valueOf(runDetectString)
+    } catch (MissingPropertyException e) {
+        runDetectVar = true
+    }
 
     def additionalParameters = config.get('additionalParameters', null)
     def params = new ArrayList()
