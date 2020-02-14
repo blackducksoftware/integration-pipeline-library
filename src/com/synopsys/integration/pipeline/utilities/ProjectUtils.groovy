@@ -18,7 +18,6 @@ public class ProjectUtils {
 
     public void initialize(String tool, String exe) {
         Objects.requireNonNull(tool, "You must provide a build tool. tool = '${tool}'")
-        Objects.requireNonNull(exe, "You must provide an exe for the build tool. exe = '${exe}'")
         logger.info("Using tool ${tool}")
 
         ToolUtils newToolUtils = null
