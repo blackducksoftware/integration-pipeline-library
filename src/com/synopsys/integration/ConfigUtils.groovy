@@ -9,7 +9,7 @@ public class ConfigUtils {
     }
 
     public <T> T get(String key, T defaultValue) {
-        String result = defaultValue
+        T result = defaultValue
         if (config.containsKey(key)) {
             result = config.get(key)
             if (null == result) {
