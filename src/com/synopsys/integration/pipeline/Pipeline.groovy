@@ -8,6 +8,7 @@ import com.synopsys.integration.pipeline.logging.SilentPipelineLogger
 import com.synopsys.integration.pipeline.model.PipelineWrapper
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.model.Step
+import org.apache.commons.lang3.StringUtils
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class Pipeline implements Serializable {
@@ -71,9 +72,10 @@ class Pipeline implements Serializable {
         for (int i = 0; i < getWrappers().size(); i++) {
             PipelineWrapper wrapper = getWrappers().get(i)
             scriptWrapper.dir(wrapper.getRelativeDirectory()) {
-                wrapper.startMessage()
-                        .ifPresent { message -> logger.info(message)
-                        }
+                String message = wrapper.startMessage()
+                if (StringUtils.isNotBlank(message)) {
+                    logger.info(message)
+                }
                 wrapper.start()
             }
         }
@@ -102,9 +104,10 @@ class Pipeline implements Serializable {
             for (int i = 0; i < getWrappers().size(); i++) {
                 PipelineWrapper wrapper = getWrappers().get(i)
                 scriptWrapper.dir(wrapper.getRelativeDirectory()) {
-                    wrapper.exceptionMessage()
-                            .ifPresent { message -> logger.error(message)
-                            }
+                    String message = wrapper.exceptionMessage()
+                    if (StringUtils.isNotBlank(message)) {
+                        logger.error(message)
+                    }
                     wrapper.handleException(e)
                 }
             }
@@ -112,9 +115,10 @@ class Pipeline implements Serializable {
             for (int i = 0; i < getWrappers().size(); i++) {
                 PipelineWrapper wrapper = getWrappers().get(i)
                 scriptWrapper.dir(wrapper.getRelativeDirectory()) {
-                    wrapper.endMessage()
-                            .ifPresent { message -> logger.info(message)
-                            }
+                    String message = wrapper.endMessage()
+                    if (StringUtils.isNotBlank(message)) {
+                        logger.info(message)
+                    }
                     wrapper.end()
                 }
             }

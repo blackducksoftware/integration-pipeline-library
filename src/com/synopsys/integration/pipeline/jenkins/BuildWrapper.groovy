@@ -34,9 +34,9 @@ interface BuildWrapper extends Serializable {
 
     public String getFullProjectName() throws AbortException
 
-    public Optional<BuildWrapper> getPreviousBuild() throws AbortException
+    public BuildWrapper getPreviousBuild() throws AbortException
 
-    public Optional<BuildWrapper> getNextBuild() throws AbortException
+    public BuildWrapper getNextBuild() throws AbortException
 
     public String getId() throws AbortException
 

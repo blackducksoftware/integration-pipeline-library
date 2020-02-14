@@ -17,15 +17,21 @@ class BuildWrapperDryRun extends BuildWrapperImpl {
     }
 
     @Override
-    Optional<BuildWrapper> getPreviousBuild() throws AbortException {
-        return Optional.ofNullable(getRunWrapper().getPreviousBuild())
-                .map({ previousBuild -> new BuildWrapperDryRun(previousBuild, this.dryRunPipelineBuilder) })
+    BuildWrapper getPreviousBuild() throws AbortException {
+        RunWrapper previousBuild = getRunWrapper().getPreviousBuild()
+        if (null == previousBuild) {
+            return null
+        }
+        return new BuildWrapperDryRun(previousBuild, this.dryRunPipelineBuilder)
     }
 
     @Override
-    Optional<BuildWrapper> getNextBuild() throws AbortException {
-        return Optional.ofNullable(getRunWrapper().getNextBuild())
-                .map({ nextBuild -> new BuildWrapperDryRun(nextBuild, this.dryRunPipelineBuilder) })
+    BuildWrapper getNextBuild() throws AbortException {
+        RunWrapper nextBuild = getRunWrapper().getNextBuild()
+        if (null == nextBuild) {
+            return null
+        }
+        return new BuildWrapperDryRun(nextBuild, this.dryRunPipelineBuilder)
     }
 
 

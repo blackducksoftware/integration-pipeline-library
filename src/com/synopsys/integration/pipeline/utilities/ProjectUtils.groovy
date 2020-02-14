@@ -27,7 +27,10 @@ public class ProjectUtils {
         } else if (tool.equalsIgnoreCase(SimplePipeline.GRADLE_BUILD_TOOL)) {
             newToolUtils = new GradleUtils(logger, jenkinsScriptWrapper, exe)
         }
-        toolUtils = Optional.ofNullable(newToolUtils).orElseThrow(new PipelineException("Did not recognize the tool '${tool}'"))
+        if (null == newToolUtils) {
+            throw new PipelineException("Did not recognize the tool '${tool}'")
+        }
+        toolUtils = newToolUtils
         logger.info("Initializing tool ${tool}")
         toolUtils.initialize()
     }
@@ -39,26 +42,34 @@ public class ProjectUtils {
     }
 
     public String getProjectVersion() {
-        return Optional.ofNullable(toolUtils)
-                .map({ toolUtils -> toolUtils.getProjectVersion() })
-                .orElse("")
+        String version = ""
+        if (null != toolUtils) {
+            version = toolUtils.getProjectVersion()
+        }
+        return version
     }
 
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
-        return Optional.ofNullable(toolUtils)
-                .map({ toolUtils -> toolUtils.checkForSnapshotDependencies(checkAllDependencies) })
-                .orElse(false)
+        boolean hasSnapshotDependencies = false
+        if (null != toolUtils) {
+            hasSnapshotDependencies = toolUtils.checkForSnapshotDependencies(checkAllDependencies)
+        }
+        return hasSnapshotDependencies
     }
 
     public String updateVersionForRelease(boolean runRelease, boolean runQARelease) {
-        return Optional.ofNullable(toolUtils)
-                .map({ toolUtils -> updateVersionForRelease(runRelease, runQARelease) })
-                .orElse("")
+        String version = ""
+        if (null != toolUtils) {
+            version = toolUtils.updateVersionForRelease(runRelease, runQARelease)
+        }
+        return version
     }
 
     public String increaseSemver(boolean runRelease, boolean runQARelease) {
-        return Optional.ofNullable(toolUtils)
-                .map({ toolUtils -> increaseSemver(runRelease, runQARelease) })
-                .orElse("")
+        String version = ""
+        if (null != toolUtils) {
+            version = toolUtils.increaseSemver(runRelease, runQARelease)
+        }
+        return version
     }
 }

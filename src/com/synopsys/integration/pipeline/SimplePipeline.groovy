@@ -82,14 +82,14 @@ class SimplePipeline extends Pipeline {
     }
 
     EmailPipelineWrapper addEmailPipelineWrapper(String recipientList) {
-        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), recipientList, getJenkinsPropertyTEST(JOB_NAME), getJenkinsPropertyTEST(BUILD_NUMBER), getJenkinsPropertyTEST(BUILD_URL))
+        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), recipientList, getJenkinsProperty(JOB_NAME), getJenkinsProperty(BUILD_NUMBER), getJenkinsProperty(BUILD_URL))
         emailPipelineWrapper.setRelativeDirectory(commonRunDirectory)
         addPipelineWrapper(emailPipelineWrapper)
         return emailPipelineWrapper
     }
 
     EmailPipelineWrapper addEmailPipelineWrapper(String wrapperName, String recipientList) {
-        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), wrapperName, recipientList, getJenkinsPropertyTEST(JOB_NAME), getJenkinsPropertyTEST(BUILD_NUMBER), getJenkinsPropertyTEST(BUILD_URL))
+        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), wrapperName, recipientList, getJenkinsProperty(JOB_NAME), getJenkinsProperty(BUILD_NUMBER), getJenkinsProperty(BUILD_URL))
         emailPipelineWrapper.setRelativeDirectory(commonRunDirectory)
         addPipelineWrapper(emailPipelineWrapper)
         return emailPipelineWrapper
@@ -252,12 +252,6 @@ class SimplePipeline extends Pipeline {
 
         String result = getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(propertyName)
         return StringUtils.trimToEmpty(result)
-    }
-
-    private String getJenkinsPropertyTEST(String propertyName) {
-        Objects.requireNonNull(propertyName, "You must provide a property name. Property: '${propertyName}'")
-
-        return Optional.ofNullable(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(propertyName)).map({ value -> StringUtils.trimToEmpty() }).orElse("")
     }
 
     private boolean getJenkinsBooleanProperty(String propertyName) {
