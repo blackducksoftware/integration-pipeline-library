@@ -1,4 +1,5 @@
 #!/usr/bin/groovy
+import com.synopsys.integration.ConfigUtils
 
 def call(Closure body) {
     def config = [:]
@@ -6,8 +7,10 @@ def call(Closure body) {
     body.delegate = config
     body()
 
+    ConfigUtils configUtils = new ConfigUtils(config)
+    
     String buildCommandVar = config.buildCommand
-    String gradleExeVar = config.gradleExe
+    String gradleExeVar = configUtils.get('gradleExe', './gradlew')
 
     def additionalParameters = config.get('additionalParameters', null)
     def params = new ArrayList()
