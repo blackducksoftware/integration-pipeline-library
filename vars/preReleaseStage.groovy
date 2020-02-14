@@ -26,19 +26,19 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
         pipelineLogger.setLogLevel(LogLevel.DEBUG)
 
         ConfigUtils configUtils = new ConfigUtils(config)
-        boolean runReleaseVar = false
-        //        try {
-        //            runReleaseVar = configUtils.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
-        //        } catch (MissingPropertyException e) {
-        //            runReleaseVar = false
-        //        }
+        boolean runReleaseVar
+        try {
+            runReleaseVar = configUtils.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+        } catch (MissingPropertyException e) {
+            runReleaseVar = false
+        }
 
-        boolean runQABuildVar = false
-        //        try {
-        //            runQABuildVar = configUtils.get('runQABuild', Boolean.valueOf("${RELEASE_QA_BUILD}"))
-        //        } catch (MissingPropertyException e) {
-        //            runQABuildVar = false
-        //        }
+        boolean runQABuildVar
+        try {
+            runQABuildVar = configUtils.get('runQABuild', Boolean.valueOf("${RELEASE_QA_BUILD}"))
+        } catch (MissingPropertyException e) {
+            runQABuildVar = false
+        }
 
         ProjectUtils projectUtils = new ProjectUtils(pipelineLogger, jenkinsScriptWrapper)
         projectUtils.initialize(buildTool, exe)

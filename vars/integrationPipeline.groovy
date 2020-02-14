@@ -53,12 +53,17 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Map config) {
 
     boolean runJacocoVar = configUtils.get('runJacoco', true)
 
-    boolean runReleaseVar = false
-    //    try {
-    //        runReleaseVar = configUtils.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
-    //    } catch (MissingPropertyException e) {
-    //        runReleaseVar = false
-    //    }
+    boolean runReleaseVar
+    try {
+        String envVarRelease = "${RUN_RELEASE}"
+        println("The environment variable for releasing ${envVarRelease}")
+        Boolean releaseVar = Boolean.valueOf("${RUN_RELEASE}")
+        println("The Boolean for releasing ${releaseVar}")
+
+        runReleaseVar = configUtils.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+    } catch (MissingPropertyException e) {
+        runReleaseVar = false
+    }
     boolean checkAllDependenciesVar = configUtils.get('checkAllDependencies', false)
     println "Going to run the Release ${runReleaseVar}"
 
