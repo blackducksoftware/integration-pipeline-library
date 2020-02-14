@@ -27,14 +27,16 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
         ConfigUtils configUtils = new ConfigUtils(config)
         boolean runReleaseVar
         try {
-            runReleaseVar = configUtils.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+            String runReleaseString = configUtils.get('runRelease', "${RUN_RELEASE}")
+            runReleaseVar = Boolean.valueOf(runReleaseString)
         } catch (MissingPropertyException e) {
             runReleaseVar = false
         }
 
         boolean runQABuildVar
         try {
-            runQABuildVar = configUtils.get('runQABuild', Boolean.valueOf("${RUN_QA_BUILD}"))
+            String runQABuildString = configUtils.get('runQABuild', "${RUN_QA_BUILD}")
+            runQABuildVar = Boolean.valueOf(runQABuildString)
         } catch (MissingPropertyException e) {
             runQABuildVar = false
         }
