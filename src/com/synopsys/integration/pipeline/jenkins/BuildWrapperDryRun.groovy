@@ -1,6 +1,5 @@
 package com.synopsys.integration.pipeline.jenkins
 
-
 import hudson.AbortException
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 
@@ -19,18 +18,20 @@ class BuildWrapperDryRun extends BuildWrapperImpl {
 
     @Override
     BuildWrapper getPreviousBuild() throws AbortException {
-        if (null == getRunWrapper().getPreviousBuild()) {
+        RunWrapper previousBuild = getRunWrapper().getPreviousBuild()
+        if (null == previousBuild) {
             return null
         }
-        return new BuildWrapperDryRun(getRunWrapper().getPreviousBuild(), this.dryRunPipelineBuilder)
+        return new BuildWrapperDryRun(previousBuild, this.dryRunPipelineBuilder)
     }
 
     @Override
     BuildWrapper getNextBuild() throws AbortException {
-        if (null == getRunWrapper().getNextBuild()) {
+        RunWrapper nextBuild = getRunWrapper().getNextBuild()
+        if (null == nextBuild) {
             return null
         }
-        return new BuildWrapperDryRun(getRunWrapper().getNextBuild(), this.dryRunPipelineBuilder)
+        return new BuildWrapperDryRun(nextBuild, this.dryRunPipelineBuilder)
     }
 
 

@@ -16,20 +16,20 @@ abstract class Wrapper implements Serializable {
 
     abstract void start()
 
-    Optional<String> startMessage() {
-        return Optional.empty()
+    String startMessage() {
+        return ""
     }
 
     abstract void handleException(Exception e)
 
-    Optional<String> exceptionMessage() {
-        return Optional.empty()
+    String exceptionMessage() {
+        return ""
     }
 
     abstract void end()
 
-    Optional<String> endMessage() {
-        return Optional.empty()
+    String endMessage() {
+        return ""
     }
 
     PipelineConfiguration getPipelineConfiguration() {

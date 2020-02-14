@@ -40,11 +40,12 @@ class EmailPipelineWrapper extends PipelineWrapper {
 
         BuildWrapper currentBuild = getPipelineConfiguration().getScriptWrapper().currentBuild()
         BuildWrapper previousBuild = currentBuild.getPreviousBuild()
-        if (currentBuild.result == "FAILURE") {
+
+        if (currentBuild.getResult() == "FAILURE") {
             getPipelineConfiguration().getLogger().error("Sending out Build Failure email: ${SUBJECT}")
             getPipelineConfiguration().getScriptWrapper().emailext(CONTENT, SUBJECT, TO)
         } else if (null != previousBuild) {
-            String previousResult = previousBuild.result
+            String previousResult = previousBuild.getResult()
             if (null != previousResult && previousResult != "SUCCESS" && currentBuild.resultIsBetterOrEqualTo(previousResult)) {
                 SUBJECT = "${jobName} - Build #${buildNumber} - Fixed!"
                 CONTENT = "${jobName} - Build #${buildNumber} - Fixed!\nCheck console output at ${buildURL} to view the results."

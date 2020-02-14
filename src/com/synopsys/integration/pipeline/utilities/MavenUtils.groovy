@@ -2,6 +2,7 @@ package com.synopsys.integration.pipeline.utilities
 
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.PipelineLogger
+import org.apache.commons.lang3.StringUtils
 
 public class MavenUtils implements ToolUtils, Serializable {
     private final PipelineLogger logger
@@ -17,7 +18,7 @@ public class MavenUtils implements ToolUtils, Serializable {
 
     @Override
     public void initialize() {
-        if (null == exe || exe.trim().length() > 0) {
+        if (StringUtils.isNotBlank(exe)) {
             String mvnHome = jenkinsScriptWrapper.tool 'maven-3'
             String mavenExe = "${mvnHome}/bin/mvn"
             this.exe = mavenExe

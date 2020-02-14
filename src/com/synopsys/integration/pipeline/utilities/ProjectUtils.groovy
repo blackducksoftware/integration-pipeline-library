@@ -1,6 +1,8 @@
 package com.synopsys.integration.pipeline.utilities
 
+
 import com.synopsys.integration.pipeline.SimplePipeline
+import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 
@@ -15,16 +17,22 @@ public class ProjectUtils {
     }
 
     public void initialize(String tool, String exe) {
+        Objects.requireNonNull(tool, "You must provide a build tool. tool = '${tool}'")
+        Objects.requireNonNull(exe, "You must provide an exe for the build tool. exe = '${exe}'")
         logger.info("Using tool ${tool}")
+
+        ToolUtils newToolUtils = null
         if (tool.equalsIgnoreCase(SimplePipeline.MAVEN_BUILD_TOOL)) {
-            toolUtils = new MavenUtils(logger, jenkinsScriptWrapper, exe)
+            newToolUtils = new MavenUtils(logger, jenkinsScriptWrapper, exe)
         } else if (tool.equalsIgnoreCase(SimplePipeline.GRADLE_BUILD_TOOL)) {
-            toolUtils = new GradleUtils(logger, jenkinsScriptWrapper, exe)
+            newToolUtils = new GradleUtils(logger, jenkinsScriptWrapper, exe)
         }
-        if (null != toolUtils) {
-            logger.info("Initializing tool ${tool}")
-            toolUtils.initialize()
+        if (null == newToolUtils) {
+            throw new PipelineException("Did not recognize the tool '${tool}'")
         }
+        toolUtils = newToolUtils
+        logger.info("Initializing tool ${tool}")
+        toolUtils.initialize()
     }
 
     @Deprecated
@@ -34,7 +42,7 @@ public class ProjectUtils {
     }
 
     public String getProjectVersion() {
-        def version = ""
+        String version = ""
         if (null != toolUtils) {
             version = toolUtils.getProjectVersion()
         }
@@ -42,14 +50,15 @@ public class ProjectUtils {
     }
 
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
+        boolean hasSnapshotDependencies = false
         if (null != toolUtils) {
-            return toolUtils.checkForSnapshotDependencies(checkAllDependencies)
+            hasSnapshotDependencies = toolUtils.checkForSnapshotDependencies(checkAllDependencies)
         }
-        return false
+        return hasSnapshotDependencies
     }
 
     public String updateVersionForRelease(boolean runRelease, boolean runQARelease) {
-        def version = ""
+        String version = ""
         if (null != toolUtils) {
             version = toolUtils.updateVersionForRelease(runRelease, runQARelease)
         }
@@ -57,7 +66,7 @@ public class ProjectUtils {
     }
 
     public String increaseSemver(boolean runRelease, boolean runQARelease) {
-        def version = ""
+        String version = ""
         if (null != toolUtils) {
             version = toolUtils.increaseSemver(runRelease, runQARelease)
         }

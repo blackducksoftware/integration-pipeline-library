@@ -2,6 +2,7 @@ package com.synopsys.integration.pipeline.utilities
 
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.PipelineLogger
+import org.apache.commons.lang3.StringUtils
 
 public class GradleUtils implements com.synopsys.integration.pipeline.utilities.ToolUtils, Serializable {
     private final PipelineLogger logger
@@ -17,7 +18,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
 
     @Override
     public void initialize() {
-        if (null == exe || exe.trim().length() > 0) {
+        if (StringUtils.isNotBlank(exe)) {
             this.exe = './gradlew'
         } else {
             this.exe = exe

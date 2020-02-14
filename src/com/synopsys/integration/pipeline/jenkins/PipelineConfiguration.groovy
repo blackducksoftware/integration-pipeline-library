@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.jenkins
 
+
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 
 class PipelineConfiguration implements Serializable {

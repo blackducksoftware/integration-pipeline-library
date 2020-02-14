@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline
 
+
 import com.synopsys.integration.pipeline.jenkins.*
 import com.synopsys.integration.pipeline.logging.DefaultPipelineLogger
 import com.synopsys.integration.pipeline.logging.PipelineLogger
@@ -7,6 +8,7 @@ import com.synopsys.integration.pipeline.logging.SilentPipelineLogger
 import com.synopsys.integration.pipeline.model.PipelineWrapper
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.model.Step
+import org.apache.commons.lang3.StringUtils
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class Pipeline implements Serializable {
@@ -64,44 +66,59 @@ class Pipeline implements Serializable {
     }
 
     void runWithJenkinsWrapper() {
+        JenkinsScriptWrapper scriptWrapper = getPipelineConfiguration().getScriptWrapper()
+        PipelineLogger logger = getPipelineConfiguration().getLogger()
+
         for (int i = 0; i < getWrappers().size(); i++) {
             PipelineWrapper wrapper = getWrappers().get(i)
-            getPipelineConfiguration().getScriptWrapper().dir(wrapper.getRelativeDirectory()) {
+            scriptWrapper.dir(wrapper.getRelativeDirectory()) {
+                String message = wrapper.startMessage()
+                if (StringUtils.isNotBlank(message)) {
+                    logger.info(message)
+                }
                 wrapper.start()
             }
         }
         try {
             for (int i = 0; i < getSteps().size(); i++) {
                 Step currentStep = getSteps().get(i)
-                getPipelineConfiguration().getScriptWrapper().dir(currentStep.getRelativeDirectory()) {
+                scriptWrapper.dir(currentStep.getRelativeDirectory()) {
                     if (currentStep instanceof Stage) {
                         Stage currentStage = (Stage) currentStep
-                        getPipelineConfiguration().getScriptWrapper().stage(currentStage.getName()) {
-                            getPipelineConfiguration().getLogger().info("running stage ${currentStage.getName()}")
+                        scriptWrapper.stage(currentStage.getName()) {
+                            logger.info("running stage ${currentStage.getName()}")
                             currentStage.run()
                         }
                     } else {
                         try {
                             currentStep.run()
                         } catch (Exception e) {
-                            getPipelineConfiguration().getLogger().error(e)
+                            logger.error(e)
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            getPipelineConfiguration().getScriptWrapper().currentBuild().result = "FAILURE"
-            getPipelineConfiguration().getLogger().error("Build failed because ${e.getMessage()}", e)
+            scriptWrapper.currentBuild().result = "FAILURE"
+            logger.error("Build failed because ${e.getMessage()}", e)
             for (int i = 0; i < getWrappers().size(); i++) {
                 PipelineWrapper wrapper = getWrappers().get(i)
-                getPipelineConfiguration().getScriptWrapper().dir(wrapper.getRelativeDirectory()) {
+                scriptWrapper.dir(wrapper.getRelativeDirectory()) {
+                    String message = wrapper.exceptionMessage()
+                    if (StringUtils.isNotBlank(message)) {
+                        logger.error(message)
+                    }
                     wrapper.handleException(e)
                 }
             }
         } finally {
             for (int i = 0; i < getWrappers().size(); i++) {
                 PipelineWrapper wrapper = getWrappers().get(i)
-                getPipelineConfiguration().getScriptWrapper().dir(wrapper.getRelativeDirectory()) {
+                scriptWrapper.dir(wrapper.getRelativeDirectory()) {
+                    String message = wrapper.endMessage()
+                    if (StringUtils.isNotBlank(message)) {
+                        logger.info(message)
+                    }
                     wrapper.end()
                 }
             }

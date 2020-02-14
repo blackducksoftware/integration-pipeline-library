@@ -9,10 +9,13 @@ public class ConfigUtils {
     }
 
     public Object get(String key, Object defaultValue) {
-        Object value = config.get(key)
-        if (value == null) {
-            value = defaultValue
+        String result = defaultValue
+        if (config.containsKey(key)) {
+            result = config.get(key)
+            if (null == result) {
+                result = defaultValue
+            }
         }
-        return value
+        return result
     }
 }

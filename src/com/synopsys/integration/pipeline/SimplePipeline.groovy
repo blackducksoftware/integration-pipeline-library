@@ -6,6 +6,7 @@ import com.synopsys.integration.pipeline.email.EmailPipelineWrapper
 import com.synopsys.integration.pipeline.generic.ClosureStage
 import com.synopsys.integration.pipeline.generic.ClosureStep
 import com.synopsys.integration.pipeline.model.Stage
+import com.synopsys.integration.pipeline.model.Step
 import com.synopsys.integration.pipeline.results.ArchiveStage
 import com.synopsys.integration.pipeline.results.JacocoStage
 import com.synopsys.integration.pipeline.results.JunitStageWrapper
@@ -16,6 +17,7 @@ import com.synopsys.integration.pipeline.tools.DetectStage
 import com.synopsys.integration.pipeline.versioning.GithubReleaseStage
 import com.synopsys.integration.pipeline.versioning.NextSnapshotStage
 import com.synopsys.integration.pipeline.versioning.RemoveSnapshotStage
+import org.apache.commons.lang3.BooleanUtils
 import org.apache.commons.lang3.StringUtils
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
@@ -51,17 +53,13 @@ class SimplePipeline extends Pipeline {
     ArchiveStage addArchiveStage(String archiveFilePattern) {
         ArchiveStage archiveStage = new ArchiveStage(getPipelineConfiguration(), 'Archive')
         archiveStage.setArchiveFilePattern(archiveFilePattern)
-        archiveStage.setRelativeDirectory(commonRunDirectory)
-        addStage(archiveStage)
-        return archiveStage
+        return addCommonStage(archiveStage)
     }
 
     ArchiveStage addArchiveStage(String stageName, String archiveFilePattern) {
         ArchiveStage archiveStage = new ArchiveStage(getPipelineConfiguration(), stageName)
         archiveStage.setArchiveFilePattern(archiveFilePattern)
-        archiveStage.setRelativeDirectory(commonRunDirectory)
-        addStage(archiveStage)
-        return archiveStage
+        return addCommonStage(archiveStage)
     }
 
     CleanupStep addCleanupStep() {
@@ -73,89 +71,69 @@ class SimplePipeline extends Pipeline {
     DetectStage addDetectStage(String detectCommand) {
         detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.tools.excluded=SIGNATURE_SCAN --detect.force.success=true'
 
-        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), 'Detect', getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(HUB_DETECT_URL), detectCommand)
-        detectStage.setRelativeDirectory(commonRunDirectory)
-        addStage(detectStage)
-        return detectStage
+        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), 'Detect', getJenkinsProperty(HUB_DETECT_URL), detectCommand)
+        return addCommonStage(detectStage)
     }
 
     DetectStage addDetectStage(String stageName, String detectCommand) {
         detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.tools.excluded=SIGNATURE_SCAN --detect.force.success=true'
 
-        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), stageName, getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(HUB_DETECT_URL), detectCommand)
-        detectStage.setRelativeDirectory(commonRunDirectory)
-        addStage(detectStage)
-        return detectStage
+        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), stageName, getJenkinsProperty(HUB_DETECT_URL), detectCommand)
+        return addCommonStage(detectStage)
     }
 
     EmailPipelineWrapper addEmailPipelineWrapper(String recipientList) {
-        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), recipientList, getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(JOB_NAME), getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(BUILD_NUMBER), getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(BUILD_URL))
+        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), recipientList, getJenkinsProperty(JOB_NAME), getJenkinsProperty(BUILD_NUMBER), getJenkinsProperty(BUILD_URL))
         emailPipelineWrapper.setRelativeDirectory(commonRunDirectory)
         addPipelineWrapper(emailPipelineWrapper)
         return emailPipelineWrapper
     }
 
     EmailPipelineWrapper addEmailPipelineWrapper(String wrapperName, String recipientList) {
-        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), wrapperName, recipientList, getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(JOB_NAME), getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(BUILD_NUMBER), getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(BUILD_URL))
+        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), wrapperName, recipientList, getJenkinsProperty(JOB_NAME), getJenkinsProperty(BUILD_NUMBER), getJenkinsProperty(BUILD_URL))
         emailPipelineWrapper.setRelativeDirectory(commonRunDirectory)
         addPipelineWrapper(emailPipelineWrapper)
         return emailPipelineWrapper
     }
 
     GithubReleaseStage addGithubReleaseStage(String branch) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'GitHub Release', Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_RELEASE)), branch)
-        githubReleaseStage.setRelativeDirectory(commonRunDirectory)
-        addStage(githubReleaseStage)
-        return githubReleaseStage
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'GitHub Release', getJenkinsBooleanProperty(RUN_RELEASE), branch)
+        return addCommonStage(githubReleaseStage)
     }
 
     GithubReleaseStage addGithubReleaseStage(String stageName, String branch) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_RELEASE)), branch)
-        githubReleaseStage.setRelativeDirectory(commonRunDirectory)
-        addStage(githubReleaseStage)
-        return githubReleaseStage
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), branch)
+        return addCommonStage(githubReleaseStage)
     }
 
     GithubReleaseStage addGithubReleaseStageByFile(String branch, String artifactFile) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'GitHub Release', Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_RELEASE)), artifactFile, branch)
-        githubReleaseStage.setRelativeDirectory(commonRunDirectory)
-        addStage(githubReleaseStage)
-        return githubReleaseStage
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'GitHub Release', getJenkinsBooleanProperty(RUN_RELEASE), artifactFile, branch)
+        return addCommonStage(githubReleaseStage)
     }
 
     GithubReleaseStage addGithubReleaseStageByFile(String stageName, String branch, String artifactFile) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_RELEASE)), artifactFile, branch)
-        githubReleaseStage.setRelativeDirectory(commonRunDirectory)
-        addStage(githubReleaseStage)
-        return githubReleaseStage
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), artifactFile, branch)
+        return addCommonStage(githubReleaseStage)
     }
 
     GithubReleaseStage addGithubReleaseStageByPattern(String branch, String artifactPattern, String artifactDirectory) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'GitHub Release', Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_RELEASE)), artifactPattern, artifactDirectory, branch)
-        githubReleaseStage.setRelativeDirectory(commonRunDirectory)
-        addStage(githubReleaseStage)
-        return githubReleaseStage
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'GitHub Release', getJenkinsBooleanProperty(RUN_RELEASE), artifactPattern, artifactDirectory, branch)
+        return addCommonStage(githubReleaseStage)
     }
 
     GithubReleaseStage addGithubReleaseStageByPattern(String stageName, String branch, String artifactPattern, String artifactDirectory) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_RELEASE)), artifactPattern, artifactDirectory, branch)
-        githubReleaseStage.setRelativeDirectory(commonRunDirectory)
-        addStage(githubReleaseStage)
-        return githubReleaseStage
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), artifactPattern, artifactDirectory, branch)
+        return addCommonStage(githubReleaseStage)
     }
 
     GitStage addGitStage(String url, String branch) {
         GitStage gitStage = new GitStage(getPipelineConfiguration(), "Git", url, branch)
-        gitStage.setRelativeDirectory(commonRunDirectory)
-        addStage(gitStage)
-        return gitStage
+        return addCommonStage(gitStage)
     }
 
     GitStage addGitStage(String stageName, String url, String branch) {
         GitStage gitStage = new GitStage(getPipelineConfiguration(), stageName, url, branch)
-        gitStage.setRelativeDirectory(commonRunDirectory)
-        addStage(gitStage)
-        return gitStage
+        return addCommonStage(gitStage)
     }
 
 
@@ -163,34 +141,26 @@ class SimplePipeline extends Pipeline {
         GradleStage gradleStage = new GradleStage(getPipelineConfiguration(), "Gradle")
         gradleStage.setGradleExe(gradleExe)
         gradleStage.setGradleOptions(gradleOptions)
-        gradleStage.setRelativeDirectory(commonRunDirectory)
-        addStage(gradleStage)
-        return gradleStage
+        return addCommonStage(gradleStage)
     }
 
     GradleStage addGradleStage(String stageName, String gradleExe, String gradleOptions) {
         GradleStage gradleStage = new GradleStage(getPipelineConfiguration(), stageName)
         gradleStage.setGradleExe(gradleExe)
         gradleStage.setGradleOptions(gradleOptions)
-        gradleStage.setRelativeDirectory(commonRunDirectory)
-        addStage(gradleStage)
-        return gradleStage
+        return addCommonStage(gradleStage)
     }
 
     JacocoStage addJacocoStage(LinkedHashMap jacocoOptions) {
         JacocoStage jacocoStage = new JacocoStage(getPipelineConfiguration(), 'Jacoco')
         jacocoStage.setJacocoOptions(jacocoOptions)
-        jacocoStage.setRelativeDirectory(commonRunDirectory)
-        addStage(jacocoStage)
-        return jacocoStage
+        return addCommonStage(jacocoStage)
     }
 
     JacocoStage addJacocoStage(String stageName, LinkedHashMap jacocoOptions) {
         JacocoStage jacocoStage = new JacocoStage(getPipelineConfiguration(), stageName)
         jacocoStage.setJacocoOptions(jacocoOptions)
-        jacocoStage.setRelativeDirectory(commonRunDirectory)
-        addStage(jacocoStage)
-        return jacocoStage
+        return addCommonStage(jacocoStage)
     }
 
     JunitStageWrapper addJunitStageWrapper(Stage stage, LinkedHashMap junitOptions) {
@@ -214,92 +184,92 @@ class SimplePipeline extends Pipeline {
         MavenStage mavenStage = new MavenStage(getPipelineConfiguration(), "Maven")
         mavenStage.setMavenOptions(mavenOptions)
         mavenStage.setMavenToolName(mavenToolName)
-        mavenStage.setRelativeDirectory(commonRunDirectory)
-        addStage(mavenStage)
-        return mavenStage
+        return addCommonStage(mavenStage)
     }
 
     MavenStage addMavenStage(String stageName, String mavenToolName, String mavenOptions) {
         MavenStage mavenStage = new MavenStage(getPipelineConfiguration(), stageName)
         mavenStage.setMavenOptions(mavenOptions)
         mavenStage.setMavenToolName(mavenToolName)
-        mavenStage.setRelativeDirectory(commonRunDirectory)
-        addStage(mavenStage)
-        return mavenStage
+        return addCommonStage(mavenStage)
     }
 
     NextSnapshotStage addNextSnapshotStage(String buildTool, String exe, String branch) {
-        boolean runRelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_RELEASE))
-        boolean runQARelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_QA_BUILD))
+        boolean runRelease = getJenkinsBooleanProperty(RUN_RELEASE)
+        boolean runQARelease = getJenkinsBooleanProperty(RUN_QA_BUILD)
 
         NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getPipelineConfiguration(), 'Next Snapshot', runRelease, runQARelease, buildTool, exe, branch)
-        nextSnapshotStage.setRelativeDirectory(commonRunDirectory)
-        addStage(nextSnapshotStage)
-        return nextSnapshotStage
+        return addCommonStage(nextSnapshotStage)
     }
 
     NextSnapshotStage addNextSnapshotStage(String stageName, String buildTool, String exe, String branch) {
-        boolean runRelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_RELEASE))
-        boolean runQARelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_QA_BUILD))
+        boolean runRelease = getJenkinsBooleanProperty(RUN_RELEASE)
+        boolean runQARelease = getJenkinsBooleanProperty(RUN_QA_BUILD)
         NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getPipelineConfiguration(), stageName, runRelease, runQARelease, buildTool, exe, branch)
-        nextSnapshotStage.setRelativeDirectory(commonRunDirectory)
-        addStage(nextSnapshotStage)
-        return nextSnapshotStage
+        return addCommonStage(nextSnapshotStage)
     }
 
     RemoveSnapshotStage addRemoveSnapshotStage(String buildTool, String exe, String branch) {
-        boolean runRelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_RELEASE))
-        boolean runQARelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_QA_BUILD))
+        boolean runRelease = getJenkinsBooleanProperty(RUN_RELEASE)
+        boolean runQARelease = getJenkinsBooleanProperty(RUN_QA_BUILD)
         RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getPipelineConfiguration(), 'Remove Snapshot', runRelease, runQARelease, buildTool, exe, branch)
-        removeSnapshotStage.setRelativeDirectory(commonRunDirectory)
-        addStage(removeSnapshotStage)
-        return removeSnapshotStage
+        return addCommonStage(removeSnapshotStage)
     }
 
     RemoveSnapshotStage addRemoveSnapshotStage(String stageName, String buildTool, String exe, String branch) {
-        boolean runRelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_RELEASE))
-        boolean runQARelease = Boolean.valueOf(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RUN_QA_BUILD))
+        boolean runRelease = getJenkinsBooleanProperty(RUN_RELEASE)
+        boolean runQARelease = getJenkinsBooleanProperty(RUN_QA_BUILD)
         RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getPipelineConfiguration(), stageName, runRelease, runQARelease, buildTool, exe, branch)
-        removeSnapshotStage.setRelativeDirectory(commonRunDirectory)
-        addStage(removeSnapshotStage)
-        return removeSnapshotStage
+        return addCommonStage(removeSnapshotStage)
     }
 
     SetJdkStage addSetJdkStage() {
         SetJdkStage setJdkStage = new SetJdkStage(getPipelineConfiguration(), "Set JDK")
-        setJdkStage.setRelativeDirectory(commonRunDirectory)
-        addStage(setJdkStage)
-        return setJdkStage
+        return addCommonStage(setJdkStage)
     }
 
     SetJdkStage addSetJdkStage(String jdkToolName) {
         SetJdkStage setJdkStage = new SetJdkStage(getPipelineConfiguration(), "Set JDK")
         setJdkStage.setJdkToolName(jdkToolName)
-        setJdkStage.setRelativeDirectory(commonRunDirectory)
-        addStage(setJdkStage)
-        return setJdkStage
+        return addCommonStage(setJdkStage)
     }
 
     SetJdkStage addSetJdkStage(String stageName, String jdkToolName) {
         SetJdkStage setJdkStage = new SetJdkStage(getPipelineConfiguration(), stageName)
         setJdkStage.setJdkToolName(jdkToolName)
-        setJdkStage.setRelativeDirectory(commonRunDirectory)
-        addStage(setJdkStage)
-        return setJdkStage
+        return addCommonStage(setJdkStage)
     }
 
     ClosureStage addStage(String stageName, Closure closure) {
-        ClosureStage closureStage = new ClosureStage(getPipelineConfiguration(), stageName, closure)
-        closureStage.setRelativeDirectory(commonRunDirectory)
-        addStage(closureStage)
-        return closureStage
+        return addCommonStage(new ClosureStage(getPipelineConfiguration(), stageName, closure))
     }
 
     ClosureStep addStep(Closure closure) {
-        ClosureStep closureStep = new ClosureStep(getPipelineConfiguration(), closure)
-        closureStep.setRelativeDirectory(commonRunDirectory)
-        addStep(closureStep)
-        return closureStep
+        return addCommonStep(new ClosureStep(getPipelineConfiguration(), closure))
+    }
+
+    private String getJenkinsProperty(String propertyName) {
+        Objects.requireNonNull(propertyName, "You must provide a property name. Property: '${propertyName}'")
+
+        String result = getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(propertyName)
+        return StringUtils.trimToEmpty(result)
+    }
+
+    private boolean getJenkinsBooleanProperty(String propertyName) {
+        String result = getJenkinsProperty(propertyName)
+        return BooleanUtils.toBooleanDefaultIfNull(Boolean.valueOf(result), Boolean.FALSE)
+    }
+
+    private <T extends Stage> T addCommonStage(T stage) {
+        stage.setRelativeDirectory(commonRunDirectory)
+        addStage(stage)
+        return stage
+    }
+
+    private <T extends Step> T addCommonStep(T step) {
+        step.setRelativeDirectory(commonRunDirectory)
+        addStep(step)
+        return step
     }
 
     String getCommonRunDirectory() {
