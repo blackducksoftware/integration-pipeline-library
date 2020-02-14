@@ -60,7 +60,9 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Map config) {
         Boolean releaseVar = Boolean.valueOf("${RUN_RELEASE}")
         println("The Boolean for releasing ${releaseVar}")
 
-        runReleaseVar = configUtils.get('runRelease', Boolean.valueOf("${RUN_RELEASE}"))
+        String tmp = configUtils.get('runRelease', "${RUN_RELEASE}")
+        runReleaseVar = Boolean.valueOf(tmp)
+
     } catch (MissingPropertyException e) {
         runReleaseVar = false
     }
