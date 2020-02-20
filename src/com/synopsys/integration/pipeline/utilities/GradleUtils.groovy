@@ -18,10 +18,8 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
 
     @Override
     public void initialize() {
-        if (StringUtils.isNotBlank(exe)) {
+        if (StringUtils.isBlank(exe)) {
             this.exe = './gradlew'
-        } else {
-            this.exe = exe
         }
     }
 

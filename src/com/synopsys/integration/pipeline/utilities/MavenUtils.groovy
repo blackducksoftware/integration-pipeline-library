@@ -18,12 +18,10 @@ public class MavenUtils implements ToolUtils, Serializable {
 
     @Override
     public void initialize() {
-        if (StringUtils.isNotBlank(exe)) {
+        if (StringUtils.isBlank(exe)) {
             String mvnHome = jenkinsScriptWrapper.tool 'maven-3'
             String mavenExe = "${mvnHome}/bin/mvn"
             this.exe = mavenExe
-        } else {
-            this.exe = exe
         }
     }
 
