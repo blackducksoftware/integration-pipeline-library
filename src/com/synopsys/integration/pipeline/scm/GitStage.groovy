@@ -17,7 +17,6 @@ class GitStage extends Stage {
     private boolean changelog = DEFAULT_GIT_CHANGELOG
     private boolean poll = DEFAULT_GIT_POLL
 
-
     GitStage(PipelineConfiguration pipelineConfiguration, String stageName, String url, String branch) {
         super(pipelineConfiguration, stageName)
         this.url = url

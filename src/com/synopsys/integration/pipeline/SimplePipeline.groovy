@@ -136,6 +136,11 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(gitStage)
     }
 
+    GitStage addGitStageWithPolling(String url, String branch) {
+        GitStage gitStage = new GitStage(getPipelineConfiguration(), "Git", url, branch)
+        gitStage.setPoll(true)
+        return addCommonStage(gitStage)
+    }
 
     GradleStage addGradleStage(String gradleExe, String gradleOptions) {
         GradleStage gradleStage = new GradleStage(getPipelineConfiguration(), "Gradle")
