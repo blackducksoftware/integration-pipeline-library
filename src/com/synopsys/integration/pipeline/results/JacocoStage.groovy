@@ -5,10 +5,7 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 class JacocoStage extends Stage {
-    private LinkedHashMap jacocoOptions = [
-            changeBuildStatus: false
-            ,classPattern: '**/build/classes/java/main'
-    ]
+    private LinkedHashMap jacocoOptions = [changeBuildStatus: false]
 
     JacocoStage(PipelineConfiguration pipelineConfiguration, String name) {
         super(pipelineConfiguration, name)
@@ -16,7 +13,6 @@ class JacocoStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        throw new RuntimeException('forcing an error')
         getPipelineConfiguration().getScriptWrapper().jacoco(jacocoOptions)
     }
 
