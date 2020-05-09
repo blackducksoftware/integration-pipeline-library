@@ -16,6 +16,7 @@ class JacocoStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
+        throw new RuntimeException('forcing an error')
         getPipelineConfiguration().getScriptWrapper().jacoco(jacocoOptions)
     }
 
