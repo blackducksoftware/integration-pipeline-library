@@ -5,7 +5,7 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 class SetJdkStage extends Stage {
-    public static final String DEFAULT_JDK_TOOL_NAME = 'jdk8'
+    public static final String DEFAULT_JDK_TOOL_NAME = 'OpenJDK 11'
 
     private String jdkToolName = DEFAULT_JDK_TOOL_NAME
 
