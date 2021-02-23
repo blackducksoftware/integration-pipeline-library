@@ -22,12 +22,6 @@ import org.apache.commons.lang3.StringUtils
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class SimplePipeline extends Pipeline {
-    // These tool names need to match the ones defined in Jenkins in the global tool config //
-    public static final String JAVA_11 = 'jdk-11.0.7'
-    public static final String JAVA_8 = 'jdk8'
-    //////////////////////////////////////////////////////////////////////////////////////////
-
-
     public static final String GRADLE_BUILD_TOOL = 'gradle'
     public static final String MAVEN_BUILD_TOOL = 'maven'
 
