@@ -24,7 +24,6 @@ class SetJdkStage extends Stage {
 
         getPipelineConfiguration().getLogger().info("JAVA_HOME = ${getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('JAVA_HOME')}")
         getPipelineConfiguration().getLogger().info("PATH = ${getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('PATH')}")
-
     }
 
     String getJdkToolName() {
@@ -34,4 +33,5 @@ class SetJdkStage extends Stage {
     void setJdkToolName(final String jdkToolName) {
         this.jdkToolName = jdkToolName
     }
+
 }
