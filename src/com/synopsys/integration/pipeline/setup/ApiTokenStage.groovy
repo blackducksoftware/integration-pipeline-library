@@ -18,7 +18,7 @@ class ApiTokenStage extends Stage {
         String blackDuckApiTokenName = getPropertyValue("BLACKDUCK_API_TOKEN_NAME")
         String blackDuckApiTokenUsername = getPropertyValue("BLACKDUCK_API_TOKEN_USERNAME")
 
-        if (null != blackDuckUrl && !"".equals(blackDuckUrl)) {
+        if (blackDuckUrl) {
             String url = String.format(REQUEST_FORMAT, apiTokensUrl, blackDuckUrl, blackDuckApiTokenName, blackDuckApiTokenUsername)
             URL apiTokenURL = new URL(url)
             HttpURLConnection httpURLConnection = (HttpURLConnection) apiTokenURL.openConnection()
