@@ -11,7 +11,6 @@ import com.synopsys.integration.pipeline.results.ArchiveStage
 import com.synopsys.integration.pipeline.results.JacocoStage
 import com.synopsys.integration.pipeline.results.JunitStageWrapper
 import com.synopsys.integration.pipeline.scm.GitStage
-import com.synopsys.integration.pipeline.setup.ApiTokenStage
 import com.synopsys.integration.pipeline.setup.CleanupStep
 import com.synopsys.integration.pipeline.setup.SetJdkStage
 import com.synopsys.integration.pipeline.tools.DetectStage
@@ -245,11 +244,11 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(setJdkStage)
     }
 
-    ApiTokenStage addApiTokenStage() {
-        ApiTokenStage apiTokenStage = new ApiTokenStage(getPipelineConfiguration(), "Black Duck Api Token")
-        return addCommonStage(apiTokenStage)
-    }
-
+    //    ApiTokenStage addApiTokenStage() {
+    //        ApiTokenStage apiTokenStage = new ApiTokenStage(getPipelineConfiguration(), "Black Duck Api Token")
+    //        return addCommonStage(apiTokenStage)
+    //    }
+    //
     ClosureStage addStage(String stageName, Closure closure) {
         return addCommonStage(new ClosureStage(getPipelineConfiguration(), stageName, closure))
     }
