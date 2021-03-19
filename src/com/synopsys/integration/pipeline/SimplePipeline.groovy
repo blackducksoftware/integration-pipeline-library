@@ -11,6 +11,7 @@ import com.synopsys.integration.pipeline.results.ArchiveStage
 import com.synopsys.integration.pipeline.results.JacocoStage
 import com.synopsys.integration.pipeline.results.JunitStageWrapper
 import com.synopsys.integration.pipeline.scm.GitStage
+import com.synopsys.integration.pipeline.setup.ApiTokenStage
 import com.synopsys.integration.pipeline.setup.CleanupStep
 import com.synopsys.integration.pipeline.setup.SetJdkStage
 import com.synopsys.integration.pipeline.tools.DetectStage
@@ -26,7 +27,6 @@ class SimplePipeline extends Pipeline {
     public static final String JAVA_11 = 'jdk-11.0.7'
     public static final String JAVA_8 = 'jdk8'
     //////////////////////////////////////////////////////////////////////////////////////////
-
 
     public static final String GRADLE_BUILD_TOOL = 'gradle'
     public static final String MAVEN_BUILD_TOOL = 'maven'
@@ -48,6 +48,7 @@ class SimplePipeline extends Pipeline {
     SimplePipeline(CpsScript script, String commonRunDirectory) {
         super(script)
         this.commonRunDirectory = commonRunDirectory
+        addApiTokenStage();
     }
 
     ArchiveStage addArchiveStage(String archiveFilePattern) {
@@ -243,6 +244,11 @@ class SimplePipeline extends Pipeline {
         SetJdkStage setJdkStage = new SetJdkStage(getPipelineConfiguration(), stageName)
         setJdkStage.setJdkToolName(jdkToolName)
         return addCommonStage(setJdkStage)
+    }
+
+    ApiTokenStage addApiTokenStage() {
+        ApiTokenStage apiTokenStage = new ApiTokenStage(getPipelineConfiguration(), "Black Duck Api Token")
+        return addCommonStage(apiTokenStage)
     }
 
     ClosureStage addStage(String stageName, Closure closure) {

@@ -100,7 +100,6 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         script.env.setProperty(propertyName, value)
     }
 
-
     @Override
     boolean isUnix() {
         return script.isUnix()
