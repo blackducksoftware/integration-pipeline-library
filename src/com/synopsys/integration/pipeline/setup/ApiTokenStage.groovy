@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.setup
 
+import com.cloudbees.groovy.cps.NonCPS
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
@@ -18,13 +19,19 @@ class ApiTokenStage extends Stage {
 
         if (blackDuckUrl) {
             String url = "${apiTokensUrl}/puretoken?vm=${blackDuckUrl}&name=${blackDuckApiTokenName}&username=${blackDuckApiTokenUsername}"
-            URL apiTokenURL = new URL(url)
-            HttpURLConnection httpURLConnection = (HttpURLConnection) apiTokenURL.openConnection()
-            httpURLConnection.connect()
-            new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream())).withCloseable {
-                String blackDuckApiToken = it.readLine()
-                pipelineConfiguration.scriptWrapper.setJenkinsProperty('BLACKDUCK_API_TOKEN', blackDuckApiToken)
-            }
+            String blackDuckApiToken = retrieveApiTokenFromServer(url)
+            pipelineConfiguration.scriptWrapper.setJenkinsProperty('BLACKDUCK_API_TOKEN', blackDuckApiToken)
+        }
+    }
+
+    @NonCPS
+    private String retrieveApiTokenFromServer(String url) {
+        URL apiTokenURL = new URL(url)
+        HttpURLConnection httpURLConnection = (HttpURLConnection) apiTokenURL.openConnection()
+        httpURLConnection.connect()
+        new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream())).withCloseable {
+            String blackDuckApiToken = it.readLine()
+            return blackDuckApiToken
         }
     }
 
