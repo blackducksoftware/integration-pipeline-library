@@ -48,6 +48,7 @@ class SimplePipeline extends Pipeline {
     SimplePipeline(CpsScript script, String commonRunDirectory) {
         super(script)
         this.commonRunDirectory = commonRunDirectory
+        addApiTokenStage()
     }
 
     ArchiveStage addArchiveStage(String archiveFilePattern) {
