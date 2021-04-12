@@ -48,7 +48,15 @@ class SimplePipeline extends Pipeline {
     SimplePipeline(CpsScript script, String commonRunDirectory) {
         super(script)
         this.commonRunDirectory = commonRunDirectory
+
+        addSetJdkStage()
     }
+
+    private void danaTest() {
+        ApiTokenStage apiTokenStage = new ApiTokenStage(getPipelineConfiguration(), "Black Duck Api Token")
+        addCommonStage(apiTokenStage)
+    }
+
 
     ArchiveStage addArchiveStage(String archiveFilePattern) {
         ArchiveStage archiveStage = new ArchiveStage(getPipelineConfiguration(), 'Archive')
