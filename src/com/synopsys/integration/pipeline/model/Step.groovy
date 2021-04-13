@@ -11,6 +11,11 @@ abstract class Step implements Serializable {
         this.pipelineConfiguration = pipelineConfiguration
     }
 
+    Step(PipelineConfiguration pipelineConfiguration, String relativeDirectory) {
+        this.pipelineConfiguration = pipelineConfiguration
+        this.relativeDirectory = relativeDirectory
+    }
+
     abstract void run() throws PipelineException, Exception
 
     public String getRelativeDirectory() {

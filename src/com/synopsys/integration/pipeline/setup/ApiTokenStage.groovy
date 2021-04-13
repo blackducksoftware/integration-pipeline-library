@@ -22,7 +22,7 @@ class ApiTokenStage extends Stage {
             String blackDuckApiToken = retrieveApiTokenFromServer(url)
             pipelineConfiguration.scriptWrapper.setJenkinsProperty('BLACKDUCK_API_TOKEN', blackDuckApiToken)
 
-            pipelineConfiguration.getLogger().info("BLACKDUCK_API_TOKEN for server ${blackDuckUrl} set as ${blackDuckApiToken.substring(0, 10)}")
+            pipelineConfiguration.getLogger().info("BLACKDUCK_API_TOKEN for server ${blackDuckUrl} set as ${blackDuckApiToken}")
         }
     }
 

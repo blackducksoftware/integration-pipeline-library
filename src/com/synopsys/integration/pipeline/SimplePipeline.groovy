@@ -39,6 +39,16 @@ class SimplePipeline extends Pipeline {
     public static final String BUILD_URL = 'BUILD_URL'
     public static final String HUB_DETECT_URL = 'HUB_DETECT_URL'
 
+    public static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url) {
+        SimplePipeline pipeline = new SimplePipeline(script)
+        pipeline.setDirectoryFromBranch(branch)
+        pipeline.addCleanupStep(relativeDirectory)
+        pipeline.addSetJdkStage()
+        pipeline.addGitStage(url, branch)
+        pipeline.addApiTokenStage()
+        return pipeline
+    }
+
     public String commonRunDirectory
 
     SimplePipeline(CpsScript script) {
@@ -48,18 +58,6 @@ class SimplePipeline extends Pipeline {
     SimplePipeline(CpsScript script, String commonRunDirectory) {
         super(script)
         this.commonRunDirectory = commonRunDirectory
-    }
-
-    static SimplePipeline commonPipeline(CpsScript script, String branch, String relativeDirectory, String url) {
-        SimplePipeline pipeline = new SimplePipeline(script)
-        pipeline.setDirectoryFromBranch(branch)
-        def cleanup = pipeline.addCleanupStep()
-        cleanup.setRelativeDirectory(relativeDirectory)
-        pipeline.addSetJdkStage()
-        pipeline.addGitStage(url, branch)
-        pipeline.addApiTokenStage()
-
-        return pipeline
     }
 
     ArchiveStage addArchiveStage(String archiveFilePattern) {
@@ -76,6 +74,12 @@ class SimplePipeline extends Pipeline {
 
     CleanupStep addCleanupStep() {
         CleanupStep cleanupStep = new CleanupStep(getPipelineConfiguration())
+        addStep(cleanupStep)
+        return cleanupStep
+    }
+
+    CleanupStep addCleanupStep(String relativeDirectory) {
+        CleanupStep cleanupStep = new CleanupStep(getPipelineConfiguration(), relativeDirectory)
         addStep(cleanupStep)
         return cleanupStep
     }
