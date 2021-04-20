@@ -9,6 +9,10 @@ class CleanupStep extends Step {
         super(pipelineConfiguration)
     }
 
+    CleanupStep(PipelineConfiguration pipelineConfiguration, String relativeDirectory) {
+        super(pipelineConfiguration, relativeDirectory)
+    }
+
     @Override
     void run() throws PipelineException, Exception {
         getPipelineConfiguration().getScriptWrapper().deleteDir()

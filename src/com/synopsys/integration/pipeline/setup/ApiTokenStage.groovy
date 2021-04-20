@@ -21,6 +21,10 @@ class ApiTokenStage extends Stage {
             String url = "${apiTokensUrl}/puretoken?vm=${blackDuckUrl}&name=${blackDuckApiTokenName}&username=${blackDuckApiTokenUsername}"
             String blackDuckApiToken = retrieveApiTokenFromServer(url)
             pipelineConfiguration.scriptWrapper.setJenkinsProperty('BLACKDUCK_API_TOKEN', blackDuckApiToken)
+
+            pipelineConfiguration.getLogger().info("BLACKDUCK_API_TOKEN for server ${blackDuckUrl} set as ${blackDuckApiToken}")
+        } else {
+            pipelineConfiguration.getLogger().info("BLACKDUCK_API_TOKEN not set as required BLACKDUCK_URL not set.")
         }
     }
 
