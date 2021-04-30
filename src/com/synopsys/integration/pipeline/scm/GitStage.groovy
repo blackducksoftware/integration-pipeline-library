@@ -25,6 +25,8 @@ class GitStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
+        poll = setPollFromEnvironment()
+
         getPipelineConfiguration().getLogger().info("Pulling branch '${branch}' from repo '${url}")
         getPipelineConfiguration().getScriptWrapper().checkout(url, branch, gitToolName, changelog, poll)
 
@@ -61,5 +63,10 @@ class GitStage extends Stage {
 
     void setPoll(final boolean poll) {
         this.poll = poll
+    }
+
+    private boolean setPollFromEnvironment() {
+        def gitPolling = pipelineConfiguration.scriptWrapper.getJenkinsProperty('INT_GIT_POLLING')
+        return gitPolling?.trim() ? Boolean.valueOf(gitPolling) : poll
     }
 }
