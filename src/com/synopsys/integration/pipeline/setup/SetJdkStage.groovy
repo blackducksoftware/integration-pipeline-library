@@ -15,6 +15,7 @@ class SetJdkStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
+        jdkToolName = setJdkToolNameEnvironment()
         getPipelineConfiguration().getLogger().info("Setting jdk = ${jdkToolName}")
 
         String toolHome = getPipelineConfiguration().getScriptWrapper().tool(jdkToolName)
@@ -34,4 +35,8 @@ class SetJdkStage extends Stage {
         this.jdkToolName = jdkToolName
     }
 
+    private String setJdkToolNameEnvironment() {
+        def envJdkToolName = pipelineConfiguration.scriptWrapper.getJenkinsProperty('INT_JDK_TOOL_NAME')
+        return envJdkToolName?.trim() ? envJdkToolName : jdkToolName
+    }
 }
