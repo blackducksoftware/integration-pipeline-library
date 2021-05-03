@@ -31,8 +31,4 @@ class SetJdkStage extends Stage {
         return jdkToolName
     }
 
-    void setJdkToolName(final String jdkToolName) {
-        this.jdkToolName = jdkToolName
-    }
-
 }

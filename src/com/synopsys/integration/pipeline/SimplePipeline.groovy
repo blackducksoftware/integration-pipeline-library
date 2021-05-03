@@ -143,8 +143,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GitStage addGitStage(String url, String branch) {
-        GitStage gitStage = new GitStage(getPipelineConfiguration(), "Git", url, branch)
-        return addCommonStage(gitStage)
+        return addGitStage("Git", url, branch)
     }
 
     GitStage addGitStage(String stageName, String url, String branch) {
@@ -239,19 +238,11 @@ class SimplePipeline extends Pipeline {
     }
 
     SetJdkStage addSetJdkStage() {
-        SetJdkStage setJdkStage = new SetJdkStage(getPipelineConfiguration(), "Set JDK")
-        return addCommonStage(setJdkStage)
+        return addSetJdkStage("Set JDK")
     }
 
-    SetJdkStage addSetJdkStage(String jdkToolName) {
-        SetJdkStage setJdkStage = new SetJdkStage(getPipelineConfiguration(), "Set JDK")
-        setJdkStage.setJdkToolName(jdkToolName)
-        return addCommonStage(setJdkStage)
-    }
-
-    SetJdkStage addSetJdkStage(String stageName, String jdkToolName) {
+    SetJdkStage addSetJdkStage(String stageName) {
         SetJdkStage setJdkStage = new SetJdkStage(getPipelineConfiguration(), stageName)
-        setJdkStage.setJdkToolName(jdkToolName)
         return addCommonStage(setJdkStage)
     }
 
