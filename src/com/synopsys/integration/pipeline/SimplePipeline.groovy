@@ -39,7 +39,7 @@ class SimplePipeline extends Pipeline {
     public static final String BUILD_URL = 'BUILD_URL'
     public static final String HUB_DETECT_URL = 'HUB_DETECT_URL'
 
-    public static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url) {
+    static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url) {
         SimplePipeline pipeline = new SimplePipeline(script)
         pipeline.setDirectoryFromBranch(branch)
         pipeline.addCleanupStep(relativeDirectory)
@@ -149,12 +149,6 @@ class SimplePipeline extends Pipeline {
 
     GitStage addGitStage(String stageName, String url, String branch) {
         GitStage gitStage = new GitStage(getPipelineConfiguration(), stageName, url, branch)
-        return addCommonStage(gitStage)
-    }
-
-    GitStage addGitStageWithPolling(String url, String branch) {
-        GitStage gitStage = new GitStage(getPipelineConfiguration(), "Git", url, branch)
-        gitStage.setPoll(true)
         return addCommonStage(gitStage)
     }
 

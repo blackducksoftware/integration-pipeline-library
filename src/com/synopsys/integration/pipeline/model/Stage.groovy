@@ -3,6 +3,8 @@ package com.synopsys.integration.pipeline.model
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 
+import java.util.function.Function
+
 abstract class Stage extends Step {
     // Fields here must be public or they can't be accessed (in Jenkins at runtime) in sub classes
     public final String name
@@ -47,4 +49,24 @@ abstract class Stage extends Step {
     String getName() {
         return name
     }
+
+    protected <T extends Object> T retrieveFromEnv(String key, Function<String, T> converter, T defaultValue) {
+        def value = pipelineConfiguration.scriptWrapper.getJenkinsProperty(key)
+
+        if (value?.trim()) {
+            getPipelineConfiguration().getLogger().info("${key} was found in environment with a value of ${value}")
+            return converter.apply(value)
+        } else {
+            getPipelineConfiguration().getLogger().info("${key} was NOT found in environment using default value of ${defaultValue}")
+        }
+    }
+
+    protected String retrieveStringFromEnv(String key, String defaultValue) {
+        return retrieveFromEnv(key, Function.&identity as Function, defaultValue)
+    }
+
+    protected String retrieveDefaultStringFromEnv(String key) {
+        return retrieveFromEnv(key, Function.&identity as Function, '')
+    }
+
 }
