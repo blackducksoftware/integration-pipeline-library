@@ -62,11 +62,11 @@ abstract class Stage extends Step {
     }
 
     protected String retrieveStringFromEnv(String key, String defaultValue) {
-        return retrieveFromEnv(key, Function.&identity as Function, defaultValue)
+        return retrieveFromEnv(key, Closure.IDENTITY as Function, defaultValue)
     }
 
     protected String retrieveDefaultStringFromEnv(String key) {
-        return retrieveFromEnv(key, Function.&identity as Function, '')
+        return retrieveStringFromEnv(key, '')
     }
 
 }
