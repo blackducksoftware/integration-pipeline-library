@@ -58,6 +58,7 @@ abstract class Stage extends Step {
             return converter.apply(value)
         } else {
             getPipelineConfiguration().getLogger().info("${key} was NOT found in environment using default value of ${defaultValue}")
+            return defaultValue
         }
     }
 
