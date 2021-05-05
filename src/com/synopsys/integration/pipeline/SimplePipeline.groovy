@@ -39,12 +39,12 @@ class SimplePipeline extends Pipeline {
     public static final String BUILD_URL = 'BUILD_URL'
     public static final String HUB_DETECT_URL = 'HUB_DETECT_URL'
 
-    public static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url) {
+    static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling) {
         SimplePipeline pipeline = new SimplePipeline(script)
         pipeline.setDirectoryFromBranch(branch)
         pipeline.addCleanupStep(relativeDirectory)
-        pipeline.addSetJdkStage()
-        pipeline.addGitStage(url, branch)
+        pipeline.addSetJdkStage(jdkToolName)
+        pipeline.addGitStage(url, branch, gitPolling)
         pipeline.addApiTokenStage()
         return pipeline
     }
@@ -61,9 +61,7 @@ class SimplePipeline extends Pipeline {
     }
 
     ArchiveStage addArchiveStage(String archiveFilePattern) {
-        ArchiveStage archiveStage = new ArchiveStage(getPipelineConfiguration(), 'Archive')
-        archiveStage.setArchiveFilePattern(archiveFilePattern)
-        return addCommonStage(archiveStage)
+        return addArchiveStage('Archive', archiveFilePattern)
     }
 
     ArchiveStage addArchiveStage(String stageName, String archiveFilePattern) {
@@ -85,10 +83,7 @@ class SimplePipeline extends Pipeline {
     }
 
     DetectStage addDetectStage(String detectCommand) {
-        detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.tools.excluded=SIGNATURE_SCAN --detect.force.success=true'
-
-        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), 'Detect', getJenkinsProperty(HUB_DETECT_URL), detectCommand)
-        return addCommonStage(detectStage)
+        return addDetectStage('Detect', detectCommand)
     }
 
     DetectStage addDetectStage(String stageName, String detectCommand) {
@@ -113,8 +108,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStage addGithubReleaseStage(String branch) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'GitHub Release', getJenkinsBooleanProperty(RUN_RELEASE), branch)
-        return addCommonStage(githubReleaseStage)
+        return addGithubReleaseStage('GitHub Release', branch)
     }
 
     GithubReleaseStage addGithubReleaseStage(String stageName, String branch) {
@@ -123,8 +117,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStage addGithubReleaseStageByFile(String branch, String artifactFile) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'GitHub Release', getJenkinsBooleanProperty(RUN_RELEASE), artifactFile, branch)
-        return addCommonStage(githubReleaseStage)
+        return addGithubReleaseStageByFile('GitHub Release', branch, artifactFile)
     }
 
     GithubReleaseStage addGithubReleaseStageByFile(String stageName, String branch, String artifactFile) {
@@ -133,8 +126,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStage addGithubReleaseStageByPattern(String branch, String artifactPattern, String artifactDirectory) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'GitHub Release', getJenkinsBooleanProperty(RUN_RELEASE), artifactPattern, artifactDirectory, branch)
-        return addCommonStage(githubReleaseStage)
+        return addGithubReleaseStageByPattern('GitHub Release', branch, artifactPattern, artifactDirectory)
     }
 
     GithubReleaseStage addGithubReleaseStageByPattern(String stageName, String branch, String artifactPattern, String artifactDirectory) {
@@ -142,27 +134,18 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(githubReleaseStage)
     }
 
-    GitStage addGitStage(String url, String branch) {
-        GitStage gitStage = new GitStage(getPipelineConfiguration(), "Git", url, branch)
-        return addCommonStage(gitStage)
+    GitStage addGitStage(String url, String branch, boolean gitPolling) {
+        return addGitStage('Git', url, branch, gitPolling)
     }
 
-    GitStage addGitStage(String stageName, String url, String branch) {
+    GitStage addGitStage(String stageName, String url, String branch, boolean gitPolling) {
         GitStage gitStage = new GitStage(getPipelineConfiguration(), stageName, url, branch)
-        return addCommonStage(gitStage)
-    }
-
-    GitStage addGitStageWithPolling(String url, String branch) {
-        GitStage gitStage = new GitStage(getPipelineConfiguration(), "Git", url, branch)
-        gitStage.setPoll(true)
+        gitStage.setPoll(gitPolling)
         return addCommonStage(gitStage)
     }
 
     GradleStage addGradleStage(String gradleExe, String gradleOptions) {
-        GradleStage gradleStage = new GradleStage(getPipelineConfiguration(), "Gradle")
-        gradleStage.setGradleExe(gradleExe)
-        gradleStage.setGradleOptions(gradleOptions)
-        return addCommonStage(gradleStage)
+        return addGradleStage('Gradle', gradleExe, gradleOptions)
     }
 
     GradleStage addGradleStage(String stageName, String gradleExe, String gradleOptions) {
@@ -173,9 +156,7 @@ class SimplePipeline extends Pipeline {
     }
 
     JacocoStage addJacocoStage(LinkedHashMap jacocoOptions) {
-        JacocoStage jacocoStage = new JacocoStage(getPipelineConfiguration(), 'Jacoco')
-        jacocoStage.setJacocoOptions(jacocoOptions)
-        return addCommonStage(jacocoStage)
+        return addJacocoStage('Jacoco', jacocoOptions)
     }
 
     JacocoStage addJacocoStage(String stageName, LinkedHashMap jacocoOptions) {
@@ -185,11 +166,7 @@ class SimplePipeline extends Pipeline {
     }
 
     JunitStageWrapper addJunitStageWrapper(Stage stage, LinkedHashMap junitOptions) {
-        JunitStageWrapper junitStageWrapper = new JunitStageWrapper(getPipelineConfiguration(), 'Junit')
-        junitStageWrapper.setJunitOptions(junitOptions)
-        junitStageWrapper.setRelativeDirectory(commonRunDirectory)
-        stage.addStageWrapper(junitStageWrapper)
-        return junitStageWrapper
+        return addJunitStageWrapper(stage, 'Junit', junitOptions)
     }
 
     JunitStageWrapper addJunitStageWrapper(Stage stage, String stageName, LinkedHashMap junitOptions) {
@@ -200,12 +177,8 @@ class SimplePipeline extends Pipeline {
         return junitStageWrapper
     }
 
-
     MavenStage addMavenStage(String mavenToolName, String mavenOptions) {
-        MavenStage mavenStage = new MavenStage(getPipelineConfiguration(), "Maven")
-        mavenStage.setMavenOptions(mavenOptions)
-        mavenStage.setMavenToolName(mavenToolName)
-        return addCommonStage(mavenStage)
+        return addMavenStage('Maven', mavenToolName, mavenOptions)
     }
 
     MavenStage addMavenStage(String stageName, String mavenToolName, String mavenOptions) {
@@ -216,11 +189,7 @@ class SimplePipeline extends Pipeline {
     }
 
     NextSnapshotStage addNextSnapshotStage(String buildTool, String exe, String branch) {
-        boolean runRelease = getJenkinsBooleanProperty(RUN_RELEASE)
-        boolean runQARelease = getJenkinsBooleanProperty(RUN_QA_BUILD)
-
-        NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getPipelineConfiguration(), 'Next Snapshot', runRelease, runQARelease, buildTool, exe, branch)
-        return addCommonStage(nextSnapshotStage)
+        addNextSnapshotStage('Next Snapshot', buildTool, exe, branch)
     }
 
     NextSnapshotStage addNextSnapshotStage(String stageName, String buildTool, String exe, String branch) {
@@ -231,10 +200,7 @@ class SimplePipeline extends Pipeline {
     }
 
     RemoveSnapshotStage addRemoveSnapshotStage(String buildTool, String exe, String branch) {
-        boolean runRelease = getJenkinsBooleanProperty(RUN_RELEASE)
-        boolean runQARelease = getJenkinsBooleanProperty(RUN_QA_BUILD)
-        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getPipelineConfiguration(), 'Remove Snapshot', runRelease, runQARelease, buildTool, exe, branch)
-        return addCommonStage(removeSnapshotStage)
+        return addRemoveSnapshotStage('Remove Snapshot', buildTool, exe, branch)
     }
 
     RemoveSnapshotStage addRemoveSnapshotStage(String stageName, String buildTool, String exe, String branch) {
@@ -245,14 +211,12 @@ class SimplePipeline extends Pipeline {
     }
 
     SetJdkStage addSetJdkStage() {
-        SetJdkStage setJdkStage = new SetJdkStage(getPipelineConfiguration(), "Set JDK")
+        SetJdkStage setJdkStage = new SetJdkStage(getPipelineConfiguration(), 'Set JDK')
         return addCommonStage(setJdkStage)
     }
 
     SetJdkStage addSetJdkStage(String jdkToolName) {
-        SetJdkStage setJdkStage = new SetJdkStage(getPipelineConfiguration(), "Set JDK")
-        setJdkStage.setJdkToolName(jdkToolName)
-        return addCommonStage(setJdkStage)
+        return addSetJdkStage('Set JDK', jdkToolName)
     }
 
     SetJdkStage addSetJdkStage(String stageName, String jdkToolName) {
@@ -262,7 +226,7 @@ class SimplePipeline extends Pipeline {
     }
 
     ApiTokenStage addApiTokenStage() {
-        ApiTokenStage apiTokenStage = new ApiTokenStage(getPipelineConfiguration(), "Black Duck Api Token")
+        ApiTokenStage apiTokenStage = new ApiTokenStage(getPipelineConfiguration(), 'Black Duck Api Token')
         return addCommonStage(apiTokenStage)
     }
 

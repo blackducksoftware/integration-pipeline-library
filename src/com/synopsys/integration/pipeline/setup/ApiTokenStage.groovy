@@ -12,10 +12,10 @@ class ApiTokenStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        String apiTokensUrl = getPropertyValue('BLACKDUCK_API_TOKENS_URL')
-        String blackDuckUrl = getPropertyValue('BLACKDUCK_URL')
-        String blackDuckApiTokenName = getPropertyValue('BLACKDUCK_API_TOKEN_NAME')
-        String blackDuckApiTokenUsername = getPropertyValue('BLACKDUCK_API_TOKEN_USERNAME')
+        String apiTokensUrl = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKENS_URL')
+        String blackDuckUrl = retrieveDefaultStringFromEnv('BLACKDUCK_URL')
+        String blackDuckApiTokenName = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKEN_NAME')
+        String blackDuckApiTokenUsername = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKEN_USERNAME')
 
         if (blackDuckUrl) {
             String url = "${apiTokensUrl}/puretoken?vm=${blackDuckUrl}&name=${blackDuckApiTokenName}&username=${blackDuckApiTokenUsername}"
@@ -29,7 +29,7 @@ class ApiTokenStage extends Stage {
     }
 
     @NonCPS
-    private String retrieveApiTokenFromServer(String url) {
+    private static String retrieveApiTokenFromServer(String url) {
         URL apiTokenURL = new URL(url)
         HttpURLConnection httpURLConnection = (HttpURLConnection) apiTokenURL.openConnection()
         httpURLConnection.connect()
@@ -37,11 +37,6 @@ class ApiTokenStage extends Stage {
             String blackDuckApiToken = it.readLine()
             return blackDuckApiToken
         }
-    }
-
-    private String getPropertyValue(String propertyName) {
-        String value = pipelineConfiguration.scriptWrapper.getJenkinsProperty(propertyName)
-        return value ? value : ''
     }
 
 }
