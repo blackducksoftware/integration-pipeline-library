@@ -6,8 +6,6 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.utilities.GithubBranchParser
 
-import java.util.function.Function
-
 class GitStage extends Stage {
     public static final String DEFAULT_GIT_TOOL = 'Default'
     public static final boolean DEFAULT_GIT_CHANGELOG = false
@@ -17,7 +15,7 @@ class GitStage extends Stage {
     private final String branch
     private String gitToolName = DEFAULT_GIT_TOOL
     private boolean changelog = DEFAULT_GIT_CHANGELOG
-    private boolean poll
+    private boolean poll = DEFAULT_GIT_POLL
 
     GitStage(PipelineConfiguration pipelineConfiguration, String stageName, String url, String branch) {
         super(pipelineConfiguration, stageName)
@@ -27,8 +25,6 @@ class GitStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        poll = retrieveFromEnv('INT_GIT_POLLING', Boolean.&valueOf as Function, DEFAULT_GIT_POLL)
-
         getPipelineConfiguration().getLogger().info("Pulling branch '${branch}' from repo '${url}")
         getPipelineConfiguration().getScriptWrapper().checkout(url, branch, gitToolName, changelog, poll)
 
@@ -63,4 +59,7 @@ class GitStage extends Stage {
         return poll
     }
 
+    void setPoll(final boolean poll) {
+        this.poll = poll
+    }
 }

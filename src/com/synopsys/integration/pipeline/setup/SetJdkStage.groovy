@@ -7,7 +7,7 @@ import com.synopsys.integration.pipeline.model.Stage
 class SetJdkStage extends Stage {
     public static final String DEFAULT_JDK_TOOL_NAME = 'OpenJDK 11'
 
-    private String jdkToolName
+    private String jdkToolName = DEFAULT_JDK_TOOL_NAME
 
     SetJdkStage(PipelineConfiguration pipelineConfiguration, String name) {
         super(pipelineConfiguration, name)
@@ -15,7 +15,6 @@ class SetJdkStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        jdkToolName = retrieveStringFromEnv('INT_JDK_TOOL_NAME', DEFAULT_JDK_TOOL_NAME)
         getPipelineConfiguration().getLogger().info("Setting jdk = ${jdkToolName}")
 
         String toolHome = getPipelineConfiguration().getScriptWrapper().tool(jdkToolName)
@@ -29,6 +28,10 @@ class SetJdkStage extends Stage {
 
     String getJdkToolName() {
         return jdkToolName
+    }
+
+    void setJdkToolName(final String jdkToolName) {
+        this.jdkToolName = jdkToolName
     }
 
 }
