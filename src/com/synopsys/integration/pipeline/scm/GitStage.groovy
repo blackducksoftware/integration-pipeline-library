@@ -37,6 +37,10 @@ class GitStage extends Stage {
         getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} checkout ${githubBranchModel.getBranchName()}")
         // Do a hard reset in order to clear out any local changes/commits
         getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} reset --hard ${githubBranchModel.getBranchName()}")
+
+        // Set COMMIT_HASH in environment to allow downstream jobs to use the same code
+        String commitHash = getPipelineConfiguration().getScriptWrapper().executeCommand("git rev-parse HEAD", true).trim()
+        getPipelineConfiguration().getScriptWrapper().setJenkinsProperty('COMMIT_HASH', commitHash)
     }
 
     String getGitToolName() {
