@@ -1,6 +1,7 @@
 package com.synopsys.integration.pipeline.jenkins
 
 import hudson.AbortException
+import hudson.model.Cause.UpstreamCause
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 
 class BuildWrapperImpl implements BuildWrapper {
@@ -8,6 +9,8 @@ class BuildWrapperImpl implements BuildWrapper {
 
     BuildWrapperImpl(RunWrapper runWrapper) {
         this.runWrapper = runWrapper
+
+        //        runWrapper.getRawBuild().getCause(hudson.model.Cause$UpstreamCause)
     }
 
     @Override
@@ -123,7 +126,13 @@ class BuildWrapperImpl implements BuildWrapper {
         return runWrapper.getAbsoluteUrl()
     }
 
+    @Override
     RunWrapper getRunWrapper() {
         return runWrapper
+    }
+
+    @Override
+    UpstreamCause getUpstreamCause() {
+        return runWrapper.getRawBuild().getCause(Cause.UpstreamCause)
     }
 }

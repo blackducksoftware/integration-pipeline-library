@@ -1,6 +1,8 @@
 package com.synopsys.integration.pipeline.jenkins
 
 import hudson.AbortException
+import hudson.model.Cause.UpstreamCause
+import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 
 interface BuildWrapper extends Serializable {
 
@@ -45,5 +47,9 @@ interface BuildWrapper extends Serializable {
     public List<BuildWrapper> getUpstreamBuilds() throws AbortException
 
     public String getAbsoluteUrl() throws AbortException
+
+    public RunWrapper getRunWrapper()
+
+    public UpstreamCause getUpstreamCause()
 
 }
