@@ -49,6 +49,7 @@ class GitStage extends Stage {
     }
 
     void determineAndSetBranch() {
+        getPipelineConfiguration().getLogger().info("In determineAndSetBranch")
         WorkflowRun currentBuild = pipelineConfiguration.getScriptWrapper().currentBuild().getRunWrapper().getRawBuild() as WorkflowRun
         Cause.UpstreamCause initiatingUpstreamCause = determineUpstreamCause(currentBuild)
 
@@ -62,11 +63,14 @@ class GitStage extends Stage {
                 setBranchSource('upstream build ' + build.toString())
             }
         }
-        
+
+        getPipelineConfiguration().getLogger().info("Before IF")
         if (branch?.trim()) {
+            getPipelineConfiguration().getLogger().info("In IF")
             setBranch(DEFAULT_BRANCH_NAME)
             setBranchSource('default setting')
         }
+        getPipelineConfiguration().getLogger().info("After IF")
     }
 
     private Cause.UpstreamCause determineUpstreamCause(WorkflowRun build) {
