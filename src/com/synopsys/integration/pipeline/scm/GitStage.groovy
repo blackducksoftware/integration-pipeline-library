@@ -66,6 +66,7 @@ class GitStage extends Stage {
 
         getPipelineConfiguration().getLogger().info("Before IF")
         getPipelineConfiguration().getLogger().info("'${branch}'")
+        getPipelineConfiguration().getLogger().info(branch?.trim())
         if (branch?.trim()) {
             getPipelineConfiguration().getLogger().info("In IF")
             setBranch(DEFAULT_BRANCH_NAME)
