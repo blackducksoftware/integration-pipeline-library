@@ -27,8 +27,8 @@ class GitStage extends Stage {
     GitStage(PipelineConfiguration pipelineConfiguration, String stageName, String url, String branch) {
         super(pipelineConfiguration, stageName)
         this.url = url
-        this.branch = branch
-        this.branchSource = 'constructor'
+        this.branch = (branch?.trim()) ? branch : DEFAULT_BRANCH_NAME
+        this.branchSource = (branch?.trim()) ? 'constructor' : 'default setting'
     }
 
     @Override
@@ -63,18 +63,6 @@ class GitStage extends Stage {
                 setBranchSource('upstream build ' + build.toString())
             }
         }
-
-        getPipelineConfiguration().getLogger().info("Before IF")
-        getPipelineConfiguration().getLogger().info("'${branch}'")
-        getPipelineConfiguration().getLogger().info(branch?.trim())
-        if (branch?.trim() && null != branch) {
-            getPipelineConfiguration().getLogger().info("In IF")
-            setBranch(DEFAULT_BRANCH_NAME)
-            setBranchSource('default setting')
-        }
-        getPipelineConfiguration().getLogger().info("'${branch}'")
-        getPipelineConfiguration().getLogger().info(branch.getClass().name)
-        getPipelineConfiguration().getLogger().info("After IF")
     }
 
     private Cause.UpstreamCause determineUpstreamCause(WorkflowRun build) {
