@@ -6,7 +6,7 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.utilities.GithubBranchParser
 import hudson.model.BuildListener
-import hudson.model.Cause.UpstreamCause
+import hudson.model.Cause
 import hudson.model.Hudson
 import jenkins.model.Jenkins
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
@@ -16,26 +16,31 @@ class GitStage extends Stage {
     public static final String DEFAULT_GIT_TOOL = 'Default'
     public static final boolean DEFAULT_GIT_CHANGELOG = false
     public static final boolean DEFAULT_GIT_POLL = false
-    public static final String COMMIT_HASH = 'COMMIT_HASH'
+    public static final String DEFAULT_BRANCH_NAME = 'origin/master'
 
     private final String url
-    private final String branch
+    private String branch = DEFAULT_BRANCH_NAME
+    private String branchSource = 'default'
     private String gitToolName = DEFAULT_GIT_TOOL
     private boolean changelog = DEFAULT_GIT_CHANGELOG
     private boolean poll = DEFAULT_GIT_POLL
+    private final Hudson hudson = Jenkins.get() as Hudson
+
+    GitStage(PipelineConfiguration pipelineConfiguration, String stageName, String url) {
+        super(pipelineConfiguration, stageName)
+        this.url = url
+    }
 
     GitStage(PipelineConfiguration pipelineConfiguration, String stageName, String url, String branch) {
         super(pipelineConfiguration, stageName)
         this.url = url
         this.branch = branch
+        this.branchSource = 'constructor'
     }
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        getPipelineConfiguration().getLogger().info("DANA GET CAUSE")
-        getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().currentBuild().getUpstreamCause().toString())
-        getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().currentBuild().getUpstreamCause().getClass().name)
-
+        getPipelineConfiguration().getLogger().info("branch is set from ${this.branchSource}")
         getPipelineConfiguration().getLogger().info("Pulling branch '${branch}' from repo '${url}'")
         getPipelineConfiguration().getScriptWrapper().checkout(url, branch, gitToolName, changelog, poll)
 
@@ -48,71 +53,43 @@ class GitStage extends Stage {
         getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} checkout ${githubBranchModel.getBranchName()}")
         // Do a hard reset in order to clear out any local changes/commits
         getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} reset --hard ${githubBranchModel.getBranchName()}")
-
-        // Set COMMIT_HASH in environment to allow downstream jobs to use the same code
-        String commitHash = getPipelineConfiguration().getScriptWrapper().executeCommand("git rev-parse HEAD", true).trim()
-        getPipelineConfiguration().getScriptWrapper().setJenkinsProperty(COMMIT_HASH, commitHash)
-        dana()
     }
 
-    String determineBranch() {
+    void determineAndSetBranch() {
+        WorkflowRun currentBuild = pipelineConfiguration.getScriptWrapper().currentBuild().getRunWrapper().getRawBuild() as WorkflowRun
+        Cause.UpstreamCause initiatingUpstreamCause = determineUpstreamCause(currentBuild)
 
-        String commitHash = ''
-        UpstreamCause upstreamCause = getPipelineConfiguration().getScriptWrapper().currentBuild().getUpstreamCause()
-
-        if (null != upstreamCause) {
-            int upstreamBuildNumber = upstreamCause.getUpstreamBuild()
-            String upstreamJobName = upstreamCause.getUpstreamProject()
-            BuildListener buildListener = Jenkins.get()
-                    .getItemByFullName(upstreamJobName, WorkflowJob)
-                    .getBuildByNumber(upstreamBuildNumber)
-                    .getListener()
-            commitHash = upstreamCause.getUpstreamRun().getEnvironment(buildListener)[COMMIT_HASH]
-        }
-
-        Jenkins.get().getItemByFullName(upstreamJobName, WorkflowJob).builds.getLastBuild().getEnvironment(buildListener)
-
-        if (commitHash?.trim()) {
-            return commitHash
-        } else {
-            GithubBranchParser githubBranchParser = new GithubBranchParser()
-            GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
-            return githubBranchModel.getBranchName()
-        }
-    }
-
-    void dana() {
-        UpstreamCause upstreamCause = getPipelineConfiguration().getScriptWrapper().currentBuild().getUpstreamCause()
-
-        if (null != upstreamCause) {
-            int upstreamBuildNumber = upstreamCause.getUpstreamBuild()
-            String upstreamJobName = upstreamCause.getUpstreamProject()
-
-            Hudson hudson = Jenkins.get() as Hudson
-            WorkflowJob workflowJob = hudson.getItemByFullName(upstreamJobName, WorkflowJob)
-            WorkflowRun workflowRun = workflowJob.getBuildByNumber(upstreamBuildNumber)
-            BuildListener buildListener = workflowRun.getListener()
-
-            getPipelineConfiguration().getLogger().info("LIB:: " + hudson.getClass().name) //hudson.model.Hudson
-            getPipelineConfiguration().getLogger().info("LIB:: " + workflowJob.getClass().name) //org.jenkinsci.plugins.workflow.job.WorkflowJob
-            getPipelineConfiguration().getLogger().info("LIB:: " + workflowRun.getClass().name) //org.jenkinsci.plugins.workflow.job.WorkflowRun
-            getPipelineConfiguration().getLogger().info("LIB:: " + buildListener.getClass().name) //hudson.model.StreamBuildListener
-            getPipelineConfiguration().getLogger().info("LIB:: " + upstreamCause.getUpstreamRun().getClass().name) //org.jenkinsci.plugins.workflow.job.WorkflowRun
-            getPipelineConfiguration().getLogger().info("LIB:: " + upstreamCause.getUpstreamRun().getClass().name) //org.jenkinsci.plugins.workflow.job.WorkflowRun
-
-            getPipelineConfiguration().getLogger().info("LIB:: " + upstreamCause.getUpstreamRun().getEnvironment(buildListener)[COMMIT_HASH].getClass().name) //org.codehaus.groovy.runtime.NullObject
-
-            getPipelineConfiguration().getLogger().info("LIB:: " + workflowJob.getBuildByNumber(upstreamBuildNumber).getClass().name) //org.jenkinsci.plugins.workflow.job.WorkflowRun
-            getPipelineConfiguration().getLogger().info("LIB:: " + workflowJob.builds.getClass().name) //hudson.util.RunList
-            getPipelineConfiguration().getLogger().info("LIB:: " + workflowJob.builds.getLastBuild().getClass().name) //org.jenkinsci.plugins.workflow.job.WorkflowRun
-            getPipelineConfiguration().getLogger().info("LIB:: " + workflowJob.getBuildByNumber(upstreamBuildNumber).getEnvironment(buildListener).getClass().name) //hudson.EnvVars
-            getPipelineConfiguration().getLogger().info("LIB:: " + workflowJob.getBuildByNumber(upstreamBuildNumber).getEnvironment(buildListener)[COMMIT_HASH]) //null
-            getPipelineConfiguration().getLogger().info("LIB:: " + workflowJob.getBuildByNumber(upstreamBuildNumber).getEnvironment(buildListener).collect().getClass().name) //java.util.ArrayList
-
-            workflowJob.getBuildByNumber(upstreamBuildNumber).getEnvironment(buildListener).collect().each { it -> getPipelineConfiguration().getLogger().info("LIB:: " + it.toString())
+        if (null != initiatingUpstreamCause) {
+            WorkflowRun build = getBuild(initiatingUpstreamCause)
+            BuildListener buildListener = build.getListener()
+            String branchFromCause = initiatingUpstreamCause.getUpstreamRun().getEnvironment(buildListener)['BRANCH']
+            if (null != branchFromCause) {
+                this.branch = branchFromCause
+                this.branchSource = 'upstream build ' + build.toString()
+            } else if (null != retrieveDefaultStringFromEnv('BRANCH')) {
+                this.branch = retrieveDefaultStringFromEnv('BRANCH')
+                this.branchSource = 'current build environment'
             }
-
         }
+    }
+
+    private Cause.UpstreamCause determineUpstreamCause(WorkflowRun build) {
+        Cause.UpstreamCause currentUpstreamCause = build.getCause(Cause.UpstreamCause)
+        def nextUpstreamCause = null
+
+        if (null != currentUpstreamCause) {
+            WorkflowRun upstreamBuild = getBuild(currentUpstreamCause)
+            nextUpstreamCause = determineUpstreamCause(upstreamBuild)
+        }
+        return (null != nextUpstreamCause) ? nextUpstreamCause : currentUpstreamCause
+    }
+
+    private WorkflowRun getBuild(Cause.UpstreamCause cause) {
+        String jobName = cause.getUpstreamProject()
+        int buildNumber = cause.getUpstreamBuild()
+        WorkflowJob workflowJob = hudson.getItemByFullName(jobName, WorkflowJob)
+        WorkflowRun workflowRun = workflowJob.getBuildByNumber(buildNumber)
+        return workflowRun
     }
 
     String getGitToolName() {
