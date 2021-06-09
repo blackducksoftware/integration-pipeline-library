@@ -20,8 +20,8 @@ class GitStage extends Stage {
     public static final String DEFAULT_BRANCH_NAME = 'origin/master'
 
     private final String url
-    private String branch = DEFAULT_BRANCH_NAME
-    private String branchSource = 'default'
+    private String branch
+    private String branchSource
     private String gitToolName = DEFAULT_GIT_TOOL
     private boolean changelog = DEFAULT_GIT_CHANGELOG
     private boolean poll = DEFAULT_GIT_POLL
@@ -63,12 +63,13 @@ class GitStage extends Stage {
             WorkflowRun build = getBuild(initiatingUpstreamCause)
             BuildListener buildListener = build.getListener()
             String branchFromCause = initiatingUpstreamCause.getUpstreamRun().getEnvironment(buildListener)['BRANCH']
-            if (null != branchFromCause) {
+
+            if (branchFromCause?.trim()) {
                 this.branch = branchFromCause
                 this.branchSource = 'upstream build ' + build.toString()
-            } else if (null != retrieveDefaultStringFromEnv('BRANCH')) {
-                this.branch = retrieveDefaultStringFromEnv('BRANCH')
-                this.branchSource = 'current build environment'
+            } else if (branch?.trim()) {
+                this.branch = DEFAULT_BRANCH_NAME
+                this.branchSource = 'default setting'
             }
         }
     }
