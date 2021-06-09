@@ -26,11 +26,6 @@ class GitStage extends Stage {
     private boolean changelog = DEFAULT_GIT_CHANGELOG
     private boolean poll = DEFAULT_GIT_POLL
 
-    GitStage(PipelineConfiguration pipelineConfiguration, String stageName, String url) {
-        super(pipelineConfiguration, stageName)
-        this.url = url
-    }
-
     GitStage(PipelineConfiguration pipelineConfiguration, String stageName, String url, String branch) {
         super(pipelineConfiguration, stageName)
         this.url = url
@@ -40,7 +35,7 @@ class GitStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        getPipelineConfiguration().getLogger().info("branch is set from ${this.branchSource}")
+        getPipelineConfiguration().getLogger().info("branch is set from ${branchSource}")
         getPipelineConfiguration().getLogger().info("Pulling branch '${branch}' from repo '${url}'")
         getPipelineConfiguration().getScriptWrapper().checkout(url, branch, gitToolName, changelog, poll)
 
@@ -56,7 +51,6 @@ class GitStage extends Stage {
     }
 
     void determineAndSetBranch() {
-        printBranch()
         WorkflowRun currentBuild = pipelineConfiguration.getScriptWrapper().currentBuild().getRunWrapper().getRawBuild() as WorkflowRun
         Cause.UpstreamCause initiatingUpstreamCause = determineUpstreamCause(currentBuild)
 
@@ -65,15 +59,13 @@ class GitStage extends Stage {
             BuildListener buildListener = build.getListener()
             String branchFromCause = initiatingUpstreamCause.getUpstreamRun().getEnvironment(buildListener)['BRANCH']
 
-            printBranch()
-            if (null != branchFromCause) {
-                this.branch = branchFromCause
-                this.branchSource = 'upstream build ' + build.toString()
+            if (branchFromCause?.trim()) {
+                setBranch(branchFromCause)
+                setBranchSource('upstream build ' + build.toString())
             } else if (branch?.trim()) {
-                this.branch = DEFAULT_BRANCH_NAME
-                this.branchSource = 'default setting'
+                setBranch(DEFAULT_BRANCH_NAME)
+                setBranchSource('default setting')
             }
-            printBranch()
         }
     }
 
@@ -96,6 +88,22 @@ class GitStage extends Stage {
         WorkflowJob workflowJob = hudson.getItemByFullName(jobName, WorkflowJob)
         WorkflowRun workflowRun = workflowJob.getBuildByNumber(buildNumber)
         return workflowRun
+    }
+
+    String getBranch() {
+        return branch
+    }
+
+    void setBranch(String branch) {
+        this.branch = branch
+    }
+
+    String getBranchSource() {
+        return branchSource
+    }
+
+    void setBranchSource(String branchSource) {
+        this.branchSource = branchSource
     }
 
     String getGitToolName() {
@@ -122,8 +130,4 @@ class GitStage extends Stage {
         this.poll = poll
     }
 
-    void printBranch() {
-        getPipelineConfiguration().getLogger().info("Current branch is :: " + branch)
-        getPipelineConfiguration().getLogger().info("Current branchSource is :: " + branchSource)
-    }
 }

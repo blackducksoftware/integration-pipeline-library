@@ -44,7 +44,7 @@ class SimplePipeline extends Pipeline {
         pipeline.setDirectoryFromBranch(branch)
         pipeline.addCleanupStep(relativeDirectory)
         pipeline.addSetJdkStage(jdkToolName)
-        pipeline.addGitStage(url, branch, gitPolling).printBranch()
+        pipeline.addGitStage(url, branch, gitPolling)
         pipeline.addApiTokenStage()
 
         return pipeline
@@ -141,12 +141,6 @@ class SimplePipeline extends Pipeline {
 
     GitStage addGitStage(String stageName, String url, String branch, boolean gitPolling) {
         GitStage gitStage = new GitStage(getPipelineConfiguration(), stageName, url, branch)
-        gitStage.setPoll(gitPolling)
-        return addCommonStage(gitStage)
-    }
-
-    GitStage addGitStageNoBranch(String url, boolean gitPolling) {
-        GitStage gitStage = new GitStage(getPipelineConfiguration(), 'Git', url)
         gitStage.setPoll(gitPolling)
         gitStage.determineAndSetBranch()
         return addCommonStage(gitStage)
