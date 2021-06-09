@@ -60,10 +60,12 @@ class GitStage extends Stage {
             if (branchFromCause?.trim()) {
                 setBranch(branchFromCause)
                 setBranchSource('upstream build ' + build.toString())
-            } else if (branch?.trim()) {
-                setBranch(DEFAULT_BRANCH_NAME)
-                setBranchSource('default setting')
             }
+        }
+        
+        if (branch?.trim()) {
+            setBranch(DEFAULT_BRANCH_NAME)
+            setBranchSource('default setting')
         }
     }
 
