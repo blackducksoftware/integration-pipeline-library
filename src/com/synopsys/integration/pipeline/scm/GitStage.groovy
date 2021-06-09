@@ -56,6 +56,7 @@ class GitStage extends Stage {
     }
 
     void determineAndSetBranch() {
+        printBranch()
         WorkflowRun currentBuild = pipelineConfiguration.getScriptWrapper().currentBuild().getRunWrapper().getRawBuild() as WorkflowRun
         Cause.UpstreamCause initiatingUpstreamCause = determineUpstreamCause(currentBuild)
 
@@ -64,6 +65,7 @@ class GitStage extends Stage {
             BuildListener buildListener = build.getListener()
             String branchFromCause = initiatingUpstreamCause.getUpstreamRun().getEnvironment(buildListener)['BRANCH']
 
+            printBranch()
             if (null != branchFromCause) {
                 this.branch = branchFromCause
                 this.branchSource = 'upstream build ' + build.toString()
@@ -71,6 +73,7 @@ class GitStage extends Stage {
                 this.branch = DEFAULT_BRANCH_NAME
                 this.branchSource = 'default setting'
             }
+            printBranch()
         }
     }
 
@@ -117,5 +120,10 @@ class GitStage extends Stage {
 
     void setPoll(final boolean poll) {
         this.poll = poll
+    }
+
+    void printBranch() {
+        getPipelineConfiguration().getLogger().info("Current branch is :: " + branch)
+        getPipelineConfiguration().getLogger().info("Current branchSource is :: " + branchSource)
     }
 }

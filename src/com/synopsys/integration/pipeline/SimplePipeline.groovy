@@ -44,8 +44,9 @@ class SimplePipeline extends Pipeline {
         pipeline.setDirectoryFromBranch(branch)
         pipeline.addCleanupStep(relativeDirectory)
         pipeline.addSetJdkStage(jdkToolName)
-        pipeline.addGitStage(url, branch, gitPolling)
+        pipeline.addGitStage(url, branch, gitPolling).printBranch()
         pipeline.addApiTokenStage()
+
         return pipeline
     }
 
