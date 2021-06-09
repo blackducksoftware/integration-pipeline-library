@@ -41,11 +41,12 @@ class SimplePipeline extends Pipeline {
 
     static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling) {
         SimplePipeline pipeline = new SimplePipeline(script)
-        pipeline.setDirectoryFromBranch(branch)
         pipeline.addCleanupStep(relativeDirectory)
         pipeline.addSetJdkStage(jdkToolName)
-        pipeline.addGitStageNoBranch(url, gitPolling)
+        def gitStage = pipeline.addGitStage(url, branch, gitPolling)
+        pipeline.setCommonRunDirectory(gitStage.getBranch())
         pipeline.addApiTokenStage()
+
         return pipeline
     }
 
@@ -140,12 +141,6 @@ class SimplePipeline extends Pipeline {
 
     GitStage addGitStage(String stageName, String url, String branch, boolean gitPolling) {
         GitStage gitStage = new GitStage(getPipelineConfiguration(), stageName, url, branch)
-        gitStage.setPoll(gitPolling)
-        return addCommonStage(gitStage)
-    }
-
-    GitStage addGitStageNoBranch(String url, boolean gitPolling) {
-        GitStage gitStage = new GitStage(getPipelineConfiguration(), 'Git', url)
         gitStage.setPoll(gitPolling)
         gitStage.determineAndSetBranch()
         return addCommonStage(gitStage)

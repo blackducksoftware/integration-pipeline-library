@@ -1,6 +1,5 @@
 package com.synopsys.integration.pipeline.scm
 
-import com.cloudbees.groovy.cps.NonCPS
 import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
@@ -8,7 +7,6 @@ import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.utilities.GithubBranchParser
 import hudson.model.BuildListener
 import hudson.model.Cause
-import hudson.model.Hudson
 import jenkins.model.Jenkins
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.job.WorkflowRun
@@ -20,27 +18,22 @@ class GitStage extends Stage {
     public static final String DEFAULT_BRANCH_NAME = 'origin/master'
 
     private final String url
-    private String branch = DEFAULT_BRANCH_NAME
-    private String branchSource = 'default'
+    private String branch
+    private String branchSource
     private String gitToolName = DEFAULT_GIT_TOOL
     private boolean changelog = DEFAULT_GIT_CHANGELOG
     private boolean poll = DEFAULT_GIT_POLL
 
-    GitStage(PipelineConfiguration pipelineConfiguration, String stageName, String url) {
-        super(pipelineConfiguration, stageName)
-        this.url = url
-    }
-
     GitStage(PipelineConfiguration pipelineConfiguration, String stageName, String url, String branch) {
         super(pipelineConfiguration, stageName)
         this.url = url
-        this.branch = branch
-        this.branchSource = 'constructor'
+        this.branch = (branch?.trim()) ? branch : DEFAULT_BRANCH_NAME
+        this.branchSource = (branch?.trim()) ? 'constructor' : 'default setting'
     }
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        getPipelineConfiguration().getLogger().info("branch is set from ${this.branchSource}")
+        getPipelineConfiguration().getLogger().info("branch is set from ${branchSource}")
         getPipelineConfiguration().getLogger().info("Pulling branch '${branch}' from repo '${url}'")
         getPipelineConfiguration().getScriptWrapper().checkout(url, branch, gitToolName, changelog, poll)
 
@@ -56,6 +49,7 @@ class GitStage extends Stage {
     }
 
     void determineAndSetBranch() {
+        getPipelineConfiguration().getLogger().info("In determineAndSetBranch")
         WorkflowRun currentBuild = pipelineConfiguration.getScriptWrapper().currentBuild().getRunWrapper().getRawBuild() as WorkflowRun
         Cause.UpstreamCause initiatingUpstreamCause = determineUpstreamCause(currentBuild)
 
@@ -63,12 +57,10 @@ class GitStage extends Stage {
             WorkflowRun build = getBuild(initiatingUpstreamCause)
             BuildListener buildListener = build.getListener()
             String branchFromCause = initiatingUpstreamCause.getUpstreamRun().getEnvironment(buildListener)['BRANCH']
-            if (null != branchFromCause) {
-                this.branch = branchFromCause
-                this.branchSource = 'upstream build ' + build.toString()
-            } else if (null != retrieveDefaultStringFromEnv('BRANCH')) {
-                this.branch = retrieveDefaultStringFromEnv('BRANCH')
-                this.branchSource = 'current build environment'
+
+            if (branchFromCause?.trim()) {
+                setBranch(branchFromCause)
+                setBranchSource('upstream build ' + build.toString())
             }
         }
     }
@@ -84,14 +76,26 @@ class GitStage extends Stage {
         return (null != nextUpstreamCause) ? nextUpstreamCause : currentUpstreamCause
     }
 
-    @NonCPS
     private static WorkflowRun getBuild(Cause.UpstreamCause cause) {
-        Hudson hudson = Jenkins.get() as Hudson
         String jobName = cause.getUpstreamProject()
         int buildNumber = cause.getUpstreamBuild()
-        WorkflowJob workflowJob = hudson.getItemByFullName(jobName, WorkflowJob)
-        WorkflowRun workflowRun = workflowJob.getBuildByNumber(buildNumber)
-        return workflowRun
+        return Jenkins.get().getItemByFullName(jobName, WorkflowJob).getBuildByNumber(buildNumber)
+    }
+
+    String getBranch() {
+        return branch
+    }
+
+    void setBranch(String branch) {
+        this.branch = branch
+    }
+
+    String getBranchSource() {
+        return branchSource
+    }
+
+    void setBranchSource(String branchSource) {
+        this.branchSource = branchSource
     }
 
     String getGitToolName() {
@@ -117,4 +121,5 @@ class GitStage extends Stage {
     void setPoll(final boolean poll) {
         this.poll = poll
     }
+
 }
