@@ -43,7 +43,8 @@ class SimplePipeline extends Pipeline {
         SimplePipeline pipeline = new SimplePipeline(script)
         pipeline.addCleanupStep(relativeDirectory)
         pipeline.addSetJdkStage(jdkToolName)
-        pipeline.addGitStage(url, branch, gitPolling)
+        def gitStage = pipeline.addGitStage(url, branch, gitPolling)
+        pipeline.setCommonRunDirectory(gitStage.getBranch())
         pipeline.addApiTokenStage()
 
         return pipeline
@@ -142,7 +143,6 @@ class SimplePipeline extends Pipeline {
         GitStage gitStage = new GitStage(getPipelineConfiguration(), stageName, url, branch)
         gitStage.setPoll(gitPolling)
         gitStage.determineAndSetBranch()
-        setCommonRunDirectory(gitStage.getBranch())
         return addCommonStage(gitStage)
     }
 
