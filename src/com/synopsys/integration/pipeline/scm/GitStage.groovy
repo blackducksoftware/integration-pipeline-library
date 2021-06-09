@@ -1,6 +1,5 @@
 package com.synopsys.integration.pipeline.scm
 
-import com.cloudbees.groovy.cps.NonCPS
 import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
@@ -8,7 +7,6 @@ import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.utilities.GithubBranchParser
 import hudson.model.BuildListener
 import hudson.model.Cause
-import hudson.model.Hudson
 import jenkins.model.Jenkins
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.job.WorkflowRun
@@ -80,14 +78,10 @@ class GitStage extends Stage {
         return (null != nextUpstreamCause) ? nextUpstreamCause : currentUpstreamCause
     }
 
-    @NonCPS
     private static WorkflowRun getBuild(Cause.UpstreamCause cause) {
-        Hudson hudson = Jenkins.get() as Hudson
         String jobName = cause.getUpstreamProject()
         int buildNumber = cause.getUpstreamBuild()
-        WorkflowJob workflowJob = hudson.getItemByFullName(jobName, WorkflowJob)
-        WorkflowRun workflowRun = workflowJob.getBuildByNumber(buildNumber)
-        return workflowRun
+        return Jenkins.get().getItemByFullName(jobName, WorkflowJob).getBuildByNumber(buildNumber)
     }
 
     String getBranch() {
