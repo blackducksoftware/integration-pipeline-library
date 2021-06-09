@@ -64,7 +64,7 @@ class GitStage extends Stage {
             BuildListener buildListener = build.getListener()
             String branchFromCause = initiatingUpstreamCause.getUpstreamRun().getEnvironment(buildListener)['BRANCH']
 
-            if (branchFromCause?.trim()) {
+            if (null != branchFromCause) {
                 this.branch = branchFromCause
                 this.branchSource = 'upstream build ' + build.toString()
             } else if (branch?.trim()) {
