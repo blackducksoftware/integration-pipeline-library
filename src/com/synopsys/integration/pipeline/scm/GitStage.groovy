@@ -49,7 +49,6 @@ class GitStage extends Stage {
     }
 
     void determineAndSetBranch() {
-        getPipelineConfiguration().getLogger().info("In determineAndSetBranch")
         WorkflowRun currentBuild = pipelineConfiguration.getScriptWrapper().currentBuild().getRunWrapper().getRawBuild() as WorkflowRun
         Cause.UpstreamCause initiatingUpstreamCause = determineUpstreamCause(currentBuild)
 
