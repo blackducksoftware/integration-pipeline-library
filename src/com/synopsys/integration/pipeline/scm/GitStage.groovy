@@ -50,32 +50,43 @@ class GitStage extends Stage {
 
     void determineAndSetBranch() {
         WorkflowRun currentBuild = pipelineConfiguration.getScriptWrapper().currentBuild().getRunWrapper().getRawBuild() as WorkflowRun
-        Cause.UpstreamCause initiatingUpstreamCause = determineUpstreamCause(currentBuild)
 
-        if (null != initiatingUpstreamCause) {
-            WorkflowRun build = getBuild(initiatingUpstreamCause)
-            BuildListener buildListener = build.getListener()
-            String branchFromCause = initiatingUpstreamCause.getUpstreamRun().getEnvironment(buildListener)['BRANCH']
+        if (!hasUpstreamCause(currentBuild)) {
+            return
+        }
 
-            if (branchFromCause?.trim()) {
-                setBranch(branchFromCause)
-                setBranchSource('upstream build ' + build.toString())
-            }
+        String branchFromCause = determineBranchFromUpstreamCause(currentBuild)
+
+        if (branchFromCause?.trim()) {
+            setBranch(branchFromCause)
+            setBranchSource('upstream build ' + branchFromCause.toString())
         }
     }
 
-    private Cause.UpstreamCause determineUpstreamCause(WorkflowRun build) {
-        Cause.UpstreamCause currentUpstreamCause = build.getCause(Cause.UpstreamCause)
-        def nextUpstreamCause = null
-
-        if (null != currentUpstreamCause) {
-            WorkflowRun upstreamBuild = getBuild(currentUpstreamCause)
-            nextUpstreamCause = determineUpstreamCause(upstreamBuild)
-        }
-        return (null != nextUpstreamCause) ? nextUpstreamCause : currentUpstreamCause
+    private static boolean hasUpstreamCause(WorkflowRun workflowRun) {
+        return null != workflowRun.getCause(Cause.UpstreamCause)
     }
 
-    private static WorkflowRun getBuild(Cause.UpstreamCause cause) {
+    private static String determineBranchFromUpstreamCause(WorkflowRun workflowRun) {
+        Cause.UpstreamCause upstreamCause = workflowRun.getCause(Cause.UpstreamCause)
+
+        Cause.UpstreamCause possiblyNull = getParentCause(upstreamCause)
+        while (possiblyNull != null) {
+            upstreamCause = possiblyNull
+            possiblyNull = getParentCause(possiblyNull)
+        }
+
+        WorkflowRun highestUpstreamBuild = getWorkflowRun(upstreamCause)
+        BuildListener buildListener = highestUpstreamBuild.getListener()
+
+        return upstreamCause.getUpstreamRun().getEnvironment(buildListener)['BRANCH']
+    }
+
+    private static Cause.UpstreamCause getParentCause(Cause.UpstreamCause cause) {
+        return getWorkflowRun(cause).getCause(Cause.UpstreamCause)
+    }
+
+    private static WorkflowRun getWorkflowRun(Cause.UpstreamCause cause) {
         String jobName = cause.getUpstreamProject()
         int buildNumber = cause.getUpstreamBuild()
         return Jenkins.get().getItemByFullName(jobName, WorkflowJob).getBuildByNumber(buildNumber)
