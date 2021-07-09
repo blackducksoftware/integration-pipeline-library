@@ -1,6 +1,6 @@
 package com.synopsys.integration.pipeline.tools
 
-import com.google.gson.Gson
+
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
@@ -8,11 +8,8 @@ class ReadArtifactoryPropertiesStage extends Stage {
     public static final String PUBLIC_ARTIFACTORY = 'https://sig-repo.synopsys.com/artifactory'
     public static final String INTERNAL_ARTIFACTORY = 'https://artifactory.internal.synopsys.com/artifactory'
 
-    private final Gson gson
-
     ReadArtifactoryPropertiesStage(PipelineConfiguration pipelineConfiguration, String name) {
         super(pipelineConfiguration, name)
-        gson = new Gson()
     }
 
     @Override
