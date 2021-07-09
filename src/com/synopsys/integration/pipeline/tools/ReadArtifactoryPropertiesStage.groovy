@@ -56,6 +56,7 @@ class ReadArtifactoryPropertiesStage extends Stage {
                 }
             }
         }
+        pipelineConfiguration.getLogger().info(propertiesReportBuilder)
     }
 
 }
