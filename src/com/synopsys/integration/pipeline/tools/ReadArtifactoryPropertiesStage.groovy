@@ -39,7 +39,7 @@ class ReadArtifactoryPropertiesStage extends Stage {
         for (ArtifactoryProduct artifactoryProduct : artifactoryProducts) {
             String repoKey = artifactoryProduct.getRepoKey()
             String itemPath = artifactoryProduct.getItemPathToCheck()
-            propertiesReportBuilder.append(String.format("\nProperties for: %s/%s\n", repoKey, itemPath))
+            propertiesReportBuilder.append(String.format("\n<b>Properties for: %s/%s</b>\n", repoKey, itemPath))
 
             HttpUrl propertiesUrl = new HttpUrl(String.format("%s/api/storage/%s/%s?properties", PUBLIC_ARTIFACTORY, repoKey, itemPath))
             URLConnection urlConnection = propertiesUrl.url().openConnection()
@@ -56,7 +56,7 @@ class ReadArtifactoryPropertiesStage extends Stage {
                 }
             }
         }
-        pipelineConfiguration.getLogger().info(propertiesReportBuilder)
+        pipelineConfiguration.getLogger().info(propertiesReportBuilder.toString())
     }
 
 }
