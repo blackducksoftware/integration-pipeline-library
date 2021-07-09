@@ -1,11 +1,9 @@
 package com.synopsys.integration.pipeline.tools
 
-import com.cloudbees.groovy.cps.NonCPS
-import com.google.gson.Gson
+
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.rest.HttpUrl
-import org.apache.commons.lang3.StringUtils
 
 class ReadArtifactoryPropertiesStage extends Stage {
     public static final String PUBLIC_ARTIFACTORY = 'https://sig-repo.synopsys.com/artifactory'
@@ -39,22 +37,20 @@ class ReadArtifactoryPropertiesStage extends Stage {
             pipelineConfiguration.getLogger().info(String.format("Properties for: %s/%s", repoKey, itemPath))
 
             HttpUrl propertiesUrl = new HttpUrl(String.format("%s/api/storage/%s/%s", PUBLIC_ARTIFACTORY, repoKey, itemPath))
-                        URLConnection urlConnection = propertiesUrl.url().openConnection()
-                        urlConnection.connect()
-                        urlConnection.getInputStream().withCloseable { inputStream ->
-                            String content = inputStream.text
-                            pipelineConfiguration.getLogger().info(content)
-                            //                            ArtifactoryPropertiesResponse propertiesResponse = new Gson().fromJson(content, ArtifactoryPropertiesResponse.class)
-                            //                            Map<String, List<String>> properties = propertiesResponse.getProperties()
-                            //                            pipelineConfiguration.getLogger().info(String.format("Properties for: %s/%s", repoKey, itemPath))
-                            //                            for (String name : properties.keySet()) {
-                            //                                if (name.startsWith(artifactoryProduct.getPropertyPrefix())) {
-                            //                                    String values = StringUtils.join(properties.get(name))
-                            //                                    String propertyOutput = String.format("%s: %s", name, values)
-                            //                                    pipelineConfiguration.getLogger().info(propertyOutput)
-                            //                                }
-                            //                            }
-                        }
+            URLConnection urlConnection = propertiesUrl.url().openConnection()
+            urlConnection.connect()
+            String content = urlConnection.getInputStream().text
+            pipelineConfiguration.getLogger().info(content)
+            //                            ArtifactoryPropertiesResponse propertiesResponse = new Gson().fromJson(content, ArtifactoryPropertiesResponse.class)
+            //                            Map<String, List<String>> properties = propertiesResponse.getProperties()
+            //                            pipelineConfiguration.getLogger().info(String.format("Properties for: %s/%s", repoKey, itemPath))
+            //                            for (String name : properties.keySet()) {
+            //                                if (name.startsWith(artifactoryProduct.getPropertyPrefix())) {
+            //                                    String values = StringUtils.join(properties.get(name))
+            //                                    String propertyOutput = String.format("%s: %s", name, values)
+            //                                    pipelineConfiguration.getLogger().info(propertyOutput)
+            //                                }
+            //                            }
         }
     }
 
