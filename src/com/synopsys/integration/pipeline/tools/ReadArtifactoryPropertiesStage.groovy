@@ -18,7 +18,6 @@ class ReadArtifactoryPropertiesStage extends Stage {
         super(pipelineConfiguration, name)
     }
 
-    @NonCPS
     private void doTheStuff() {
         List<ArtifactoryProduct> artifactoryProducts = new LinkedList<>()
         artifactoryProducts.add(create(NUGET_REPO, 'BlackduckNugetInspector', 'NUGET_INSPECTOR'))
@@ -38,7 +37,6 @@ class ReadArtifactoryPropertiesStage extends Stage {
         }
     }
 
-    @NonCPS
     private ArtifactoryProduct create(String repo, String repoPathToCheck, String propertyPrefix) {
         return new ArtifactoryProduct(repo, repoPathToCheck, propertyPrefix)
     }
