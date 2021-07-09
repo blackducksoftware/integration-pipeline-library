@@ -23,7 +23,6 @@ class ReadArtifactoryPropertiesStage extends Stage {
     ReadArtifactoryPropertiesStage(PipelineConfiguration pipelineConfiguration, String name) {
         super(pipelineConfiguration, name)
         gson = new Gson()
-        httpClient = new IntHttpClient(new SilentIntLogger(), gson, 120, false, ProxyInfo.NO_PROXY_INFO)
     }
 
     @Override
@@ -34,9 +33,10 @@ class ReadArtifactoryPropertiesStage extends Stage {
             String itemPath = artifactoryProduct.getItemPathToCheck()
             HttpUrl propertiesUrl = new HttpUrl(String.format("%s/api/storage/%s/%s", PUBLIC_ARTIFACTORY, repoKey, itemPath))
 
-            Request request = new Request.Builder(propertiesUrl).build()
-            httpClient.execute(request).withCloseable { response ->
-                String content = response.getContentString(StandardCharsets.UTF_8)
+            URLConnection urlConnection = propertiesUrl.url().openConnection()
+            urlConnection.connect()
+            urlConnection.getInputStream().withCloseable {inputStream ->
+                String content = inputStream.text
                 ArtifactoryPropertiesResponse propertiesResponse = gson.fromJson(content, ArtifactoryPropertiesResponse.class)
                 Map<String, List<String>> properties = propertiesResponse.getProperties()
                 pipelineConfiguration.getLogger().info(String.format("Properties for: %s/%s", repoKey, itemPath))
