@@ -8,7 +8,7 @@ class ArtifactoryProduct {
     ArtifactoryProduct(String repoKey, String itemPathToCheck, String propertyPrefix) {
         this.repoKey = repoKey
         this.itemPathToCheck = itemPathToCheck
-        this.propertyPrefix = propertyPrefix
+        this.propertyPrefix = propertyPrefix + "_LATEST_"
     }
 
 }
