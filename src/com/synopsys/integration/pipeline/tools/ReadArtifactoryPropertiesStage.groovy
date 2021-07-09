@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.tools
 
+import com.cloudbees.groovy.cps.NonCPS
 import com.google.gson.Gson
 import com.synopsys.integration.log.SilentIntLogger
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
@@ -26,6 +27,7 @@ class ReadArtifactoryPropertiesStage extends Stage {
     }
 
     @Override
+    @NonCPS
     void stageExecution() throws Exception {
         for (ArtifactoryProduct artifactoryProduct : ArtifactoryProducts.artifactoryProducts) {
             String repoKey = artifactoryProduct.getRepoKey()
