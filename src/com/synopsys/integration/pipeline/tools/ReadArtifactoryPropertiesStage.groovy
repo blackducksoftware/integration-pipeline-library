@@ -26,7 +26,6 @@ class ReadArtifactoryPropertiesStage extends Stage {
     }
 
     @Override
-    @NonCPS
     void stageExecution() throws Exception {
         for (ArtifactoryProduct artifactoryProduct : ArtifactoryProducts.artifactoryProducts) {
             String repoKey = artifactoryProduct.getRepoKey()
