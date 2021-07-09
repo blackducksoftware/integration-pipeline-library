@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.tools
 
+import com.cloudbees.groovy.cps.NonCPS
 import com.google.gson.Gson
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
@@ -20,22 +21,25 @@ class ReadArtifactoryPropertiesStage extends Stage {
         super(pipelineConfiguration, name)
     }
 
-    private void doTheStuff() {
+    @Override
+    void stageExecution() throws Exception {
         List<ArtifactoryProduct> artifactoryProducts = new LinkedList<>()
-        artifactoryProducts.add(create(NUGET_REPO, 'BlackduckNugetInspector', 'NUGET_INSPECTOR'))
-        artifactoryProducts.add(create(NUGET_REPO, 'IntegrationNugetInspector', 'NUGET_INSPECTOR'))
-        artifactoryProducts.add(create(NUGET_REPO, 'NugetDotnet3Inspector', 'NUGET_DOTNET3_INSPECTOR'))
-        artifactoryProducts.add(create(NUGET_REPO, 'NugetDotnet5Inspector', 'NUGET_DOTNET5_INSPECTOR'))
+        artifactoryProducts.add(new ArtifactoryProduct(NUGET_REPO, 'BlackduckNugetInspector', 'NUGET_INSPECTOR'))
+        artifactoryProducts.add(new ArtifactoryProduct(NUGET_REPO, 'IntegrationNugetInspector', 'NUGET_INSPECTOR'))
+        artifactoryProducts.add(new ArtifactoryProduct(NUGET_REPO, 'NugetDotnet3Inspector', 'NUGET_DOTNET3_INSPECTOR'))
+        artifactoryProducts.add(new ArtifactoryProduct(NUGET_REPO, 'NugetDotnet5Inspector', 'NUGET_DOTNET5_INSPECTOR'))
 
-        artifactoryProducts.add(create(MAVEN_REPO, DETECT_REPOPATH, 'DETECT'))
-        artifactoryProducts.add(create(MAVEN_REPO, DETECT_REPOPATH, 'DETECT_FONT_BUNDLE'))
+        artifactoryProducts.add(new ArtifactoryProduct(MAVEN_REPO, DETECT_REPOPATH, 'DETECT'))
+        artifactoryProducts.add(new ArtifactoryProduct(MAVEN_REPO, DETECT_REPOPATH, 'DETECT_FONT_BUNDLE'))
 
-        artifactoryProducts.add(create(MAVEN_REPO, DOCKER_INSPECTOR_REPOPATH, 'DOCKER_INSPECTOR_AIR_GAP'))
-        artifactoryProducts.add(create(MAVEN_REPO, DOCKER_INSPECTOR_REPOPATH, 'DOCKER_INSPECTOR'))
+        artifactoryProducts.add(new ArtifactoryProduct(MAVEN_REPO, DOCKER_INSPECTOR_REPOPATH, 'DOCKER_INSPECTOR_AIR_GAP'))
+        artifactoryProducts.add(new ArtifactoryProduct(MAVEN_REPO, DOCKER_INSPECTOR_REPOPATH, 'DOCKER_INSPECTOR'))
+
+        def propertiesReportBuilder = new StringBuilder()
         for (ArtifactoryProduct artifactoryProduct : artifactoryProducts) {
             String repoKey = artifactoryProduct.getRepoKey()
             String itemPath = artifactoryProduct.getItemPathToCheck()
-            pipelineConfiguration.getLogger().info(String.format("Properties for: %s/%s", repoKey, itemPath))
+            propertiesReportBuilder.append(String.format("\nProperties for: %s/%s\n", repoKey, itemPath))
 
             HttpUrl propertiesUrl = new HttpUrl(String.format("%s/api/storage/%s/%s?properties", PUBLIC_ARTIFACTORY, repoKey, itemPath))
             URLConnection urlConnection = propertiesUrl.url().openConnection()
@@ -43,24 +47,15 @@ class ReadArtifactoryPropertiesStage extends Stage {
             String content = urlConnection.getInputStream().text
             ArtifactoryPropertiesResponse propertiesResponse = new Gson().fromJson(content, ArtifactoryPropertiesResponse.class)
             Map<String, List<String>> properties = propertiesResponse.getProperties()
-            pipelineConfiguration.getLogger().info(String.format("Properties for: %s/%s", repoKey, itemPath))
             for (String name : properties.keySet()) {
                 if (name.startsWith(artifactoryProduct.getPropertyPrefix())) {
                     String values = StringUtils.join(properties.get(name))
-                    String propertyOutput = String.format("%s: %s", name, values)
-                    pipelineConfiguration.getLogger().info(propertyOutput)
+                    String propertyOutput = String.format("\t%s: %s", name, values)
+                    propertiesReportBuilder.append(propertyOutput)
+                    propertiesReportBuilder.append('\n')
                 }
             }
         }
-    }
-
-    private ArtifactoryProduct create(String repo, String repoPathToCheck, String propertyPrefix) {
-        return new ArtifactoryProduct(repo, repoPathToCheck, propertyPrefix)
-    }
-
-    @Override
-    void stageExecution() throws Exception {
-        doTheStuff()
     }
 
 }
