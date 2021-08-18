@@ -12,7 +12,7 @@ class ApiTokenStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        String apiTokensUrl = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKENS_URL_TEST')
+        String apiTokensUrl = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKENS_URL')
         String blackDuckUrl = retrieveDefaultStringFromEnv('BLACKDUCK_URL')
         String blackDuckApiTokenName = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKEN_NAME')
         String blackDuckApiTokenUsername = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKEN_USERNAME')
