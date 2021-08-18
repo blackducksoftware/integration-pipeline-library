@@ -12,13 +12,13 @@ class ApiTokenStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        String apiTokensUrl = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKENS_URL')
+        String apiTokensUrl = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKENS_URL_TEST')
         String blackDuckUrl = retrieveDefaultStringFromEnv('BLACKDUCK_URL')
         String blackDuckApiTokenName = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKEN_NAME')
         String blackDuckApiTokenUsername = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKEN_USERNAME')
 
         if (blackDuckUrl) {
-            String url = "${apiTokensUrl}/puretoken?vm=${blackDuckUrl}&name=${blackDuckApiTokenName}&username=${blackDuckApiTokenUsername}"
+            String url = "${apiTokensUrl}?vm=${blackDuckUrl}&name=${blackDuckApiTokenName}&username=${blackDuckApiTokenUsername}"
             String blackDuckApiToken = retrieveApiTokenFromServer(url)
             pipelineConfiguration.scriptWrapper.setJenkinsProperty('BLACKDUCK_API_TOKEN', blackDuckApiToken)
 
