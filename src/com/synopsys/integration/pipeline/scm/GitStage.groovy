@@ -5,11 +5,6 @@ import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.utilities.GithubBranchParser
-import hudson.model.BuildListener
-import hudson.model.Cause
-import jenkins.model.Jenkins
-import org.jenkinsci.plugins.workflow.job.WorkflowJob
-import org.jenkinsci.plugins.workflow.job.WorkflowRun
 
 class GitStage extends Stage {
     public static final String DEFAULT_GIT_TOOL = 'Default'
@@ -19,7 +14,6 @@ class GitStage extends Stage {
 
     private final String url
     private String branch
-    private String branchSource
     private String gitToolName = DEFAULT_GIT_TOOL
     private boolean changelog = DEFAULT_GIT_CHANGELOG
     private boolean poll = DEFAULT_GIT_POLL
@@ -28,12 +22,10 @@ class GitStage extends Stage {
         super(pipelineConfiguration, stageName)
         this.url = url
         this.branch = (branch?.trim()) ? branch : DEFAULT_BRANCH_NAME
-        this.branchSource = (branch?.trim()) ? 'constructor' : 'default setting'
     }
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        getPipelineConfiguration().getLogger().info("branch is set from ${branchSource}")
         getPipelineConfiguration().getLogger().info("Pulling branch '${branch}' from repo '${url}'")
         getPipelineConfiguration().getScriptWrapper().checkout(url, branch, gitToolName, changelog, poll)
 
@@ -48,64 +40,12 @@ class GitStage extends Stage {
         getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} reset --hard ${githubBranchModel.getBranchName()}")
     }
 
-    void determineAndSetBranch() {
-        WorkflowRun currentBuild = pipelineConfiguration.getScriptWrapper().currentBuild().getRunWrapper().getRawBuild() as WorkflowRun
-
-        if (!hasUpstreamCause(currentBuild)) {
-            return
-        }
-
-        String branchFromCause = determineBranchFromUpstreamCause(currentBuild)
-
-        if (branchFromCause?.trim()) {
-            setBranch(branchFromCause)
-            setBranchSource('upstream build ' + branchFromCause.toString())
-        }
-    }
-
-    private static boolean hasUpstreamCause(WorkflowRun workflowRun) {
-        return null != workflowRun.getCause(Cause.UpstreamCause)
-    }
-
-    private static String determineBranchFromUpstreamCause(WorkflowRun workflowRun) {
-        Cause.UpstreamCause upstreamCause = workflowRun.getCause(Cause.UpstreamCause)
-
-        Cause.UpstreamCause possiblyNull = getParentCause(upstreamCause)
-        while (possiblyNull != null) {
-            upstreamCause = possiblyNull
-            possiblyNull = getParentCause(possiblyNull)
-        }
-
-        WorkflowRun highestUpstreamBuild = getWorkflowRun(upstreamCause)
-        BuildListener buildListener = highestUpstreamBuild.getListener()
-
-        return upstreamCause.getUpstreamRun().getEnvironment(buildListener)['BRANCH']
-    }
-
-    private static Cause.UpstreamCause getParentCause(Cause.UpstreamCause cause) {
-        return getWorkflowRun(cause).getCause(Cause.UpstreamCause)
-    }
-
-    private static WorkflowRun getWorkflowRun(Cause.UpstreamCause cause) {
-        String jobName = cause.getUpstreamProject()
-        int buildNumber = cause.getUpstreamBuild()
-        return Jenkins.get().getItemByFullName(jobName, WorkflowJob).getBuildByNumber(buildNumber)
-    }
-
     String getBranch() {
         return branch
     }
 
     void setBranch(String branch) {
         this.branch = branch
-    }
-
-    String getBranchSource() {
-        return branchSource
-    }
-
-    void setBranchSource(String branchSource) {
-        this.branchSource = branchSource
     }
 
     String getGitToolName() {

@@ -10,6 +10,7 @@ import com.synopsys.integration.pipeline.model.Step
 import com.synopsys.integration.pipeline.results.ArchiveStage
 import com.synopsys.integration.pipeline.results.JacocoStage
 import com.synopsys.integration.pipeline.results.JunitStageWrapper
+import com.synopsys.integration.pipeline.scm.GitBranch
 import com.synopsys.integration.pipeline.scm.GitStage
 import com.synopsys.integration.pipeline.setup.ApiTokenStage
 import com.synopsys.integration.pipeline.setup.CleanupStep
@@ -43,8 +44,9 @@ class SimplePipeline extends Pipeline {
         SimplePipeline pipeline = new SimplePipeline(script)
         pipeline.addCleanupStep(relativeDirectory)
         pipeline.addSetJdkStage(jdkToolName)
-        def gitStage = pipeline.addGitStage(url, branch, gitPolling)
-        pipeline.setCommonRunDirectory(gitStage.getBranch())
+        String gitBranch = pipeline.determineGitBranch(branch)
+        pipeline.setDirectoryFromBranch(gitBranch)
+        pipeline.addGitStage(url, gitBranch, gitPolling)
         pipeline.addApiTokenStage()
 
         return pipeline
@@ -142,7 +144,6 @@ class SimplePipeline extends Pipeline {
     GitStage addGitStage(String stageName, String url, String branch, boolean gitPolling) {
         GitStage gitStage = new GitStage(getPipelineConfiguration(), stageName, url, branch)
         gitStage.setPoll(gitPolling)
-        gitStage.determineAndSetBranch()
         return addCommonStage(gitStage)
     }
 
@@ -238,6 +239,11 @@ class SimplePipeline extends Pipeline {
 
     ClosureStep addStep(Closure closure) {
         return addCommonStep(new ClosureStep(getPipelineConfiguration(), closure))
+    }
+
+    String determineGitBranch(String branch) {
+        GitBranch gitBranch = new GitBranch(getPipelineConfiguration(), branch)
+        return gitBranch.determineAndGetBranch()
     }
 
     private String getJenkinsProperty(String propertyName) {
