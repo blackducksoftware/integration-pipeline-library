@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils
 class GithubReleaseStage extends Stage {
     public static final String DEFAULT_GITHUB_OWNER = 'blackducksoftware'
     public static final String DEFAULT_RELEASE_MESSAGE = 'Auto Release'
-    public static final String DEFAULT_SCRIPT_URL = 'https://github.com/blackducksoftware/github-auto-release/releases/download/1.2.0/github_auto_release.sh'
+    public static final String DEFAULT_SCRIPT_URL = 'https://github.com/blackducksoftware/github-auto-release/releases/download/2.0.0/github_auto_release.sh'
 
     private final boolean runRelease
     private final String artifactFile
@@ -106,7 +106,7 @@ class GithubReleaseStage extends Stage {
         commandLines.add("chmod 777 github_auto_release.sh")
         commandLines.add("./github_auto_release.sh ${commandOptions}")
         try {
-            getPipelineConfiguration().getScriptWrapper().executeCommand(commandLines.join(" \n"))
+            getPipelineConfiguration().getScriptWrapper().executeCommandWithException(commandLines.join(" \n"))
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")
         }
