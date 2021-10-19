@@ -5,7 +5,10 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 class SetJdkStage extends Stage {
-    public static final String DEFAULT_JDK_TOOL_NAME = 'OpenJDK 11'
+    // These tool names need to match the ones defined in Jenkins in the node tool config OR global tool config //
+    public static final String JAVA_8 = 'jdk8'
+    public static final String JAVA_11 = 'OpenJDK 11'
+    public static final String DEFAULT_JDK_TOOL_NAME = JAVA_11
 
     private String jdkToolName = DEFAULT_JDK_TOOL_NAME
 
