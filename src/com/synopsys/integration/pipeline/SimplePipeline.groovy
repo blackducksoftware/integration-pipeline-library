@@ -46,7 +46,8 @@ class SimplePipeline extends Pipeline {
         pipeline.addSetJdkStage(jdkToolName)
         String gitBranch = pipeline.determineGitBranch(branch)
         pipeline.setDirectoryFromBranch(gitBranch)
-        pipeline.addGitStage(url, gitBranch, gitPolling)
+        GitStage gitStage = pipeline.addGitStage(url, gitBranch, gitPolling)
+        gitStage.setChangelog(true)
         pipeline.addApiTokenStage()
 
         return pipeline
