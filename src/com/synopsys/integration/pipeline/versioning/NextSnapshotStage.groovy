@@ -46,12 +46,12 @@ class NextSnapshotStage extends Stage {
             def commitMessage = "Using the next snapshot post release ${newVersion}"
             String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
 
-            getPipelineConfiguration().getScriptWrapper().executeCommand("${gitPath} commit -a -m \"${commitMessage}\"")
+            getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} commit -a -m \"${commitMessage}\"")
 
             GithubBranchParser githubBranchParser = new GithubBranchParser()
             GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
 
-            getPipelineConfiguration().getScriptWrapper().executeCommand("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
+            getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
         }
     }
 
