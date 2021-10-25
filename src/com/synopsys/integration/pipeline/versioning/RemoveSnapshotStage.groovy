@@ -17,17 +17,21 @@ class RemoveSnapshotStage extends Stage {
     private final String exe
 
     private final String branch
+    private final String url
+    private final String githubCredentialsId
 
     private boolean checkAllDependencies = false
     private String gitToolName = GitStage.DEFAULT_GIT_TOOL
 
-    RemoveSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch) {
+    RemoveSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch, String url, String githubCredentialsId) {
         super(pipelineConfiguration, stageName)
         this.runRelease = runRelease
         this.runQARelease = runQARelease
         this.buildTool = buildTool
         this.exe = exe
         this.branch = branch
+        this.url = url
+        this.githubCredentialsId = githubCredentialsId
     }
 
     @Override
@@ -54,11 +58,8 @@ class RemoveSnapshotStage extends Stage {
             String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
 
             getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} commit -am \"Release ${newVersion}\"")
+            getPipelineConfiguration().getScriptWrapper().executeGitPushToGithub(pipelineConfiguration, url, githubCredentialsId, gitPath)
 
-            GithubBranchParser githubBranchParser = new GithubBranchParser()
-            GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
-
-            getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
             getPipelineConfiguration().getLogger().debug("Pushing release to branch ${branch}")
         }
         getPipelineConfiguration().getScriptWrapper().setJenkinsProperty('GITHUB_RELEASE_VERSION', newVersion)
@@ -76,6 +77,10 @@ class RemoveSnapshotStage extends Stage {
         return branch
     }
 
+    String getUrl() {
+        return url
+    }
+
     boolean getCheckAllDependencies() {
         return checkAllDependencies
     }
@@ -90,6 +95,10 @@ class RemoveSnapshotStage extends Stage {
 
     void setGitToolName(final String gitToolName) {
         this.gitToolName = gitToolName
+    }
+
+    String getGithubCredentialsId() {
+        return githubCredentialsId
     }
 
 }

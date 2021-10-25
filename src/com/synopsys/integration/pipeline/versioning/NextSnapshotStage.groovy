@@ -16,16 +16,20 @@ class NextSnapshotStage extends Stage {
     private final String exe
 
     private final String branch
+    private final String url
+    private final String githubCredentialsId
 
     private String gitToolName = GitStage.DEFAULT_GIT_TOOL
 
-    NextSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch) {
+    NextSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch, String url, String githubCredentialsId) {
         super(pipelineConfiguration, stageName)
         this.runRelease = runRelease;
         this.runQARelease = runQARelease;
         this.buildTool = buildTool
         this.exe = exe
         this.branch = branch
+        this.url = url
+        this.githubCredentialsId = githubCredentialsId
     }
 
     @Override
@@ -38,20 +42,17 @@ class NextSnapshotStage extends Stage {
         projectUtils.initialize(buildTool, exe)
 
         String version = projectUtils.getProjectVersion()
+        String newVersion = projectUtils.increaseSemver(runRelease, runQARelease)
+
         getPipelineConfiguration().getLogger().info("Post release updating the Project version '${version}'. Release: ${runRelease}, QA release: ${runQARelease}")
 
-        String newVersion = projectUtils.increaseSemver(runRelease, runQARelease)
         if (!newVersion.equals(version)) {
             getPipelineConfiguration().getLogger().info("Using the next snapshot post release. ${newVersion}")
             def commitMessage = "Using the next snapshot post release ${newVersion}"
             String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
 
             getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} commit -a -m \"${commitMessage}\"")
-
-            GithubBranchParser githubBranchParser = new GithubBranchParser()
-            GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
-
-            getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
+            getPipelineConfiguration().getScriptWrapper().executeGitPushToGithub(pipelineConfiguration, url, githubCredentialsId, gitPath)
         }
     }
 
@@ -67,12 +68,20 @@ class NextSnapshotStage extends Stage {
         return branch
     }
 
+    String getUrl() {
+        return url
+    }
+
     String getGitToolName() {
         return gitToolName
     }
 
     void setGitToolName(final String gitToolName) {
         this.gitToolName = gitToolName
+    }
+
+    String getGithubCredentialsId() {
+        return githubCredentialsId
     }
 
 }

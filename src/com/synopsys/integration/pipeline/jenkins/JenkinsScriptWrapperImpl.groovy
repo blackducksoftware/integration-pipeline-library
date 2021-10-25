@@ -1,6 +1,7 @@
 package com.synopsys.integration.pipeline.jenkins
 
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
+import com.synopsys.integration.pipeline.scm.GitStage
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
@@ -91,6 +92,18 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         }
         if (errorStatus != 0) {
             throw new CommandExecutionException(errorStatus, "Executing command '${command}', resulted in error status code '${errorStatus}'")
+        }
+    }
+
+    @Override
+    void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws CommandExecutionException {
+        assert url.startsWith("https://github.com") : "Required to use https://github.com when publishing to github"
+        script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+            String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
+            String gitUsername= pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
+            String adjustedBranch = url.replace("https://","https://${gitUsername}:${gitPassword}@")
+
+            executeCommandWithException("${gitPath} push ${adjustedBranch}")
         }
     }
 

@@ -32,6 +32,8 @@ interface JenkinsScriptWrapper extends Serializable {
 
     void executeCommandWithException(String command) throws CommandExecutionException
 
+    void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws CommandExecutionException
+
     boolean isUnix()
 
     void jacoco(LinkedHashMap jacocoOptions)
