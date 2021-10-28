@@ -60,7 +60,8 @@ abstract class SnapshotStage extends Stage {
 //            }
 //        }
 
-        version = projectUtils.getProjectVersion()
+        String version = projectUtils.getProjectVersion()
+        this.version = version
         getPipelineConfiguration().getLogger().info("${loggingFlag}:: updating the Project version '${version}'. Release: ${runRelease}, QA release: ${runQARelease}")
         generateAndSetNewVersion(projectUtils)
 
