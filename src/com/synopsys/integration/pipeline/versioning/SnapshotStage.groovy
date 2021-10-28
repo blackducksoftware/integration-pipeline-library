@@ -19,7 +19,6 @@ abstract class SnapshotStage extends Stage {
     public final String githubCredentialsId
 
     private String loggingFlag
-    private String version
     private String newVersion
     private String gitToolName = GitStage.DEFAULT_GIT_TOOL
     private boolean shouldCheckDependencies = false
@@ -61,12 +60,22 @@ abstract class SnapshotStage extends Stage {
 //        }
 
         String version = projectUtils.getProjectVersion()
-        this.version = version
         getPipelineConfiguration().getLogger().info("${loggingFlag}:: updating the Project version '${version}'. Release: ${runRelease}, QA release: ${runQARelease}")
         generateAndSetNewVersion(projectUtils)
 
         if (!newVersion.equals(version)) {
-            commitAndPushToRepo()
+            getPipelineConfiguration().getLogger().info("${loggingFlag}:: Committing new version: ${newVersion}")
+            String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
+            getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} commit -a -m \"${getCommitMessage()}\"")
+
+            getPipelineConfiguration().getLogger().debug("${loggingFlag}:: Pushing new version to branch ${branch}")
+            if (url.startsWith(GitStage.GITHUB_HTTPS)) {
+                getPipelineConfiguration().getScriptWrapper().executeGitPushToGithub(pipelineConfiguration, url, githubCredentialsId, gitPath)
+            } else {
+                GithubBranchParser githubBranchParser = new GithubBranchParser()
+                GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
+                getPipelineConfiguration().getScriptWrapper().executeCommand("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
+            }
         }
     }
 
