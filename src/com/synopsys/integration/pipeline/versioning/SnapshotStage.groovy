@@ -24,7 +24,6 @@ abstract class SnapshotStage extends Stage {
     private String gitToolName = GitStage.DEFAULT_GIT_TOOL
     private boolean shouldCheckDependencies = false
     private boolean checkAllDependencies = false
-    private ProjectUtils projectUtils
 
     SnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch, String url, String githubCredentialsId, String loggingFlag, boolean shouldCheckDependencies) {
         super(pipelineConfiguration, stageName)
@@ -37,10 +36,9 @@ abstract class SnapshotStage extends Stage {
         this.githubCredentialsId = githubCredentialsId
         this.loggingFlag = loggingFlag
         this.shouldCheckDependencies = shouldCheckDependencies
-        this.projectUtils = new ProjectUtils(getPipelineConfiguration().getLogger(), getPipelineConfiguration().getScriptWrapper())
     }
 
-    abstract void generateAndSetNewVersion()
+    abstract void generateAndSetNewVersion(ProjectUtils projectUtils)
 
     abstract String getCommitMessage()
 
@@ -51,23 +49,21 @@ abstract class SnapshotStage extends Stage {
             return
         }
 
-        getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getLogger().toString())
-        getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().toString())
-//        this.projectUtils = new ProjectUtils(getPipelineConfiguration().getLogger(), getPipelineConfiguration().getScriptWrapper())
+        ProjectUtils projectUtils = new ProjectUtils(getPipelineConfiguration().getLogger(), getPipelineConfiguration().getScriptWrapper())
         projectUtils.initialize(buildTool, exe)
 
-        checkSnapshotDependencies()
+        checkSnapshotDependencies(projectUtils)
 
         version = projectUtils.getProjectVersion()
         getPipelineConfiguration().getLogger().info("${loggingFlag}:: updating the Project version '${version}'. Release: ${runRelease}, QA release: ${runQARelease}")
-        generateAndSetNewVersion()
+        generateAndSetNewVersion(projectUtils)
 
         if (!newVersion.equals(version)) {
             commitAndPushToRepo()
         }
     }
 
-    void checkSnapshotDependencies() {
+    void checkSnapshotDependencies(ProjectUtils projectUtils) {
         if (shouldCheckDependencies) {
             boolean hasSnapshotDependencies = projectUtils.checkForSnapshotDependencies(checkAllDependencies)
             if (hasSnapshotDependencies) {
@@ -150,10 +146,6 @@ abstract class SnapshotStage extends Stage {
 
     void setCheckAllDependencies(boolean checkAllDependencies) {
         this.checkAllDependencies = checkAllDependencies
-    }
-
-    ProjectUtils getProjectUtils() {
-        return projectUtils
     }
 
 }
