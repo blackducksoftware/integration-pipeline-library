@@ -37,9 +37,6 @@ abstract class SnapshotStage extends Stage {
         this.githubCredentialsId = githubCredentialsId
         this.loggingFlag = loggingFlag
         this.shouldCheckDependencies = shouldCheckDependencies
-
-        getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getLogger().toString())
-        getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().toString())
     }
 
     abstract void generateAndSetNewVersion()

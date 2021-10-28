@@ -55,6 +55,8 @@ class SimplePipeline extends Pipeline {
         pipeline.setUrl(url)
         pipeline.setGithubCredentialsId(gitStage.getCredentialsId())
 
+        pipeline.getPipelineConfiguration().getLogger().info(pipeline.getPipelineConfiguration().getLogger().toString())
+        pipeline.getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().toString())
         return pipeline
     }
 
