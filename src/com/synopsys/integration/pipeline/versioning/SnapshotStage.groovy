@@ -52,7 +52,7 @@ abstract class SnapshotStage extends Stage {
         ProjectUtils projectUtils = new ProjectUtils(getPipelineConfiguration().getLogger(), getPipelineConfiguration().getScriptWrapper())
         projectUtils.initialize(buildTool, exe)
 
-        if (getShouldCheckDependencies()) {
+        if (shouldCheckDependencies) {
             boolean hasSnapshotDependencies = projectUtils.checkForSnapshotDependencies(checkAllDependencies)
             if (hasSnapshotDependencies) {
                 String errorMessage = "Failing release preparation because of ${buildTool} SNAPSHOT dependencies"
