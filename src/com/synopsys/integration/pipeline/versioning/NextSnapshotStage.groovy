@@ -4,8 +4,7 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 
 class NextSnapshotStage extends SnapshotStage {
     NextSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch, String url, String githubCredentialsId) {
-        super(pipelineConfiguration, stageName, runRelease, runQARelease, buildTool, exe, branch, url, githubCredentialsId)
-        setLoggingFlag("POST Release")
+        super(pipelineConfiguration, stageName, runRelease, runQARelease, buildTool, exe, branch, url, githubCredentialsId, "POST Release", false)
     }
 
     void generateAndSetNewVersion() {

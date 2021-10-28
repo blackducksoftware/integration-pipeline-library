@@ -26,7 +26,7 @@ abstract class SnapshotStage extends Stage {
     private boolean checkAllDependencies = false
     private ProjectUtils projectUtils
 
-    SnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch, String url, String githubCredentialsId) {
+    SnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch, String url, String githubCredentialsId, String loggingFlag, boolean shouldCheckDependencies) {
         super(pipelineConfiguration, stageName)
         this.runRelease = runRelease
         this.runQARelease = runQARelease
@@ -35,6 +35,8 @@ abstract class SnapshotStage extends Stage {
         this.branch = branch
         this.url = url
         this.githubCredentialsId = githubCredentialsId
+        this.loggingFlag = loggingFlag
+        this.shouldCheckDependencies = shouldCheckDependencies
     }
 
     abstract void generateAndSetNewVersion()

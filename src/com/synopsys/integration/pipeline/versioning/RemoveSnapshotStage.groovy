@@ -4,9 +4,7 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 
 class RemoveSnapshotStage extends SnapshotStage {
     RemoveSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch, String url, String githubCredentialsId) {
-        super(pipelineConfiguration, stageName, runRelease, runQARelease, buildTool, exe, branch, url, githubCredentialsId)
-        setLoggingFlag("PRE Release")
-        setShouldCheckDependencies(true)
+        super(pipelineConfiguration, stageName, runRelease, runQARelease, buildTool, exe, branch, url, githubCredentialsId, "PRE Release", true)
     }
 
     void generateAndSetNewVersion() {
