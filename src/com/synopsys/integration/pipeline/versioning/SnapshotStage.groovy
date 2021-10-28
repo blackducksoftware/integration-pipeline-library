@@ -53,11 +53,11 @@ abstract class SnapshotStage extends Stage {
         projectUtils.initialize(buildTool, exe)
 
 //        if (shouldCheckDependencies) {
-            boolean hasSnapshotDependencies = projectUtils.checkForSnapshotDependencies(checkAllDependencies)
-            if (hasSnapshotDependencies) {
-                String errorMessage = "Failing release preparation because of ${buildTool} SNAPSHOT dependencies"
-                throw new PrepareForReleaseException(errorMessage)
-            }
+//            boolean hasSnapshotDependencies = projectUtils.checkForSnapshotDependencies(checkAllDependencies)
+//            if (hasSnapshotDependencies) {
+//                String errorMessage = "Failing release preparation because of ${buildTool} SNAPSHOT dependencies"
+//                throw new PrepareForReleaseException(errorMessage)
+//            }
 //        }
 
         version = projectUtils.getProjectVersion()
