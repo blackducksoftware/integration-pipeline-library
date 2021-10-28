@@ -1,87 +1,20 @@
 package com.synopsys.integration.pipeline.versioning
 
-import com.synopsys.integration.model.GithubBranchModel
-import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
-import com.synopsys.integration.pipeline.model.Stage
-import com.synopsys.integration.pipeline.scm.GitStage
 import com.synopsys.integration.pipeline.utilities.ProjectUtils
-import com.synopsys.integration.utilities.GithubBranchParser
 
-class NextSnapshotStage extends Stage {
-    private final boolean runRelease
-    private final boolean runQARelease
-
-    private final String buildTool
-    private final String exe
-
-    private final String branch
-    private final String url
-    private final String githubCredentialsId
-
-    private String gitToolName = GitStage.DEFAULT_GIT_TOOL
-
+class NextSnapshotStage extends SnapshotStage {
     NextSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch, String url, String githubCredentialsId) {
-        super(pipelineConfiguration, stageName)
-        this.runRelease = runRelease;
-        this.runQARelease = runQARelease;
-        this.buildTool = buildTool
-        this.exe = exe
-        this.branch = branch
-        this.url = url
-        this.githubCredentialsId = githubCredentialsId
+        super(pipelineConfiguration, stageName, runRelease, runQARelease, buildTool, exe, branch, url, githubCredentialsId, "POST Release", false)
     }
 
-    @Override
-    void stageExecution() throws PipelineException, Exception {
-        if (!runRelease && !runQARelease) {
-            getPipelineConfiguration().getLogger().info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
-            return
-        }
-        ProjectUtils projectUtils = new ProjectUtils(getPipelineConfiguration().getLogger(), getPipelineConfiguration().getScriptWrapper())
-        projectUtils.initialize(buildTool, exe)
-
-        String version = projectUtils.getProjectVersion()
-        String newVersion = projectUtils.increaseSemver(runRelease, runQARelease)
-
-        getPipelineConfiguration().getLogger().info("Post release updating the Project version '${version}'. Release: ${runRelease}, QA release: ${runQARelease}")
-
-        if (!newVersion.equals(version)) {
-            getPipelineConfiguration().getLogger().info("Using the next snapshot post release. ${newVersion}")
-            def commitMessage = "Using the next snapshot post release ${newVersion}"
-            String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
-
-            getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} commit -a -m \"${commitMessage}\"")
-            getPipelineConfiguration().getScriptWrapper().executeGitPushToGithub(pipelineConfiguration, url, githubCredentialsId, gitPath)
-        }
+    void generateAndSetNewVersion(ProjectUtils projectUtils) {
+        getPipelineConfiguration().getLogger().info("Incrementing to next snapshot version.")
+        setNewVersion(projectUtils.increaseSemver(runRelease, runQARelease))
     }
 
-    String getBuildTool() {
-        return buildTool
-    }
-
-    String getExe() {
-        return exe
-    }
-
-    String getBranch() {
-        return branch
-    }
-
-    String getUrl() {
-        return url
-    }
-
-    String getGitToolName() {
-        return gitToolName
-    }
-
-    void setGitToolName(final String gitToolName) {
-        this.gitToolName = gitToolName
-    }
-
-    String getGithubCredentialsId() {
-        return githubCredentialsId
+    String getCommitMessage() {
+        return "Using the next snapshot post release ${newVersion}"
     }
 
 }

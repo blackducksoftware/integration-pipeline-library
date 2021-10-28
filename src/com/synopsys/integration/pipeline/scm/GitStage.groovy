@@ -10,6 +10,7 @@ class GitStage extends Stage {
     public static final boolean DEFAULT_GIT_POLL = false
     public static final String DEFAULT_BRANCH_NAME = 'origin/master'
     public static final String DEFAULT_CREDENTIALS_ID = 'integrations-github-pat'
+    public static final String GITHUB_HTTPS = 'https://github.com'
 
     private final String url
     private String branch

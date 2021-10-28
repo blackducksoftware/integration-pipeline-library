@@ -1,104 +1,21 @@
 package com.synopsys.integration.pipeline.versioning
 
-import com.synopsys.integration.model.GithubBranchModel
-import com.synopsys.integration.pipeline.exception.PipelineException
-import com.synopsys.integration.pipeline.exception.PrepareForReleaseException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
-import com.synopsys.integration.pipeline.model.Stage
-import com.synopsys.integration.pipeline.scm.GitStage
 import com.synopsys.integration.pipeline.utilities.ProjectUtils
-import com.synopsys.integration.utilities.GithubBranchParser
 
-class RemoveSnapshotStage extends Stage {
-    private final boolean runRelease
-    private final boolean runQARelease
-
-    private final String buildTool
-    private final String exe
-
-    private final String branch
-    private final String url
-    private final String githubCredentialsId
-
-    private boolean checkAllDependencies = false
-    private String gitToolName = GitStage.DEFAULT_GIT_TOOL
-
+class RemoveSnapshotStage extends SnapshotStage {
     RemoveSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch, String url, String githubCredentialsId) {
-        super(pipelineConfiguration, stageName)
-        this.runRelease = runRelease
-        this.runQARelease = runQARelease
-        this.buildTool = buildTool
-        this.exe = exe
-        this.branch = branch
-        this.url = url
-        this.githubCredentialsId = githubCredentialsId
+        super(pipelineConfiguration, stageName, runRelease, runQARelease, buildTool, exe, branch, url, githubCredentialsId, "PRE Release", true)
     }
 
-    @Override
-    void stageExecution() throws PipelineException, Exception {
-        if (!runRelease && !runQARelease) {
-            getPipelineConfiguration().getLogger().info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
-            return
-        }
-        ProjectUtils projectUtils = new ProjectUtils(getPipelineConfiguration().getLogger(), getPipelineConfiguration().getScriptWrapper())
-        projectUtils.initialize(buildTool, exe)
-        boolean hasSnapshotDependencies = projectUtils.checkForSnapshotDependencies(checkAllDependencies)
-        if (hasSnapshotDependencies) {
-            String errorMessage = "Failing release preparation because of ${buildTool} SNAPSHOT dependencies"
-            throw new PrepareForReleaseException(errorMessage)
-        }
-        String version = projectUtils.getProjectVersion()
-        getPipelineConfiguration().getLogger().info("Updating the Project version '${version}'. Release: ${runRelease}, QA release: ${runQARelease}")
-
-        getPipelineConfiguration().getLogger().info("Removing SNAPSHOT from the Project Version")
-        String newVersion = projectUtils.updateVersionForRelease(runRelease, runQARelease)
-
-        if (!newVersion.equals(version)) {
-            getPipelineConfiguration().getLogger().debug("Commiting the release ${newVersion}")
-            String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
-
-            getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} commit -am \"Release ${newVersion}\"")
-            getPipelineConfiguration().getScriptWrapper().executeGitPushToGithub(pipelineConfiguration, url, githubCredentialsId, gitPath)
-
-            getPipelineConfiguration().getLogger().debug("Pushing release to branch ${branch}")
-        }
+    void generateAndSetNewVersion(ProjectUtils projectUtils) {
+        getPipelineConfiguration().getLogger().info("Removing SNAPSHOT from the Project Version.")
+        setNewVersion(projectUtils.updateVersionForRelease(runRelease, runQARelease))
         getPipelineConfiguration().getScriptWrapper().setJenkinsProperty('GITHUB_RELEASE_VERSION', newVersion)
     }
 
-    String getBuildTool() {
-        return buildTool
-    }
-
-    String getExe() {
-        return exe
-    }
-
-    String getBranch() {
-        return branch
-    }
-
-    String getUrl() {
-        return url
-    }
-
-    boolean getCheckAllDependencies() {
-        return checkAllDependencies
-    }
-
-    void setCheckAllDependencies(final boolean checkAllDependencies) {
-        this.checkAllDependencies = checkAllDependencies
-    }
-
-    String getGitToolName() {
-        return gitToolName
-    }
-
-    void setGitToolName(final String gitToolName) {
-        this.gitToolName = gitToolName
-    }
-
-    String getGithubCredentialsId() {
-        return githubCredentialsId
+    String getCommitMessage() {
+        return "Release ${newVersion}"
     }
 
 }

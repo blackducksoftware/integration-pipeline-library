@@ -97,7 +97,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
 
     @Override
     void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws CommandExecutionException {
-        assert url.startsWith("https://github.com") : "Required to use https://github.com when publishing to github"
+        assert url.startsWith(GitStage.GITHUB_HTTPS) : "Required to use " + GitStage.GITHUB_HTTPS + " when publishing to github"
         script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
             String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
             String gitUsername= pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
