@@ -1,22 +1,24 @@
 package com.synopsys.integration.pipeline.scm
 
-import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
-import com.synopsys.integration.utilities.GithubBranchParser
 
 class GitStage extends Stage {
     public static final String DEFAULT_GIT_TOOL = 'Default'
     public static final boolean DEFAULT_GIT_CHANGELOG = false
     public static final boolean DEFAULT_GIT_POLL = false
     public static final String DEFAULT_BRANCH_NAME = 'origin/master'
+    public static final String DEFAULT_CREDENTIALS_ID = 'integrations-github-pat'
+    public static final String GITHUB_HTTPS = 'https://github.com'
 
     private final String url
     private String branch
     private String gitToolName = DEFAULT_GIT_TOOL
     private boolean changelog = DEFAULT_GIT_CHANGELOG
     private boolean poll = DEFAULT_GIT_POLL
+
+    private String credentialsId = DEFAULT_CREDENTIALS_ID
 
     GitStage(PipelineConfiguration pipelineConfiguration, String stageName, String url, String branch) {
         super(pipelineConfiguration, stageName)
@@ -27,17 +29,7 @@ class GitStage extends Stage {
     @Override
     void stageExecution() throws PipelineException, Exception {
         getPipelineConfiguration().getLogger().info("Pulling branch '${branch}' from repo '${url}'")
-        getPipelineConfiguration().getScriptWrapper().checkout(url, branch, gitToolName, changelog, poll)
-
-        String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
-
-        GithubBranchParser githubBranchParser = new GithubBranchParser()
-        GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
-
-        // Need to do this because Jenkins checks out a detached HEAD
-        getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} checkout ${githubBranchModel.getBranchName()}")
-        // Do a hard reset in order to clear out any local changes/commits
-        getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${gitPath} reset --hard ${githubBranchModel.getBranchName()}")
+        getPipelineConfiguration().getScriptWrapper().checkout(url, branch, gitToolName, changelog, poll, credentialsId)
     }
 
     String getBranch() {
@@ -70,6 +62,14 @@ class GitStage extends Stage {
 
     void setPoll(final boolean poll) {
         this.poll = poll
+    }
+
+    String getCredentialsId() {
+        return credentialsId
+    }
+
+    void setCredentialsId(String credentialsId) {
+        this.credentialsId = credentialsId
     }
 
 }

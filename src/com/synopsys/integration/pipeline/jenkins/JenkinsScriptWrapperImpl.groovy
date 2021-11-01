@@ -1,6 +1,7 @@
 package com.synopsys.integration.pipeline.jenkins
 
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
+import com.synopsys.integration.pipeline.scm.GitStage
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
@@ -34,9 +35,11 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll) {
+    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll, String credentialsId) {
+        String localBranch = branch.replace("origin/", "")
         script.checkout changelog: changelog, poll: poll, scm: [$class : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
-                                                                gitTool: gitToolName, submoduleCfg: [], userRemoteConfigs: [[url: url]]]
+                                                                extensions: [[$class: 'WipeWorkspace'], [$class: 'LocalBranch', localBranch: localBranch]],
+                                                                gitTool: gitToolName, submoduleCfg: [], userRemoteConfigs: [[credentialsId: credentialsId, url: url]]]
     }
 
     void closure(Closure closure) {
@@ -89,6 +92,18 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         }
         if (errorStatus != 0) {
             throw new CommandExecutionException(errorStatus, "Executing command '${command}', resulted in error status code '${errorStatus}'")
+        }
+    }
+
+    @Override
+    void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws CommandExecutionException {
+        assert url.startsWith(GitStage.GITHUB_HTTPS) : "Required to use " + GitStage.GITHUB_HTTPS + " when publishing to github"
+        script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+            String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
+            String gitUsername= pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
+            String adjustedBranch = url.replace("https://","https://${gitUsername}:${gitPassword}@")
+
+            executeCommandWithException("${gitPath} push ${adjustedBranch}")
         }
     }
 

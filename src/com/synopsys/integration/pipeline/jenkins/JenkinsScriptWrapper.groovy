@@ -10,7 +10,7 @@ interface JenkinsScriptWrapper extends Serializable {
 
     String bat(String command, Boolean returnStdout) throws CommandExecutionException
 
-    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll)
+    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll, String credentialsId)
 
     void closure(Closure closure)
 
@@ -31,6 +31,8 @@ interface JenkinsScriptWrapper extends Serializable {
     String executeCommand(String command, Boolean returnStdout)
 
     void executeCommandWithException(String command) throws CommandExecutionException
+
+    void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws CommandExecutionException
 
     boolean isUnix()
 

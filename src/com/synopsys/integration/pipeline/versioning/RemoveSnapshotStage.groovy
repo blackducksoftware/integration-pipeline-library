@@ -3,7 +3,9 @@ package com.synopsys.integration.pipeline.versioning
 import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.exception.PrepareForReleaseException
+import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
+import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.scm.GitStage
 import com.synopsys.integration.pipeline.utilities.ProjectUtils
@@ -17,51 +19,68 @@ class RemoveSnapshotStage extends Stage {
     private final String exe
 
     private final String branch
+    private final String url
+    private final String githubCredentialsId
 
     private boolean checkAllDependencies = false
     private String gitToolName = GitStage.DEFAULT_GIT_TOOL
 
-    RemoveSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch) {
+    RemoveSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch, String url, String githubCredentialsId) {
         super(pipelineConfiguration, stageName)
         this.runRelease = runRelease
         this.runQARelease = runQARelease
         this.buildTool = buildTool
         this.exe = exe
         this.branch = branch
+        this.url = url
+        this.githubCredentialsId = githubCredentialsId
     }
 
     @Override
     void stageExecution() throws PipelineException, Exception {
+        PipelineLogger pipelineLogger = getPipelineConfiguration().getLogger()
+        JenkinsScriptWrapper jenkinsScriptWrapper = getPipelineConfiguration().getScriptWrapper()
+
         if (!runRelease && !runQARelease) {
-            getPipelineConfiguration().getLogger().info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
+            pipelineLogger.info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
             return
         }
-        ProjectUtils projectUtils = new ProjectUtils(getPipelineConfiguration().getLogger(), getPipelineConfiguration().getScriptWrapper())
+
+        pipelineLogger.debug("Initializing ${buildTool}")
+        ProjectUtils projectUtils = new ProjectUtils(pipelineLogger, jenkinsScriptWrapper)
         projectUtils.initialize(buildTool, exe)
+
+        pipelineLogger.info("Checking snapshot dependencies")
         boolean hasSnapshotDependencies = projectUtils.checkForSnapshotDependencies(checkAllDependencies)
         if (hasSnapshotDependencies) {
             String errorMessage = "Failing release preparation because of ${buildTool} SNAPSHOT dependencies"
             throw new PrepareForReleaseException(errorMessage)
         }
-        String version = projectUtils.getProjectVersion()
-        getPipelineConfiguration().getLogger().info("Updating the Project version '${version}'. Release: ${runRelease}, QA release: ${runQARelease}")
 
-        getPipelineConfiguration().getLogger().info("Removing SNAPSHOT from the Project Version")
+        String version = projectUtils.getProjectVersion()
+        pipelineLogger.info("Updating the Project version '${version}'. Release: ${runRelease}, QA release: ${runQARelease}")
+
+        pipelineLogger.info("Removing SNAPSHOT from the Project Version")
         String newVersion = projectUtils.updateVersionForRelease(runRelease, runQARelease)
 
         if (!newVersion.equals(version)) {
-            getPipelineConfiguration().getLogger().debug("Commiting the release ${newVersion}")
-            String gitPath = getPipelineConfiguration().getScriptWrapper().tool(gitToolName)
+            String gitPath = jenkinsScriptWrapper.tool(gitToolName)
 
-            getPipelineConfiguration().getScriptWrapper().executeCommand("${gitPath} commit -am \"Release ${newVersion}\"")
+            def commitMessage = "Release ${newVersion}"
+            pipelineLogger.info(commitMessage)
+            jenkinsScriptWrapper.executeCommandWithException("${gitPath} commit -a -m \"${commitMessage}\"")
 
-            GithubBranchParser githubBranchParser = new GithubBranchParser()
-            GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
-
-            getPipelineConfiguration().getScriptWrapper().executeCommand("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
-            getPipelineConfiguration().getLogger().debug("Pushing release to branch ${branch}")
+            pipelineLogger.info("Pushing ${newVersion} to branch ${branch}")
+            if (url.startsWith(GitStage.GITHUB_HTTPS)) {
+                jenkinsScriptWrapper.executeGitPushToGithub(pipelineConfiguration, url, githubCredentialsId, gitPath)
+            } else {
+                GithubBranchParser githubBranchParser = new GithubBranchParser()
+                GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
+                jenkinsScriptWrapper.executeCommandWithException("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
+            }
         }
-        getPipelineConfiguration().getScriptWrapper().setJenkinsProperty('GITHUB_RELEASE_VERSION', newVersion)
+
+        jenkinsScriptWrapper.setJenkinsProperty('GITHUB_RELEASE_VERSION', newVersion)
     }
 
     String getBuildTool() {
@@ -74,6 +93,10 @@ class RemoveSnapshotStage extends Stage {
 
     String getBranch() {
         return branch
+    }
+
+    String getUrl() {
+        return url
     }
 
     boolean getCheckAllDependencies() {
@@ -90,6 +113,10 @@ class RemoveSnapshotStage extends Stage {
 
     void setGitToolName(final String gitToolName) {
         this.gitToolName = gitToolName
+    }
+
+    String getGithubCredentialsId() {
+        return githubCredentialsId
     }
 
 }

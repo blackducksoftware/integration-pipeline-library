@@ -50,7 +50,7 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
         String command = "${exe} dependencies -q"
         if (!checkAllDependencies) {
-            command = "${command} --configuration compile"
+            command = "${command} --configuration implementation"
         }
         String dependencyText = jenkinsScriptWrapper.executeCommand(command, true)
         logger.info("Gradle dependencies")

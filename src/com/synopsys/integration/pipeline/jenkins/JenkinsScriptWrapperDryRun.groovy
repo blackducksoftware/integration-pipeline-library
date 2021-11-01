@@ -25,8 +25,8 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
 
 
     @Override
-    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll) {
-        getDryRunPipelineBuilder().addPipelineLine("checkout url:${url} branch:${branch} gitTool:${gitToolName} changelog:${changelog} poll:${poll}")
+    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll, String credentialsId) {
+        getDryRunPipelineBuilder().addPipelineLine("checkout url:${url} branch:${branch} gitTool:${gitToolName} changelog:${changelog} poll:${poll} credentialsId:${credentialsId}")
     }
 
     void closure(Closure closure) {

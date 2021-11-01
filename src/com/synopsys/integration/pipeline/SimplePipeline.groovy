@@ -39,15 +39,23 @@ class SimplePipeline extends Pipeline {
         SimplePipeline pipeline = new SimplePipeline(script)
         pipeline.addCleanupStep(relativeDirectory)
         pipeline.addSetJdkStage(jdkToolName)
+
         String gitBranch = pipeline.determineGitBranch(branch)
         pipeline.setDirectoryFromBranch(gitBranch)
-        pipeline.addGitStage(url, gitBranch, gitPolling)
+        GitStage gitStage = pipeline.addGitStage(url, gitBranch, gitPolling)
+        gitStage.setChangelog(true)
+
         pipeline.addApiTokenStage()
+
+        pipeline.setUrl(url)
+        pipeline.setGithubCredentialsId(gitStage.getCredentialsId())
 
         return pipeline
     }
 
     public String commonRunDirectory
+    public String url
+    public String githubCredentialsId
 
     SimplePipeline(CpsScript script) {
         this(script, '.')
@@ -193,7 +201,7 @@ class SimplePipeline extends Pipeline {
     NextSnapshotStage addNextSnapshotStage(String stageName, String buildTool, String exe, String branch) {
         boolean runRelease = getJenkinsBooleanProperty(RUN_RELEASE)
         boolean runQARelease = getJenkinsBooleanProperty(RUN_QA_BUILD)
-        NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getPipelineConfiguration(), stageName, runRelease, runQARelease, buildTool, exe, branch)
+        NextSnapshotStage nextSnapshotStage = new NextSnapshotStage(getPipelineConfiguration(), stageName, runRelease, runQARelease, buildTool, exe, branch, getUrl(), getGithubCredentialsId())
         return addCommonStage(nextSnapshotStage)
     }
 
@@ -204,7 +212,7 @@ class SimplePipeline extends Pipeline {
     RemoveSnapshotStage addRemoveSnapshotStage(String stageName, String buildTool, String exe, String branch) {
         boolean runRelease = getJenkinsBooleanProperty(RUN_RELEASE)
         boolean runQARelease = getJenkinsBooleanProperty(RUN_QA_BUILD)
-        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getPipelineConfiguration(), stageName, runRelease, runQARelease, buildTool, exe, branch)
+        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getPipelineConfiguration(), stageName, runRelease, runQARelease, buildTool, exe, branch, getUrl(), getGithubCredentialsId())
         return addCommonStage(removeSnapshotStage)
     }
 
@@ -271,6 +279,22 @@ class SimplePipeline extends Pipeline {
 
     void setCommonRunDirectory(final String commonRunDirectory) {
         this.commonRunDirectory = commonRunDirectory
+    }
+
+    String getUrl() {
+        return url
+    }
+
+    void setUrl(final String url) {
+        this.url = url
+    }
+
+    String getGithubCredentialsId() {
+        return githubCredentialsId
+    }
+
+    void setGithubCredentialsId(String githubCredentialsId) {
+        this.githubCredentialsId = githubCredentialsId
     }
 
     void setDirectoryFromBranch(final String branch) {
