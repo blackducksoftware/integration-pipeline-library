@@ -6,6 +6,8 @@ def call(String stageName = 'Update gh-pages', Closure body) {
     body.delegate = config
     body()
 
+    String publishGitUrl = config.publishGitUrl.trim()
+
     String originalBranch = config.originalBranch ?: "${BRANCH}"
     if (null == originalBranch || originalBranch.trim().length() == 0) {
         originalBranch = 'master'
@@ -74,7 +76,7 @@ def call(String stageName = 'Update gh-pages', Closure body) {
                     }
                     sh 'git add --all'
                     sh 'git commit -am "Committing the latest update-site contents to gh-pages branch."'
-                    sh "git push origin ${branch}"
+                    sh "git push ${publishGitUrl} ${branch}"
                 }
             }
         }
