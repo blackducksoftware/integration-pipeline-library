@@ -29,4 +29,15 @@ abstract class Step implements Serializable {
     PipelineConfiguration getPipelineConfiguration() {
         return pipelineConfiguration
     }
+
+    protected String retrieveStringFromEnv(String key) {
+        String value = pipelineConfiguration.getScriptWrapper().getJenkinsProperty(key)
+
+        if (value?.trim()) {
+            getPipelineConfiguration().getLogger().info("${key} was found in environment with a value of ${value}")
+            return value
+        } else {
+            throw new RuntimeException("${key} is not defined in environment.")
+        }
+    }
 }

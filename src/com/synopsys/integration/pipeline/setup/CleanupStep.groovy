@@ -15,6 +15,8 @@ class CleanupStep extends Step {
 
     @Override
     void run() throws PipelineException, Exception {
+        String buildUser = retrieveStringFromEnv("BUILDER_SERVICE_USER_NAME")
+        getPipelineConfiguration().getScriptWrapper().executeCommandWithException("sudo chown -R ${buildUser}:${buildUser} .")
         getPipelineConfiguration().getScriptWrapper().deleteDir()
     }
 }
