@@ -21,12 +21,16 @@ class SetJdkStage extends Stage {
         getPipelineConfiguration().getLogger().info("Setting jdk = ${jdkToolName}")
 
         String toolHome = getPipelineConfiguration().getScriptWrapper().tool(jdkToolName)
-        getPipelineConfiguration().getScriptWrapper().setJenkinsProperty('JAVA_HOME', toolHome)
         String currentPath = getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('PATH')
+
+        getPipelineConfiguration().getScriptWrapper().setJenkinsProperty('JAVA_HOME', toolHome)
         getPipelineConfiguration().getScriptWrapper().setJenkinsProperty('PATH', "${toolHome}/bin:${currentPath}")
 
         getPipelineConfiguration().getLogger().info("JAVA_HOME = ${getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('JAVA_HOME')}")
         getPipelineConfiguration().getLogger().info("PATH = ${getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('PATH')}")
+
+        getPipelineConfiguration().getScriptWrapper().executeCommandWithException("realpath ${toolHome}")
+        getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${toolHome}/bin/java -version 2>&1")
     }
 
     String getJdkToolName() {
