@@ -19,7 +19,7 @@ class MavenStage extends Stage {
     void stageExecution() throws PipelineException, Exception {
         String mvnHome = getPipelineConfiguration().getScriptWrapper().tool(mavenToolName)
 
-        getPipelineConfiguration().getScriptWrapper().executeCommand("${mvnHome}/bin/mvn ${mavenOptions}")
+        getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${mvnHome}/bin/mvn ${mavenOptions}")
     }
 
     String getMavenToolName() {
