@@ -20,9 +20,14 @@ class ApiTokenStage extends Stage {
         if (blackDuckUrl) {
             String url = "${apiTokensUrl}?vm=${blackDuckUrl}&name=${blackDuckApiTokenName}&username=${blackDuckApiTokenUsername}"
             String blackDuckApiToken = retrieveApiTokenFromServer(url)
-            pipelineConfiguration.scriptWrapper.setJenkinsProperty('BLACKDUCK_API_TOKEN', blackDuckApiToken)
 
-            pipelineConfiguration.getLogger().info("BLACKDUCK_API_TOKEN for server ${blackDuckUrl} set as ${blackDuckApiToken}")
+            if (blackDuckApiToken?.trim()) {
+                pipelineConfiguration.scriptWrapper.setJenkinsProperty('BLACKDUCK_API_TOKEN', blackDuckApiToken)
+                pipelineConfiguration.getLogger().info("BLACKDUCK_API_TOKEN for server ${blackDuckUrl} set as ${blackDuckApiToken}")
+            } else {
+                throw new RuntimeException("${blackDuckUrl} is not defined within ${apiTokensUrl}")
+            }
+
         } else {
             pipelineConfiguration.getLogger().info("BLACKDUCK_API_TOKEN not set as required BLACKDUCK_URL not set.")
         }
