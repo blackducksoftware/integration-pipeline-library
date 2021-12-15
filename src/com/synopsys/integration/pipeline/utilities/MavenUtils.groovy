@@ -53,7 +53,7 @@ public class MavenUtils implements ToolUtils, Serializable {
             String modifiedVersion = version.replace('-SNAPSHOT', '')
             logger.info("Maven updated version ${modifiedVersion}")
 
-            jenkinsScriptWrapper.executeCommand("${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", false)
+            jenkinsScriptWrapper.executeCommandWithException("${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}")
             logger.info("Maven pom updated with version ${modifiedVersion}")
             return modifiedVersion
         }
@@ -93,7 +93,7 @@ public class MavenUtils implements ToolUtils, Serializable {
             Integer incrementedPiece = Integer.valueOf(finalVersionPiece) + 1
             modifiedVersion = "${modifiedVersion}${incrementedPiece}-SNAPSHOT"
 
-            jenkinsScriptWrapper.executeCommand("${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}", false)
+            jenkinsScriptWrapper.executeCommandWithException("${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}")
             logger.info("Maven pom updated with version ${modifiedVersion}")
             return modifiedVersion
         }
