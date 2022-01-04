@@ -5,8 +5,8 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 class DetectStage extends Stage {
-    private final String detectCommand
-
+    private String detectCommand
+    private String blackduckConnection
     private final String detectURL
 
     DetectStage(PipelineConfiguration pipelineConfiguration, String stageName, String detectURL, String detectCommand) {
@@ -19,7 +19,7 @@ class DetectStage extends Stage {
     void stageExecution() throws PipelineException, Exception {
         def commandLines = []
         commandLines.add("#!/bin/bash")
-        commandLines.add("bash <(curl -s ${detectURL}) ${detectCommand}")
+        commandLines.add("bash <(curl -s ${detectURL}) ${blackduckConnection} ${detectCommand}")
         getPipelineConfiguration().getScriptWrapper().executeCommand(commandLines.join(" \n"))
     }
 
@@ -30,4 +30,17 @@ class DetectStage extends Stage {
     String getDetectURL() {
         return detectURL
     }
+
+    void setBlackduckConnection(String bdUrl, String bdApiToken) {
+        blackduckConnection = "--blackduck.url=" + bdUrl.trim() + " --blackduck.api.token=" + bdApiToken.trim()
+    }
+
+    String getBlackduckConnection() {
+        return blackduckConnection
+    }
+
+    void addDetectParameters(String detectArgs) {
+        detectCommand = detectCommand.trim() + " " + detectArgs.trim()
+    }
+
 }

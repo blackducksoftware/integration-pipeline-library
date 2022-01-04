@@ -35,6 +35,13 @@ class SimplePipeline extends Pipeline {
     public static final String BUILD_URL = 'BUILD_URL'
     public static final String HUB_DETECT_URL = 'HUB_DETECT_URL'
 
+    public static final String SIG_BD_HUB_SERVER_URL = 'SIG_BD_HUB_SERVER_URL'
+    public static final String SIG_BD_HUB_API_TOKEN = 'SIG_BD_HUB_API_TOKEN'
+    public static final String HUB_BDS_POP_SERVER_URL = 'HUB_BDS_POP_SERVER_URL'
+    public static final String ENG_HUB_PRD_TOKEN = 'ENG_HUB_PRD_TOKEN'
+
+    public static final String DEFAULT_POP_DETECT_SETTINGS = '--blackduck.trust.cert=true --detect.docker.passthrough.service.timeout=960000 --blackduck.timeout=600 --detect.project.codelocation.unmap=true'
+
     static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling) {
         SimplePipeline pipeline = new SimplePipeline(script)
         pipeline.addCleanupStep(relativeDirectory)
@@ -97,6 +104,66 @@ class SimplePipeline extends Pipeline {
 
         DetectStage detectStage = new DetectStage(getPipelineConfiguration(), stageName, getJenkinsProperty(HUB_DETECT_URL), detectCommand)
         return addCommonStage(detectStage)
+    }
+
+    DetectStage addDetectPopStage() {
+        return addDetectPopStage("")
+    }
+
+    DetectStage addDetectPopStage(String detectCommand) {
+        return addDetectPopStage("", detectCommand)
+    }
+
+    DetectStage addDetectPopStage(String stageNameSuffix, String detectCommand) {
+        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), "Detect " + stageNameSuffix, getJenkinsProperty(HUB_DETECT_URL), detectCommand)
+        detectStage.addDetectParameters(DEFAULT_POP_DETECT_SETTINGS)
+        detectStageSigBDHub(detectStage)
+        return addCommonStage(detectStage)
+    }
+
+    DetectStage addDetectPopSourceStage() {
+        return addDetectPopStage("")
+    }
+
+    DetectStage addDetectPopSourceStage(String detectCommand) {
+        return addDetectPopStage('source', detectCommand)
+    }
+
+    DetectStage addDetectPopDockerStage(String imageName) {
+        return addDetectPopDockerStage(imageName, "")
+    }
+
+    ArrayList<DetectStage> addDetectPopDockerStage(ArrayList<String> imageNames, String detectCommand) {
+        ArrayList<DetectStage> detectStages = []
+        imageNames.each { imageName -> detectStages << addDetectPopDockerStage(imageName, detectCommand) }
+        return detectStages
+    }
+
+    DetectStage addDetectPopDockerStage(String imageName, String detectCommand) {
+        String projectName = getProjectNameFromDockerImage(imageName) + "-Docker"
+        String versionName = imageName.substring(imageName.indexOf(':') + 1)
+        String detectParameters = "--detect.docker.image=${imageName} --detect.project.name=${projectName} --detect.project.version.name=${versionName} " + detectCommand.trim()
+
+        return addDetectPopStage(projectName, detectParameters)
+    }
+
+    void detectStageSigBDHub(DetectStage detectStage) {
+        detectStage.setBlackduckConnection(getJenkinsProperty(SIG_BD_HUB_SERVER_URL), getJenkinsProperty(SIG_BD_HUB_API_TOKEN))
+    }
+
+    void detectStageHubBDPop(DetectStage detectStage) {
+        detectStage.setBlackduckConnection(getJenkinsProperty(HUB_BDS_POP_SERVER_URL), getJenkinsProperty(ENG_HUB_PRD_TOKEN))
+    }
+
+    String getProjectNameFromDockerImage(String imageName) {
+        int slashIndex = imageName.indexOf('/')
+        int colonIndex = imageName.indexOf(':')
+
+        if (slashIndex < 1 || colonIndex == -1) {
+            throw new IllegalArgumentException("The Docker Image provided must be in the format: ORG/IMAGE:VERSION + (${imageName})")
+        }
+
+        return imageName.substring(slashIndex + 1, colonIndex)
     }
 
     EmailPipelineWrapper addEmailPipelineWrapper(String recipientList) {
