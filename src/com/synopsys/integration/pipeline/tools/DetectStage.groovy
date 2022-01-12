@@ -20,7 +20,7 @@ class DetectStage extends Stage {
         def commandLines = []
         commandLines.add("#!/bin/bash")
         commandLines.add("bash <(curl -s ${detectURL}) ${blackduckConnection} ${detectCommand}")
-        getPipelineConfiguration().getScriptWrapper().executeCommand(commandLines.join(" \n"))
+        getPipelineConfiguration().getScriptWrapper().executeCommandWithException(commandLines.join(" \n"))
     }
 
     String getDetectCommand() {

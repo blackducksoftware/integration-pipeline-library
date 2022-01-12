@@ -122,7 +122,7 @@ class SimplePipeline extends Pipeline {
     }
 
     DetectStage addDetectPopSourceStage() {
-        return addDetectPopStage("")
+        return addDetectPopSourceStage("")
     }
 
     DetectStage addDetectPopSourceStage(String detectCommand) {
@@ -133,7 +133,11 @@ class SimplePipeline extends Pipeline {
         return addDetectPopDockerStage(imageName, "")
     }
 
-    ArrayList<DetectStage> addDetectPopDockerStage(ArrayList<String> imageNames, String detectCommand) {
+    ArrayList<DetectStage> addDetectPopDockerStages(ArrayList<String> imageNames) {
+        return addDetectPopDockerStages(imageNames, "")
+    }
+
+    ArrayList<DetectStage> addDetectPopDockerStages(ArrayList<String> imageNames, String detectCommand) {
         ArrayList<DetectStage> detectStages = []
         imageNames.each { imageName -> detectStages << addDetectPopDockerStage(imageName, detectCommand) }
         return detectStages
