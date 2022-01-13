@@ -67,7 +67,7 @@ class Pipeline implements Serializable {
 
     void runWithJenkinsWrapper() {
         JenkinsScriptWrapper scriptWrapper = getPipelineConfiguration().getScriptWrapper()
-        PipelineLogger logger = getPipelineConfiguration().getLogger()
+        PipelineLogger logger = getLogger()
 
         for (int i = 0; i < getWrappers().size(); i++) {
             PipelineWrapper wrapper = getWrappers().get(i)
@@ -135,5 +135,13 @@ class Pipeline implements Serializable {
 
     public List<Step> getSteps() {
         return steps
+    }
+
+    public PipelineLogger getLogger() {
+        return getPipelineConfiguration().getLogger()
+    }
+
+    public JenkinsScriptWrapper getScriptWrapper() {
+        return getPipelineConfiguration().getScriptWrapper()
     }
 }

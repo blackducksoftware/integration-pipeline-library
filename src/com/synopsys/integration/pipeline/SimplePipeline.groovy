@@ -16,6 +16,7 @@ import com.synopsys.integration.pipeline.setup.ApiTokenStage
 import com.synopsys.integration.pipeline.setup.CleanupStep
 import com.synopsys.integration.pipeline.setup.SetJdkStage
 import com.synopsys.integration.pipeline.tools.DetectStage
+import com.synopsys.integration.pipeline.utilities.GradleUtils
 import com.synopsys.integration.pipeline.versioning.GithubReleaseStage
 import com.synopsys.integration.pipeline.versioning.NextSnapshotStage
 import com.synopsys.integration.pipeline.versioning.RemoveSnapshotStage
@@ -26,6 +27,8 @@ import org.jenkinsci.plugins.workflow.cps.CpsScript
 class SimplePipeline extends Pipeline {
     public static final String GRADLE_BUILD_TOOL = 'gradle'
     public static final String MAVEN_BUILD_TOOL = 'maven'
+
+    public static final String GRADLE_VERSION = 'GRADLE_VERSION'
 
     public static final String RUN_RELEASE = 'RUN_RELEASE'
     public static final String RUN_QA_BUILD = 'RELEASE_QA_BUILD'
@@ -230,6 +233,20 @@ class SimplePipeline extends Pipeline {
         gradleStage.setGradleExe(gradleExe)
         gradleStage.setGradleOptions(gradleOptions)
         return addCommonStage(gradleStage)
+    }
+
+    ClosureStage addSetGradleVersionStage() {
+        return addSetGradleVersionStage('./gradlew')
+    }
+
+    ClosureStage addSetGradleVersionStage(String gradleExe) {
+        Closure setGradleVersion = {
+            GradleUtils gradleUtils = new GradleUtils(getLogger(), getScriptWrapper(), gradleExe)
+            String gradleVersion = gradleUtils.getProjectVersion()
+            getScriptWrapper().setJenkinsProperty(GRADLE_VERSION, gradleVersion)
+            getLogger().info("${GRADLE_VERSION} set as ${gradleVersion}")
+        }
+        return addStage("Set ${GRADLE_VERSION}", setGradleVersion)
     }
 
     JacocoStage addJacocoStage(LinkedHashMap jacocoOptions) {
