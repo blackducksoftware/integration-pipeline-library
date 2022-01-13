@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.tools
 
+
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
@@ -7,6 +8,7 @@ import com.synopsys.integration.pipeline.model.Stage
 class DetectStage extends Stage {
     private String detectCommand
     private String blackduckConnection
+    private DockerImage dockerImage
     private final String detectURL
 
     DetectStage(PipelineConfiguration pipelineConfiguration, String stageName, String detectURL, String detectCommand) {
@@ -17,6 +19,8 @@ class DetectStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
+        addDockerImageOptions()
+
         def commandLines = []
         commandLines.add("#!/bin/bash")
         commandLines.add("bash <(curl -s ${detectURL}) ${blackduckConnection} ${detectCommand}")
@@ -43,4 +47,18 @@ class DetectStage extends Stage {
         detectCommand = detectCommand.trim() + " " + detectArgs.trim()
     }
 
+    String getDockerImage() {
+        return dockerImage
+    }
+
+    void setDockerImage(DockerImage dockerImage) {
+        this.dockerImage = dockerImage
+    }
+
+    private void addDockerImageOptions() {
+        if (dockerImage) {
+            String dockerImageOptions = dockerImage.getDockerDetectParams()
+            addDetectParameters(dockerImageOptions)
+        }
+    }
 }

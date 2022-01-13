@@ -16,6 +16,7 @@ import com.synopsys.integration.pipeline.setup.ApiTokenStage
 import com.synopsys.integration.pipeline.setup.CleanupStep
 import com.synopsys.integration.pipeline.setup.SetJdkStage
 import com.synopsys.integration.pipeline.tools.DetectStage
+import com.synopsys.integration.pipeline.tools.DockerImage
 import com.synopsys.integration.pipeline.utilities.GradleUtils
 import com.synopsys.integration.pipeline.versioning.GithubReleaseStage
 import com.synopsys.integration.pipeline.versioning.NextSnapshotStage
@@ -28,7 +29,7 @@ class SimplePipeline extends Pipeline {
     public static final String GRADLE_BUILD_TOOL = 'gradle'
     public static final String MAVEN_BUILD_TOOL = 'maven'
 
-    public static final String GRADLE_VERSION = 'GRADLE_VERSION'
+    public static final String PROJECT_VERSION = 'PROJECT_VERSION'
 
     public static final String RUN_RELEASE = 'RUN_RELEASE'
     public static final String RUN_QA_BUILD = 'RELEASE_QA_BUILD'
@@ -147,11 +148,10 @@ class SimplePipeline extends Pipeline {
     }
 
     DetectStage addDetectPopDockerStage(String imageName, String detectCommand) {
-        String projectName = getProjectNameFromDockerImage(imageName) + "-Docker"
-        String versionName = imageName.substring(imageName.indexOf(':') + 1)
-        String detectParameters = "--detect.docker.image=${imageName} --detect.project.name=${projectName} --detect.project.version.name=${versionName} " + detectCommand.trim()
-
-        return addDetectPopStage(projectName, detectParameters)
+        DockerImage dockerImage = new DockerImage(pipelineConfiguration, imageName)
+        DetectStage detectDockerStage = addDetectPopStage(dockerImage.getBdProjectName(), detectCommand)
+        detectDockerStage.setDockerImage(dockerImage)
+        return detectDockerStage
     }
 
     void detectStageSigBDHub(DetectStage detectStage) {
@@ -160,17 +160,6 @@ class SimplePipeline extends Pipeline {
 
     void detectStageHubBDPop(DetectStage detectStage) {
         detectStage.setBlackduckConnection(getJenkinsProperty(HUB_BDS_POP_SERVER_URL), getJenkinsProperty(ENG_HUB_PRD_TOKEN))
-    }
-
-    String getProjectNameFromDockerImage(String imageName) {
-        int slashIndex = imageName.indexOf('/')
-        int colonIndex = imageName.indexOf(':')
-
-        if (slashIndex < 1 || colonIndex == -1) {
-            throw new IllegalArgumentException("The Docker Image provided must be in the format: ORG/IMAGE:VERSION + (${imageName})")
-        }
-
-        return imageName.substring(slashIndex + 1, colonIndex)
     }
 
     EmailPipelineWrapper addEmailPipelineWrapper(String recipientList) {
@@ -243,10 +232,10 @@ class SimplePipeline extends Pipeline {
         Closure setGradleVersion = {
             GradleUtils gradleUtils = new GradleUtils(getLogger(), getScriptWrapper(), gradleExe)
             String gradleVersion = gradleUtils.getProjectVersion()
-            getScriptWrapper().setJenkinsProperty(GRADLE_VERSION, gradleVersion)
-            getLogger().info("${GRADLE_VERSION} set as ${gradleVersion}")
+            getScriptWrapper().setJenkinsProperty(PROJECT_VERSION, gradleVersion)
+            getLogger().info("${PROJECT_VERSION} set as ${gradleVersion}")
         }
-        return addStage("Set ${GRADLE_VERSION}", setGradleVersion)
+        return addStage("Set ${PROJECT_VERSION}", setGradleVersion)
     }
 
     JacocoStage addJacocoStage(LinkedHashMap jacocoOptions) {
