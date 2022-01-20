@@ -37,9 +37,9 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     @Override
     void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll, String credentialsId) {
         String localBranch = branch.replace("origin/", "")
-        script.checkout changelog: changelog, poll: poll, scm: [$class : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
+        script.checkout changelog: changelog, poll: poll, scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
                                                                 extensions: [[$class: 'WipeWorkspace'], [$class: 'LocalBranch', localBranch: localBranch]],
-                                                                gitTool: gitToolName, submoduleCfg: [], userRemoteConfigs: [[credentialsId: credentialsId, url: url]]]
+                                                                gitTool   : gitToolName, submoduleCfg: [], userRemoteConfigs: [[credentialsId: credentialsId, url: url]]]
     }
 
     void closure(Closure closure) {
@@ -96,12 +96,19 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
+    void executeCommandWithCatchError(String command) {
+        script.catchError(stageResult: 'FAILURE') {
+            executeCommandWithException(command)
+        }
+    }
+
+    @Override
     void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws CommandExecutionException {
-        assert url.startsWith(GitStage.GITHUB_HTTPS) : "Required to use " + GitStage.GITHUB_HTTPS + " when publishing to github"
+        assert url.startsWith(GitStage.GITHUB_HTTPS): "Required to use " + GitStage.GITHUB_HTTPS + " when publishing to github"
         script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
             String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
-            String gitUsername= pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
-            String adjustedBranch = url.replace("https://","https://${gitUsername}:${gitPassword}@")
+            String gitUsername = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
+            String adjustedBranch = url.replace("https://", "https://${gitUsername}:${gitPassword}@")
 
             executeCommandWithException("${gitPath} push ${adjustedBranch}")
         }
