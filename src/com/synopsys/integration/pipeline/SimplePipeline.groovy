@@ -47,7 +47,7 @@ class SimplePipeline extends Pipeline {
     public static final String DEFAULT_POP_DETECT_SETTINGS = '--blackduck.trust.cert=true --detect.docker.passthrough.service.timeout=960000 --blackduck.timeout=600 --detect.project.codelocation.unmap=true'
 
     static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling) {
-        SimplePipeline pipeline = new SimplePipeline(script)
+        SimplePipeline pipeline = new SimplePipeline(script, relativeDirectory)
         pipeline.addCleanupStep(relativeDirectory)
         pipeline.addSetJdkStage(jdkToolName)
 
