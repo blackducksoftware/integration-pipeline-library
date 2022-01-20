@@ -1,6 +1,5 @@
 package com.synopsys.integration.pipeline.tools
 
-
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
