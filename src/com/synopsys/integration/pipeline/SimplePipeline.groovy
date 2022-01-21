@@ -16,6 +16,8 @@ import com.synopsys.integration.pipeline.setup.ApiTokenStage
 import com.synopsys.integration.pipeline.setup.CleanupStep
 import com.synopsys.integration.pipeline.setup.SetJdkStage
 import com.synopsys.integration.pipeline.tools.DetectStage
+import com.synopsys.integration.pipeline.tools.DockerImage
+import com.synopsys.integration.pipeline.utilities.GradleUtils
 import com.synopsys.integration.pipeline.versioning.GithubReleaseStage
 import com.synopsys.integration.pipeline.versioning.NextSnapshotStage
 import com.synopsys.integration.pipeline.versioning.RemoveSnapshotStage
@@ -27,6 +29,8 @@ class SimplePipeline extends Pipeline {
     public static final String GRADLE_BUILD_TOOL = 'gradle'
     public static final String MAVEN_BUILD_TOOL = 'maven'
 
+    public static final String PROJECT_VERSION = 'PROJECT_VERSION'
+
     public static final String RUN_RELEASE = 'RUN_RELEASE'
     public static final String RUN_QA_BUILD = 'RELEASE_QA_BUILD'
 
@@ -35,8 +39,15 @@ class SimplePipeline extends Pipeline {
     public static final String BUILD_URL = 'BUILD_URL'
     public static final String HUB_DETECT_URL = 'HUB_DETECT_URL'
 
+    public static final String SIG_BD_HUB_SERVER_URL = 'SIG_BD_HUB_SERVER_URL'
+    public static final String SIG_BD_HUB_API_TOKEN = 'SIG_BD_HUB_API_TOKEN'
+    public static final String HUB_BDS_POP_SERVER_URL = 'HUB_BDS_POP_SERVER_URL'
+    public static final String ENG_HUB_PRD_TOKEN = 'ENG_HUB_PRD_TOKEN'
+
+    public static final String DEFAULT_POP_DETECT_SETTINGS = '--blackduck.trust.cert=true --detect.docker.passthrough.service.timeout=960000 --blackduck.timeout=600 --detect.project.codelocation.unmap=true'
+
     static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling) {
-        SimplePipeline pipeline = new SimplePipeline(script)
+        SimplePipeline pipeline = new SimplePipeline(script, relativeDirectory)
         pipeline.addCleanupStep(relativeDirectory)
         pipeline.addSetJdkStage(jdkToolName)
 
@@ -99,6 +110,58 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(detectStage)
     }
 
+    DetectStage addDetectPopStage() {
+        return addDetectPopStage("")
+    }
+
+    DetectStage addDetectPopStage(String detectCommand) {
+        return addDetectPopStage("", detectCommand)
+    }
+
+    DetectStage addDetectPopStage(String stageNameSuffix, String detectCommand) {
+        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), "Detect " + stageNameSuffix, getJenkinsProperty(HUB_DETECT_URL), detectCommand)
+        detectStage.addDetectParameters(DEFAULT_POP_DETECT_SETTINGS)
+        detectStageSigBDHub(detectStage)
+        return addCommonStage(detectStage)
+    }
+
+    DetectStage addDetectPopSourceStage() {
+        return addDetectPopSourceStage("")
+    }
+
+    DetectStage addDetectPopSourceStage(String detectCommand) {
+        return addDetectPopStage('source', detectCommand)
+    }
+
+    DetectStage addDetectPopDockerStage(String imageName) {
+        return addDetectPopDockerStage(imageName, "")
+    }
+
+    ArrayList<DetectStage> addDetectPopDockerStages(ArrayList<String> imageNames) {
+        return addDetectPopDockerStages(imageNames, "")
+    }
+
+    ArrayList<DetectStage> addDetectPopDockerStages(ArrayList<String> imageNames, String detectCommand) {
+        ArrayList<DetectStage> detectStages = []
+        imageNames.each { imageName -> detectStages << addDetectPopDockerStage(imageName, detectCommand) }
+        return detectStages
+    }
+
+    DetectStage addDetectPopDockerStage(String imageName, String detectCommand) {
+        DockerImage dockerImage = new DockerImage(pipelineConfiguration, imageName)
+        DetectStage detectDockerStage = addDetectPopStage(dockerImage.getBdProjectName(), detectCommand)
+        detectDockerStage.setDockerImage(dockerImage)
+        return detectDockerStage
+    }
+
+    void detectStageSigBDHub(DetectStage detectStage) {
+        detectStage.setBlackduckConnection(getJenkinsProperty(SIG_BD_HUB_SERVER_URL), getJenkinsProperty(SIG_BD_HUB_API_TOKEN))
+    }
+
+    void detectStageHubBDPop(DetectStage detectStage) {
+        detectStage.setBlackduckConnection(getJenkinsProperty(HUB_BDS_POP_SERVER_URL), getJenkinsProperty(ENG_HUB_PRD_TOKEN))
+    }
+
     EmailPipelineWrapper addEmailPipelineWrapper(String recipientList) {
         EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), recipientList, getJenkinsProperty(JOB_NAME), getJenkinsProperty(BUILD_NUMBER), getJenkinsProperty(BUILD_URL))
         emailPipelineWrapper.setRelativeDirectory(commonRunDirectory)
@@ -159,6 +222,20 @@ class SimplePipeline extends Pipeline {
         gradleStage.setGradleExe(gradleExe)
         gradleStage.setGradleOptions(gradleOptions)
         return addCommonStage(gradleStage)
+    }
+
+    ClosureStage addSetGradleVersionStage() {
+        return addSetGradleVersionStage('./gradlew')
+    }
+
+    ClosureStage addSetGradleVersionStage(String gradleExe) {
+        Closure setGradleVersion = {
+            GradleUtils gradleUtils = new GradleUtils(getLogger(), getScriptWrapper(), gradleExe)
+            String gradleVersion = gradleUtils.getProjectVersion()
+            getScriptWrapper().setJenkinsProperty(PROJECT_VERSION, gradleVersion)
+            getLogger().info("${PROJECT_VERSION} set as ${gradleVersion}")
+        }
+        return addStage("Set ${PROJECT_VERSION}", setGradleVersion)
     }
 
     JacocoStage addJacocoStage(LinkedHashMap jacocoOptions) {
