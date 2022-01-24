@@ -1,5 +1,6 @@
 package com.synopsys.integration.pipeline.tools
 
+import com.cloudbees.groovy.cps.NonCPS
 import com.synopsys.integration.pipeline.SimplePipeline
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 
@@ -64,7 +65,7 @@ class DockerImage {
             setDockerImageVersion(pipelineConfiguration.getScriptWrapper().getJenkinsProperty(SimplePipeline.PROJECT_VERSION))
             pipelineConfiguration.getLogger().info("Using environment variable ${SimplePipeline.PROJECT_VERSION} for docker image")
         }
-        
+
         String fullDockerImageName = dockerImageOrg + '/' + dockerImageName + ':' + dockerImageVersion
 
         return "--detect.docker.image=${fullDockerImageName} --detect.project.name=${bdProjectName} --detect.project.version.name=${dockerImageVersion}"
