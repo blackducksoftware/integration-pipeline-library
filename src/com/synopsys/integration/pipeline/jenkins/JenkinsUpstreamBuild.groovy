@@ -28,6 +28,7 @@ class JenkinsUpstreamBuild {
             WorkflowRun highestUpstreamBuild = getWorkflowRun(upstreamCause)
             BuildListener buildListener = highestUpstreamBuild.getListener()
 
+            pipelineConfiguration.getLogger().info("DANA::" + upstreamCause.getUpstreamRun().getEnvironment(buildListener))
             return upstreamCause.getUpstreamRun().getEnvironment(buildListener)[variableName]
         } else {
             pipelineConfiguration.getLogger().info("Current build does not have an upstream cause.")
