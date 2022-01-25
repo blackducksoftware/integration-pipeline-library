@@ -30,6 +30,7 @@ class JenkinsUpstreamBuild {
 
             return upstreamCause.getUpstreamRun().getEnvironment(buildListener)[variableName]
         } else {
+            pipelineConfiguration.getLogger().info("Current build does not have an upstream cause.")
             return null
         }
     }

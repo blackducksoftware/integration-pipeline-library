@@ -1,6 +1,8 @@
 package com.synopsys.integration.pipeline.utilities
 
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
+import com.synopsys.integration.pipeline.jenkins.JenkinsUpstreamBuild
+import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import org.apache.commons.lang3.StringUtils
 
@@ -62,5 +64,19 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
     public String increaseSemver(boolean runRelease, boolean runQARelease) {
         jenkinsScriptWrapper.executeCommandWithException("${exe} snapshotJaloja")
         return getProjectVersion()
+    }
+
+    public void setGradleVersionInEnvironment(PipelineConfiguration pipelineConfiguration, String variableName, boolean overrideIfExistsUpstream) {
+        JenkinsUpstreamBuild jenkinsUpstreamBuild = new JenkinsUpstreamBuild(pipelineConfiguration)
+        String currentUpstreamValue = jenkinsUpstreamBuild.getUpstreamEnvironmentVariable(variableName)
+
+        if (null == currentUpstreamValue || overrideIfExistsUpstream) {
+            String gradleVersion = getProjectVersion()
+            jenkinsScriptWrapper.setJenkinsProperty(variableName, gradleVersion)
+            logger.info("${variableName} set as ${gradleVersion}")
+        } else {
+            logger.info("${variableName} set from upstream cause as ${currentUpstreamValue}")
+            jenkinsScriptWrapper.setJenkinsProperty(variableName, currentUpstreamValue)
+        }
     }
 }

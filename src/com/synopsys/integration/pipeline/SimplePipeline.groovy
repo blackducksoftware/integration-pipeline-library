@@ -225,17 +225,15 @@ class SimplePipeline extends Pipeline {
     }
 
     ClosureStage addSetGradleVersionStage() {
-        return addSetGradleVersionStage('./gradlew')
+        return addSetGradleVersionStage('./gradlew', PROJECT_VERSION, false)
     }
 
-    ClosureStage addSetGradleVersionStage(String gradleExe) {
+    ClosureStage addSetGradleVersionStage(String gradleExe, String variableName, boolean overrideIfExistsUpstream) {
         Closure setGradleVersion = {
             GradleUtils gradleUtils = new GradleUtils(getLogger(), getScriptWrapper(), gradleExe)
-            String gradleVersion = gradleUtils.getProjectVersion()
-            getScriptWrapper().setJenkinsProperty(PROJECT_VERSION, gradleVersion)
-            getLogger().info("${PROJECT_VERSION} set as ${gradleVersion}")
+            gradleUtils.setGradleVersionInEnvironment(getPipelineConfiguration(), variableName, overrideIfExistsUpstream)
         }
-        return addStage("Set ${PROJECT_VERSION}", setGradleVersion)
+        return addStage("Set ${variableName}", setGradleVersion)
     }
 
     JacocoStage addJacocoStage(LinkedHashMap jacocoOptions) {
