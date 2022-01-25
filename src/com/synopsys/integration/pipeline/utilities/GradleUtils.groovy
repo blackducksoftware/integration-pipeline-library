@@ -70,6 +70,8 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
         JenkinsUpstreamBuild jenkinsUpstreamBuild = new JenkinsUpstreamBuild(pipelineConfiguration)
         String currentUpstreamValue = jenkinsUpstreamBuild.getUpstreamEnvironmentVariable(variableName)
 
+        logger.info("DANA::${currentUpstreamValue}")
+        logger.info("DANA::${overrideIfExistsUpstream}")
         if (null == currentUpstreamValue || overrideIfExistsUpstream) {
             String gradleVersion = getProjectVersion()
             jenkinsScriptWrapper.setJenkinsProperty(variableName, gradleVersion)
