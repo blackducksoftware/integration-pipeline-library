@@ -8,7 +8,7 @@ def call(Closure body) {
     body()
 
     ConfigUtils configUtils = new ConfigUtils(config)
-    
+
     String buildCommandVar = config.buildCommand
     String gradleExeVar = configUtils.get('gradleExe', './gradlew')
 

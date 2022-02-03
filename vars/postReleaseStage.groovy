@@ -16,6 +16,7 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
 
     String buildTool = config.buildTool
     String exe = config.exe
+    String publishGitUrl = config.publishGitUrl.trim()
 
     String branch = config.branch
 
@@ -41,7 +42,6 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
             runQABuildVar = false
         }
 
-
         ProjectUtils projectUtils = new ProjectUtils(pipelineLogger, jenkinsScriptWrapper)
         projectUtils.initialize(buildTool, exe)
         def newVersion = projectUtils.increaseSemver(runReleaseVar, runQABuildVar)
@@ -49,7 +49,7 @@ def call(String stageName = 'Post-Release Stage', Closure body) {
             println "Using the next snapshot post release. ${newVersion}"
             def commitMessage = "Using the next snapshot post release ${newVersion}"
             sh "git commit -a -m \"${commitMessage}\""
-            sh "git push origin ${branch}"
+            sh "git push ${publishGitUrl} ${branch}"
         }
     }
 }
