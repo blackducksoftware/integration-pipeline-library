@@ -18,6 +18,11 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Map config) {
     String emailListVar = config.emailList
     String gitUrlVar = config.gitUrl
     String gitBranchVar = config.gitBranch ?: "${BRANCH}"
+
+    String publishGitUrlVar = config.gitUrl.trim().replace("https://", "https://${GIT_USERNAME}:${GIT_PASSWORD}@")
+
+    println "publishGitUrlVar is: ${publishGitUrlVar}"
+
     if (null == gitBranchVar || gitBranchVar.trim().length() == 0) {
         gitBranchVar = 'master'
     } else if (gitBranchVar.contains('/')) {
@@ -42,7 +47,6 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Map config) {
     } catch (MissingPropertyException e) {
         runGitHubReleaseVar = true
     }
-
 
     String releaseVersionVar = config.releaseVersion
     String ownerVar = config.owner
@@ -142,6 +146,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Map config) {
                 url = gitUrlVar
                 branch = gitBranchVar
                 relativeTargetDir = gitRelativeTargetDirVar
+                publishGitUrl = publishGitUrlVar
             }
             dir(directoryToRunIn) {
                 if (null != initialStageBody) {
@@ -155,6 +160,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Map config) {
                         exe = exeVar
                         branch = gitBranchVar
                         checkAllDependencies = checkAllDependenciesVar
+                        publishGitUrl = publishGitUrlVar
                     }
                 }
                 if (null != preBuildBody) {
@@ -199,6 +205,7 @@ def call(String buildToolVar, String exeVar, Closure buildBody, Map config) {
                         buildTool = buildToolVar
                         exe = exeVar
                         branch = gitBranchVar
+                        publishGitUrl = publishGitUrlVar
                     }
                 }
                 if (runArchiveVar) {

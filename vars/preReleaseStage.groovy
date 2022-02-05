@@ -17,6 +17,7 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
     String buildTool = config.buildTool
     String exe = config.exe
     boolean checkAllDependencies = config.checkAllDependencies ?: false
+    String publishGitUrl = config.publishGitUrl.trim()
 
     String branch = config.branch
 
@@ -55,7 +56,7 @@ def call(String stageName = 'Pre-Release Stage', Closure body) {
             def newVersion = projectUtils.updateVersionForRelease(runReleaseVar, runQABuildVar)
             println "Commiting the release ${newVersion}"
             sh "git commit -am \"Release ${newVersion}\""
-            sh "git push origin ${branch}"
+            sh "git push ${publishGitUrl} ${branch}"
             println "Pushing release to branch ${branch}"
         }
     }

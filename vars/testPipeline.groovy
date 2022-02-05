@@ -14,6 +14,8 @@ def call(Closure body) {
     String gitUrlVar = config.gitUrl
     String gitRelativeTargetDirVar = config.gitRelativeTargetDir
 
+    String publishGitUrlVar = config.gitUrl.trim().replace("https://", "https://${GIT_USERNAME}:${GIT_PASSWORD}@")
+
     String gradleCommandVar = config.buildCommand
 
     def params = new ArrayList()
