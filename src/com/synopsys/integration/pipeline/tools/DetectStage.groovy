@@ -5,10 +5,13 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 class DetectStage extends Stage {
+    public static final String DEFAULT_DETECT_PROPERTIES = "--detect.gradle.excluded.configurations=test* --detect.blackduck.signature.scanner.arguments=\\\"--exclude /gradle/ --exclude /src/test/resources/\\\""
+
     private String detectCommand
     private String blackduckConnection
     private DockerImage dockerImage
     private final String detectURL
+    private boolean includeDefaultParameters = true
 
     DetectStage(PipelineConfiguration pipelineConfiguration, String stageName, String detectURL, String detectCommand) {
         super(pipelineConfiguration, stageName)
@@ -19,6 +22,10 @@ class DetectStage extends Stage {
     @Override
     void stageExecution() throws PipelineException, Exception {
         addDockerImageOptions()
+
+        if (includeDefaultParameters) {
+            addDetectParameters(DEFAULT_DETECT_PROPERTIES)
+        }
 
         def commandLines = []
         commandLines.add("#!/bin/bash")
@@ -52,6 +59,14 @@ class DetectStage extends Stage {
 
     void setDockerImage(DockerImage dockerImage) {
         this.dockerImage = dockerImage
+    }
+
+    boolean getIncludeDefaultParameters() {
+        return includeDefaultParameters
+    }
+
+    void setIncludeDefaultParameters(boolean includeDefaultParameters) {
+        this.includeDefaultParameters = includeDefaultParameters
     }
 
     private void addDockerImageOptions() {
