@@ -11,7 +11,7 @@ class DetectStage extends Stage {
     private String blackduckConnection
     private DockerImage dockerImage
     private final String detectURL
-    private boolean includeDefaultParameters = true
+    private String defaultParameters = DEFAULT_DETECT_PROPERTIES
 
     DetectStage(PipelineConfiguration pipelineConfiguration, String stageName, String detectURL, String detectCommand) {
         super(pipelineConfiguration, stageName)
@@ -23,13 +23,9 @@ class DetectStage extends Stage {
     void stageExecution() throws PipelineException, Exception {
         addDockerImageOptions()
 
-        if (includeDefaultParameters) {
-            addDetectParameters(DEFAULT_DETECT_PROPERTIES)
-        }
-
         def commandLines = []
         commandLines.add("#!/bin/bash")
-        commandLines.add("bash <(curl -s ${detectURL}) ${blackduckConnection} ${detectCommand}")
+        commandLines.add("bash <(curl -s ${detectURL}) ${blackduckConnection} ${getDetectCommand()} ${getDefaultParameters()}")
         getPipelineConfiguration().getScriptWrapper().executeCommandWithCatchError(commandLines.join(" \n"))
     }
 
@@ -61,12 +57,16 @@ class DetectStage extends Stage {
         this.dockerImage = dockerImage
     }
 
-    boolean getIncludeDefaultParameters() {
-        return includeDefaultParameters
+    String getDefaultParameters() {
+        return defaultParameters
     }
 
-    void setIncludeDefaultParameters(boolean includeDefaultParameters) {
-        this.includeDefaultParameters = includeDefaultParameters
+    void setDefaultParameters(boolean includeDefaultParameters) {
+        if (includeDefaultParameters) {
+            this.defaultParameters = DEFAULT_DETECT_PROPERTIES
+        } else {
+            this.defaultParameters = ""
+        }
     }
 
     private void addDockerImageOptions() {
