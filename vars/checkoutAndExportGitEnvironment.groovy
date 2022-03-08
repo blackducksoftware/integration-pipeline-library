@@ -1,6 +1,6 @@
 #!/usr/bin/groovy
 
-def call(String url, String stageName = 'Git') {
+def call(String url, String stageName = 'Git', Closure body) {
     stage(stageName) {
         steps {
             script {
@@ -15,8 +15,9 @@ def call(String url, String stageName = 'Git') {
                                                submoduleCfg                     : [],
                                                userRemoteConfigs                : [[credentialsId: GitStage.DEFAULT_CREDENTIALS_ID, url: url]]])
 
-                gitEnvironment.each { key, value -> env."$key" = value
-                }
+                gitEnvironment.each { key, value -> env."$key" = value }
+
+                body()
             }
         }
     }
