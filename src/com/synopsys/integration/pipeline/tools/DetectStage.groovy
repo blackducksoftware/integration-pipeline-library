@@ -21,8 +21,6 @@ class DetectStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        addDockerImageOptions()
-
         def commandLines = []
         commandLines.add("#!/bin/bash")
         commandLines.add("bash <(curl -s ${detectURL}) ${blackduckConnection} ${getDetectCommand()} ${getDefaultParameters()}")
@@ -55,6 +53,7 @@ class DetectStage extends Stage {
 
     void setDockerImage(DockerImage dockerImage) {
         this.dockerImage = dockerImage
+        addDockerImageOptions()
     }
 
     String getDefaultParameters() {
