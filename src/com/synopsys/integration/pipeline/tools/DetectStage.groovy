@@ -21,6 +21,12 @@ class DetectStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
+        // This is done because setting of the version is done during the pipeline execution.
+        // But, because of the duplicate param bug, the default parameters is set prior to execution
+        if (!Objects.isNull(dockerImage)) {
+            updateDetectCommand(DockerImage.DEFAULT_IMAGE_VERSION, dockerImage.getDockerVersionFromEnvironment())
+        }
+
         def commandLines = []
         commandLines.add("#!/bin/bash")
         commandLines.add("bash <(curl -s ${detectURL}) ${blackduckConnection} ${getDetectCommand()} ${getDefaultParameters()}")
@@ -45,6 +51,10 @@ class DetectStage extends Stage {
 
     void addDetectParameters(String detectArgs) {
         detectCommand = detectCommand.trim() + " " + detectArgs.trim()
+    }
+
+    private void updateDetectCommand(String searchToken, String replaceToken) {
+        detectCommand = detectCommand.replaceAll(searchToken, replaceToken)
     }
 
     String getDockerImage() {

@@ -5,6 +5,8 @@ import com.synopsys.integration.pipeline.SimplePipeline
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 
 class DockerImage {
+    public static final String DEFAULT_IMAGE_VERSION = '<DEFAULT_IMAGE_VERSION>'
+
     private PipelineConfiguration pipelineConfiguration
     private final String rawDockerImage
     private final String dockerImageOrg
@@ -60,10 +62,18 @@ class DockerImage {
         this.dockerImageVersion = dockerImageVersion
     }
 
+    String getDockerVersionFromEnvironment() {
+        String dockerVersion = pipelineConfiguration.getScriptWrapper().getJenkinsProperty(SimplePipeline.PROJECT_VERSION)
+        if (!dockerVersion?.trim()) {
+            dockerVersion = DEFAULT_IMAGE_VERSION
+        }
+        return dockerVersion
+    }
+
     String getDockerDetectParams() {
         if (!dockerImageVersion?.trim()) {
-            setDockerImageVersion(pipelineConfiguration.getScriptWrapper().getJenkinsProperty(SimplePipeline.PROJECT_VERSION))
-            pipelineConfiguration.getLogger().info("Using environment variable ${SimplePipeline.PROJECT_VERSION} for docker image")
+            setDockerImageVersion(getDockerVersionFromEnvironment())
+            pipelineConfiguration.getLogger().info("Using environment variable '${SimplePipeline.PROJECT_VERSION}' for docker image")
         }
 
         String fullDockerImageName = dockerImageOrg + '/' + dockerImageName + ':' + dockerImageVersion
