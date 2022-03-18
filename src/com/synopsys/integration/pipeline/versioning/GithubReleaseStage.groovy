@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils
 class GithubReleaseStage extends Stage {
     public static final String DEFAULT_GITHUB_OWNER = 'blackducksoftware'
     public static final String DEFAULT_RELEASE_MESSAGE = 'Auto Release'
-    public static final String DEFAULT_SCRIPT_URL = 'https://github.com/blackducksoftware/github-auto-release/releases/download/2.0.0/github_auto_release.sh'
+    public static final String DEFAULT_SCRIPT_URL = 'https://github.com/blackducksoftware/github-auto-release/releases/download/2.1.0/github_auto_release.sh'
 
     private final boolean runRelease
     private final String artifactFile
