@@ -63,4 +63,20 @@ public class GradleUtils implements com.synopsys.integration.pipeline.utilities.
         jenkinsScriptWrapper.executeCommandWithException("${exe} snapshotJaloja")
         return getProjectVersion()
     }
+
+    public String getCleanedProjectVersion() {
+        String version = getProjectVersion()
+
+        int sigQaLocation = version.indexOf('-SIGQA')
+        if (sigQaLocation != -1) {
+            version = version.substring(0, sigQaLocation)
+        }
+
+        int snapshotLocation = version.indexOf('-SNAPSHOT')
+        if (snapshotLocation != -1) {
+            version = version.substring(0, snapshotLocation)
+        }
+
+        return version
+    }
 }
