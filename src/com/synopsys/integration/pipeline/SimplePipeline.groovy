@@ -30,6 +30,7 @@ class SimplePipeline extends Pipeline {
     public static final String MAVEN_BUILD_TOOL = 'maven'
 
     public static final String PROJECT_VERSION = 'PROJECT_VERSION'
+    public static final String BD_UPLOAD_VERSION = 'BD_UPLOAD_VERSION'
 
     public static final String RUN_RELEASE = 'RUN_RELEASE'
     public static final String RUN_QA_BUILD = 'RELEASE_QA_BUILD'
@@ -225,17 +226,39 @@ class SimplePipeline extends Pipeline {
     }
 
     ClosureStage addSetGradleVersionStage() {
-        return addSetGradleVersionStage('./gradlew')
+        return addSetGradleVersionStage(PROJECT_VERSION)
     }
 
-    ClosureStage addSetGradleVersionStage(String gradleExe) {
+    ClosureStage addSetGradleVersionStage(String gradleVariableName) {
+        return addSetGradleVersionStage('./gradlew', gradleVariableName)
+    }
+
+    ClosureStage addSetGradleVersionStage(String gradleExe, String gradleVariableName) {
         Closure setGradleVersion = {
             GradleUtils gradleUtils = new GradleUtils(getLogger(), getScriptWrapper(), gradleExe)
             String gradleVersion = gradleUtils.getProjectVersion()
-            getScriptWrapper().setJenkinsProperty(PROJECT_VERSION, gradleVersion)
-            getLogger().info("${PROJECT_VERSION} set as ${gradleVersion}")
+            getScriptWrapper().setJenkinsProperty(gradleVariableName, gradleVersion)
+            getLogger().info("${gradleVariableName} set as ${gradleVersion}")
         }
-        return addStage("Set ${PROJECT_VERSION}", setGradleVersion)
+        return addStage("Set ${gradleVariableName}", setGradleVersion)
+    }
+
+    ClosureStage addSetCleanedGradleVersionStage() {
+        return addSetCleanedGradleVersionStage(BD_UPLOAD_VERSION)
+    }
+
+    ClosureStage addSetCleanedGradleVersionStage(String gradleVariableName) {
+        return addSetCleanedGradleVersionStage('./gradlew', gradleVariableName)
+    }
+
+    ClosureStage addSetCleanedGradleVersionStage(String gradleExe, String gradleVariableName) {
+        Closure setGradleVersion = {
+            GradleUtils gradleUtils = new GradleUtils(getLogger(), getScriptWrapper(), gradleExe)
+            String gradleVersion = gradleUtils.getCleanedProjectVersion()
+            getScriptWrapper().setJenkinsProperty(gradleVariableName, gradleVersion)
+            getLogger().info("${gradleVariableName} set as ${gradleVersion}")
+        }
+        return addStage("Set ${gradleVariableName}", setGradleVersion)
     }
 
     JacocoStage addJacocoStage(LinkedHashMap jacocoOptions) {
