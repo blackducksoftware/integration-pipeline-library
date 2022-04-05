@@ -226,7 +226,11 @@ class SimplePipeline extends Pipeline {
     }
 
     ClosureStage addSetGradleVersionStage() {
-        return addSetGradleVersionStage('./gradlew', PROJECT_VERSION)
+        return addSetGradleVersionStage(PROJECT_VERSION)
+    }
+
+    ClosureStage addSetGradleVersionStage(String gradleVariableName) {
+        return addSetGradleVersionStage('./gradlew', gradleVariableName)
     }
 
     ClosureStage addSetGradleVersionStage(String gradleExe, String gradleVariableName) {
@@ -237,6 +241,10 @@ class SimplePipeline extends Pipeline {
             getLogger().info("${gradleVariableName} set as ${gradleVersion}")
         }
         return addStage("Set ${gradleVariableName}", setGradleVersion)
+    }
+
+    ClosureStage addSetCleanedGradleVersionStage() {
+        return addSetCleanedGradleVersionStage(BD_UPLOAD_VERSION)
     }
 
     ClosureStage addSetCleanedGradleVersionStage(String gradleVariableName) {
