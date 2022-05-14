@@ -78,6 +78,6 @@ class DockerImage {
 
         String fullDockerImageName = dockerImageOrg + '/' + dockerImageName + ':' + dockerImageVersion
 
-        return "--detect.docker.image=${fullDockerImageName} --detect.project.name=${bdProjectName} --detect.project.version.name=${dockerImageVersion}"
+        return "--detect.docker.image=${fullDockerImageName} --detect.target.type=IMAGE --detect.project.name=${bdProjectName} --detect.project.version.name=${dockerImageVersion}"
     }
 }
