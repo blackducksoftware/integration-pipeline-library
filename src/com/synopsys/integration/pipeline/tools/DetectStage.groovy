@@ -124,6 +124,6 @@ class DetectStage extends Stage {
             }
         }
 
-        return newDetectCommand + "${detectProperty}=${foundOverrideValue}"
+        return newDetectCommand + " ${detectProperty}=${foundOverrideValue}"
     }
 }
