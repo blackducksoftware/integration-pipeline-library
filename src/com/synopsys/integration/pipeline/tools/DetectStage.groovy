@@ -1,20 +1,23 @@
 package com.synopsys.integration.pipeline.tools
 
-import com.synopsys.integration.pipeline.SimplePipeline
+
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 class DetectStage extends Stage {
-    public static final String DEFAULT_DETECT_PROPERTIES = "--detect.gradle.excluded.configurations=test* --detect.gradle.configuration.types.excluded=UNRESOLVED --detect.blackduck.signature.scanner.arguments=\\\"--exclude /gradle/ --exclude /src/test/resources/\\\""
-    public static final String DETECT_PROJECT_VERSION_NAME = '--detect.project.version.name'
+    public static final String DEFAULT_DETECT_SETTINGS = '--blackduck.trust.cert=true --detect.docker.passthrough.service.timeout=960000 --blackduck.timeout=600'
+    public static final String DEFAULT_DETECT_EXCLUSION_PROPERTIES = "--detect.gradle.excluded.configurations=test* --detect.gradle.configuration.types.excluded=UNRESOLVED --detect.blackduck.signature.scanner.arguments=\\\"--exclude /gradle/ --exclude /src/test/resources/\\\""
+    public static final String DETECT_PROJECT_VERSION_NAME_PROPERTY = '--detect.project.version.name'
+    public static final String DETECT_PROJECT_VERSION_NAME_OVERRIDE = 'DETECT_PROJECT_VERSION_NAME_OVERRIDE'
+    public static final String DETECT_PROJECT_CODELOCATION_UNMAP_PROPERTY = '--detect.project.codelocation.unmap'
+    public static final String DETECT_PROJECT_CODELOCATION_UNMAP_OVERRIDE = 'DETECT_PROJECT_CODELOCATION_UNMAP_OVERRIDE'
 
     private String detectCommand
     private String blackduckConnection
     private DockerImage dockerImage
     private final String detectURL
-    private String defaultParameters = DEFAULT_DETECT_PROPERTIES
-    private String bdUploadVersionVariableName = SimplePipeline.BD_UPLOAD_VERSION
+    private String defaultExclusionParameters = DEFAULT_DETECT_EXCLUSION_PROPERTIES
 
     DetectStage(PipelineConfiguration pipelineConfiguration, String stageName, String detectURL, String detectCommand) {
         super(pipelineConfiguration, stageName)
@@ -30,15 +33,11 @@ class DetectStage extends Stage {
             updateDetectCommand(DockerImage.DEFAULT_IMAGE_VERSION, dockerImage.getDockerVersionFromEnvironment())
         }
 
-        String combinedDetectParameters = "${blackduckConnection} ${getDetectCommand()} ${getDefaultParameters()}"
-        String detectProjectVersionName = pipelineConfiguration.scriptWrapper.getJenkinsProperty(bdUploadVersionVariableName)
+        String combinedDetectParameters = "${blackduckConnection} ${getDetectCommand()} ${getDefaultExclusionParameters()}"
 
-        if (null != detectProjectVersionName) {
-            combinedDetectParameters = removeDetectProjectVersionName(combinedDetectParameters)
-            combinedDetectParameters += " ${DETECT_PROJECT_VERSION_NAME}=${detectProjectVersionName}"
-        } else {
-            pipelineConfiguration.getLogger().info("Did not find environment variable set for ${bdUploadVersionVariableName}. Not setting or overriding --detect.project.version.name for detect execution")
-        }
+        // Override parameters already in Detect command if override variable set
+        combinedDetectParameters = removeDetectPropertyFromCommand(combinedDetectParameters, DETECT_PROJECT_VERSION_NAME_PROPERTY, DETECT_PROJECT_VERSION_NAME_OVERRIDE, null)
+        combinedDetectParameters = removeDetectPropertyFromCommand(combinedDetectParameters, DETECT_PROJECT_CODELOCATION_UNMAP_PROPERTY, DETECT_PROJECT_CODELOCATION_UNMAP_OVERRIDE, 'false')
 
         def commandLines = []
         commandLines.add("#!/bin/bash")
@@ -79,15 +78,15 @@ class DetectStage extends Stage {
         addDockerImageOptions()
     }
 
-    String getDefaultParameters() {
-        return defaultParameters
+    String getDefaultExclusionParameters() {
+        return defaultExclusionParameters
     }
 
-    void setDefaultParameters(boolean includeDefaultParameters) {
-        if (includeDefaultParameters) {
-            this.defaultParameters = DEFAULT_DETECT_PROPERTIES
+    void setDefaultExclusionParameters(boolean includeDefaultExclusionParameters) {
+        if (includeDefaultExclusionParameters) {
+            this.defaultExclusionParameters = DEFAULT_DETECT_EXCLUSION_PROPERTIES
         } else {
-            this.defaultParameters = ""
+            this.defaultExclusionParameters = ""
         }
     }
 
@@ -98,33 +97,33 @@ class DetectStage extends Stage {
         }
     }
 
-    String getBdUploadVersionVariableName() {
-        return bdUploadVersionVariableName
-    }
+    private String removeDetectPropertyFromCommand(String inputDetectCommand, String detectProperty, String overrideVariableName, String valueIfOverrideNotFound) {
+        String foundOverrideValue = pipelineConfiguration.scriptWrapper.getJenkinsProperty(overrideVariableName)
 
-    void setBdUploadVersionVariableName(String bdUploadVersionVariableName) {
-        this.bdUploadVersionVariableName = bdUploadVersionVariableName
-    }
-
-    private String removeDetectProjectVersionName(String inputDetectCommand) {
-        if (!inputDetectCommand.contains(DETECT_PROJECT_VERSION_NAME)) {
+        if (null == foundOverrideValue && null == valueIfOverrideNotFound) {
+            pipelineConfiguration.getLogger().info("Did not find environment variable set for ${overrideVariableName}. Not setting or overriding ${detectProperty} for detect execution")
             return inputDetectCommand
+        } else if (null == foundOverrideValue && null != valueIfOverrideNotFound) {
+            foundOverrideValue = valueIfOverrideNotFound
         }
 
-        String detectProjectVersionNameSetting = inputDetectCommand.substring(inputDetectCommand.indexOf(DETECT_PROJECT_VERSION_NAME))
-        int nextConfigurationSetting = detectProjectVersionNameSetting.indexOf(' --')
-        if (nextConfigurationSetting != -1) {
-            detectProjectVersionNameSetting = detectProjectVersionNameSetting.substring(0, nextConfigurationSetting)
+        String newDetectCommand = inputDetectCommand
+        if (inputDetectCommand.contains(detectProperty)) {
+            String detectProjectVersionNameSetting = inputDetectCommand.substring(inputDetectCommand.indexOf(detectProperty))
+            int nextConfigurationSetting = detectProjectVersionNameSetting.indexOf(' --')
+            if (nextConfigurationSetting != -1) {
+                detectProjectVersionNameSetting = detectProjectVersionNameSetting.substring(0, nextConfigurationSetting)
+            }
+
+            newDetectCommand = inputDetectCommand.replace(detectProjectVersionNameSetting, '')
+
+            if (newDetectCommand.indexOf(detectProperty) != -1) {
+                throw new IllegalArgumentException("Detect command had multiple occurrences of " + detectProperty)
+            } else {
+                pipelineConfiguration.getLogger().info("Successfully removed ${detectProperty} from the Detect command.")
+            }
         }
 
-        String newDetectCommand = inputDetectCommand.replace(detectProjectVersionNameSetting, '')
-
-        if (newDetectCommand.indexOf(DETECT_PROJECT_VERSION_NAME) != -1) {
-            throw new IllegalArgumentException("Detect command had multiple occurrences of " + DETECT_PROJECT_VERSION_NAME)
-        } else {
-            pipelineConfiguration.getLogger().info("Successfully removed ${DETECT_PROJECT_VERSION_NAME} from the Detect command.")
-        }
-
-        return newDetectCommand
+        return newDetectCommand + " ${detectProperty}=${foundOverrideValue}"
     }
 }

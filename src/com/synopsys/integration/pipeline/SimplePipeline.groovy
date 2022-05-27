@@ -30,7 +30,6 @@ class SimplePipeline extends Pipeline {
     public static final String MAVEN_BUILD_TOOL = 'maven'
 
     public static final String PROJECT_VERSION = 'PROJECT_VERSION'
-    public static final String BD_UPLOAD_VERSION = 'BD_UPLOAD_VERSION'
 
     public static final String RUN_RELEASE = 'RUN_RELEASE'
     public static final String RUN_QA_BUILD = 'RELEASE_QA_BUILD'
@@ -44,8 +43,6 @@ class SimplePipeline extends Pipeline {
     public static final String SIG_BD_HUB_API_TOKEN = 'SIG_BD_HUB_API_TOKEN'
     public static final String HUB_BDS_POP_SERVER_URL = 'HUB_BDS_POP_SERVER_URL'
     public static final String ENG_HUB_PRD_TOKEN = 'ENG_HUB_PRD_TOKEN'
-
-    public static final String DEFAULT_POP_DETECT_SETTINGS = '--blackduck.trust.cert=true --detect.docker.passthrough.service.timeout=960000 --blackduck.timeout=600 --detect.project.codelocation.unmap=true'
 
     static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling) {
         SimplePipeline pipeline = new SimplePipeline(script, relativeDirectory)
@@ -121,7 +118,7 @@ class SimplePipeline extends Pipeline {
 
     DetectStage addDetectPopStage(String stageNameSuffix, String detectCommand) {
         DetectStage detectStage = new DetectStage(getPipelineConfiguration(), "Detect " + stageNameSuffix, getJenkinsProperty(HUB_DETECT_URL), detectCommand)
-        detectStage.addDetectParameters(DEFAULT_POP_DETECT_SETTINGS)
+        detectStage.addDetectParameters(DetectStage.DEFAULT_DETECT_SETTINGS)
         detectStageSigBDHub(detectStage)
         return addCommonStage(detectStage)
     }
@@ -244,7 +241,7 @@ class SimplePipeline extends Pipeline {
     }
 
     ClosureStage addSetCleanedGradleVersionStage() {
-        return addSetCleanedGradleVersionStage(BD_UPLOAD_VERSION)
+        return addSetCleanedGradleVersionStage(DetectStage.DETECT_PROJECT_VERSION_NAME_OVERRIDE)
     }
 
     ClosureStage addSetCleanedGradleVersionStage(String gradleVariableName) {
