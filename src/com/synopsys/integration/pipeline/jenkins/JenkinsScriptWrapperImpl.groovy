@@ -2,6 +2,7 @@ package com.synopsys.integration.pipeline.jenkins
 
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
 import com.synopsys.integration.pipeline.scm.GitStage
+import net.sf.json.JSONObject
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
@@ -197,5 +198,15 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     @Override
     void writeFile(final String fileName, final String text) {
         script.writeFile(file: fileName, text: text)
+    }
+
+    @Override
+    void writeJsonFile(String fileName, Map data) {
+        script.writeJSON(file: fileName, json: data, pretty: 4)
+    }
+
+    @Override
+    JSONObject readJsonFile(String fileName) {
+        return script.readJSON(file: fileName)
     }
 }

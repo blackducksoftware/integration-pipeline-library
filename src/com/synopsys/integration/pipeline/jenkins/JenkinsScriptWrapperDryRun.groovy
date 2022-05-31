@@ -1,6 +1,7 @@
 package com.synopsys.integration.pipeline.jenkins
 
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
+import net.sf.json.JSONObject
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
@@ -141,5 +142,16 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
     @Override
     void writeFile(String fileName, String text) {
         getDryRunPipelineBuilder().addPipelineLine("writeFile file: ${fileName}")
+    }
+
+    @Override
+    void writeJsonFile(String fileName, Map data) {
+        getDryRunPipelineBuilder().addPipelineLine("writeJsonFile file: ${fileName}")
+    }
+
+    @Override
+    JSONObject readJsonFile(String fileName) {
+        getDryRunPipelineBuilder().addPipelineLine("readJsonFile file: ${fileName}")
+        return new JSONObject()
     }
 }
