@@ -16,7 +16,8 @@ class PublishBuildDataStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        buildDataMap.each { k, v -> getPipelineConfiguration().getLogger().info("${k}:${v}") }
+        getPipelineConfiguration().getScriptWrapper().writeJsonFile(JSON_FILE_NAME, buildDataMap)
+        getPipelineConfiguration().getScriptWrapper().archiveArtifacts(JSON_FILE_NAME)
     }
 
 }
