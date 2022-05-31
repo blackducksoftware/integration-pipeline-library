@@ -10,7 +10,7 @@ interface JenkinsScriptWrapper extends Serializable {
 
     String bat(String command, Boolean returnStdout) throws CommandExecutionException
 
-    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll, String credentialsId)
+    Map<String, String> checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll, String credentialsId)
 
     void closure(Closure closure)
 

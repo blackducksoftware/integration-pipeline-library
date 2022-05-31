@@ -12,6 +12,8 @@ import com.synopsys.integration.pipeline.utilities.ProjectUtils
 import com.synopsys.integration.utilities.GithubBranchParser
 
 class RemoveSnapshotStage extends Stage {
+    public static final String RELEASE_COMMIT_HASH = 'RELEASE_COMMIT_HASH'
+
     private final boolean runRelease
     private final boolean runQARelease
 
@@ -62,10 +64,9 @@ class RemoveSnapshotStage extends Stage {
 
         pipelineLogger.info("Removing SNAPSHOT from the Project Version")
         String newVersion = projectUtils.updateVersionForRelease(runRelease, runQARelease)
+        String gitPath = jenkinsScriptWrapper.tool(gitToolName)
 
         if (!newVersion.equals(version)) {
-            String gitPath = jenkinsScriptWrapper.tool(gitToolName)
-
             def commitMessage = "Release ${newVersion}"
             pipelineLogger.info(commitMessage)
             jenkinsScriptWrapper.executeCommandWithException("${gitPath} commit -a -m \"${commitMessage}\"")
@@ -79,6 +80,9 @@ class RemoveSnapshotStage extends Stage {
                 jenkinsScriptWrapper.executeCommandWithException("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
             }
         }
+
+        String commitHash = jenkinsScriptWrapper.executeCommand("${gitPath} rev-parse HEAD", true).trim()
+        pipelineConfiguration.addToBuildDataMap(RELEASE_COMMIT_HASH, commitHash)
 
         jenkinsScriptWrapper.setJenkinsProperty('GITHUB_RELEASE_VERSION', newVersion)
     }

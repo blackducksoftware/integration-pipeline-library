@@ -28,6 +28,8 @@ class SetJdkStage extends Stage {
 
         getPipelineConfiguration().getScriptWrapper().executeCommandWithException("realpath ${toolHome}")
         getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${toolHome}/bin/java -version 2>&1")
+
+        pipelineConfiguration.addToBuildDataMap("JAVA_HOME", toolHome)
     }
 
     String getJdkToolName() {

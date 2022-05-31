@@ -8,6 +8,7 @@ import com.synopsys.integration.pipeline.logging.SilentPipelineLogger
 import com.synopsys.integration.pipeline.model.PipelineWrapper
 import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.model.Step
+import com.synopsys.integration.pipeline.results.PublishBuildDataStage
 import org.apache.commons.lang3.StringUtils
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
@@ -61,6 +62,7 @@ class Pipeline implements Serializable {
 
         getPipelineConfiguration().setScriptWrapper(originalScriptWrapper)
         getPipelineConfiguration().setLogger(originalLogger)
+        addStage(new PublishBuildDataStage(pipelineConfiguration, "Publish Build Data ", pipelineConfiguration.getBuildDataMap()))
         getPipelineConfiguration().getLogger().info("Starting run")
         runWithJenkinsWrapper()
     }
@@ -144,4 +146,5 @@ class Pipeline implements Serializable {
     public JenkinsScriptWrapper getScriptWrapper() {
         return getPipelineConfiguration().getScriptWrapper()
     }
+
 }

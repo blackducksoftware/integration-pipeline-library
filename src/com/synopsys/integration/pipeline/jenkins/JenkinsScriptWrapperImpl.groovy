@@ -35,11 +35,12 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll, String credentialsId) {
+    Map<String, String> checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll, String credentialsId) {
         String localBranch = branch.replace("origin/", "")
-        script.checkout changelog: changelog, poll: poll, scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
-                                                                extensions: [[$class: 'WipeWorkspace'], [$class: 'LocalBranch', localBranch: localBranch]],
-                                                                gitTool   : gitToolName, submoduleCfg: [], userRemoteConfigs: [[credentialsId: credentialsId, url: url]]]
+        Map<String, String> checkoutData = script.checkout changelog: changelog, poll: poll, scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
+                                                                                                   extensions: [[$class: 'WipeWorkspace'], [$class: 'LocalBranch', localBranch: localBranch]],
+                                                                                                   gitTool   : gitToolName, submoduleCfg: [], userRemoteConfigs: [[credentialsId: credentialsId, url: url]]]
+        return checkoutData
     }
 
     void closure(Closure closure) {

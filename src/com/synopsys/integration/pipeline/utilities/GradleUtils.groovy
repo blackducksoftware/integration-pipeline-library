@@ -4,7 +4,7 @@ import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 import org.apache.commons.lang3.StringUtils
 
-public class GradleUtils implements com.synopsys.integration.pipeline.utilities.ToolUtils, Serializable {
+public class GradleUtils implements ToolUtils, Serializable {
     private final PipelineLogger logger
     private final JenkinsScriptWrapper jenkinsScriptWrapper
 

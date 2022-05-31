@@ -29,7 +29,8 @@ class GitStage extends Stage {
     @Override
     void stageExecution() throws PipelineException, Exception {
         getPipelineConfiguration().getLogger().info("Pulling branch '${branch}' from repo '${url}'")
-        getPipelineConfiguration().getScriptWrapper().checkout(url, branch, gitToolName, changelog, poll, credentialsId)
+        Map<String, String> checkoutData = getPipelineConfiguration().getScriptWrapper().checkout(url, branch, gitToolName, changelog, poll, credentialsId)
+        checkoutData.each { k, v -> getPipelineConfiguration().addToBuildDataMap(k, v) }
     }
 
     String getBranch() {
