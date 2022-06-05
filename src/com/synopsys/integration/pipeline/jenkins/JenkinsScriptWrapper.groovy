@@ -1,6 +1,7 @@
 package com.synopsys.integration.pipeline.jenkins
 
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
+import net.sf.json.JSONObject
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 interface JenkinsScriptWrapper extends Serializable {
@@ -10,7 +11,7 @@ interface JenkinsScriptWrapper extends Serializable {
 
     String bat(String command, Boolean returnStdout) throws CommandExecutionException
 
-    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll, String credentialsId)
+    Map<String, String> checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll, String credentialsId)
 
     void closure(Closure closure)
 
@@ -61,5 +62,9 @@ interface JenkinsScriptWrapper extends Serializable {
     String tool(String toolName)
 
     void writeFile(String fileName, String text)
+
+    void writeJsonFile(String fileName, Map data)
+
+    JSONObject readJsonFile(String fileName)
 
 }

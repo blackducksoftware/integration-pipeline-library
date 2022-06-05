@@ -2,6 +2,7 @@ package com.synopsys.integration.pipeline.jenkins
 
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
 import com.synopsys.integration.pipeline.scm.GitStage
+import net.sf.json.JSONObject
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
@@ -35,11 +36,12 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    void checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll, String credentialsId) {
+    Map<String, String> checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll, String credentialsId) {
         String localBranch = branch.replace("origin/", "")
-        script.checkout changelog: changelog, poll: poll, scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
-                                                                extensions: [[$class: 'WipeWorkspace'], [$class: 'LocalBranch', localBranch: localBranch]],
-                                                                gitTool   : gitToolName, submoduleCfg: [], userRemoteConfigs: [[credentialsId: credentialsId, url: url]]]
+        Map<String, String> checkoutData = script.checkout changelog: changelog, poll: poll, scm: [$class    : 'GitSCM', branches: [[name: branch]], doGenerateSubmoduleConfigurations: false,
+                                                                                                   extensions: [[$class: 'WipeWorkspace'], [$class: 'LocalBranch', localBranch: localBranch]],
+                                                                                                   gitTool   : gitToolName, submoduleCfg: [], userRemoteConfigs: [[credentialsId: credentialsId, url: url]]]
+        return checkoutData
     }
 
     void closure(Closure closure) {
@@ -196,5 +198,15 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     @Override
     void writeFile(final String fileName, final String text) {
         script.writeFile(file: fileName, text: text)
+    }
+
+    @Override
+    void writeJsonFile(String fileName, Map data) {
+        script.writeJSON(file: fileName, json: data, pretty: 4)
+    }
+
+    @Override
+    JSONObject readJsonFile(String fileName) {
+        return script.readJSON(file: fileName)
     }
 }

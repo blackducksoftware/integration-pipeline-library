@@ -1,11 +1,11 @@
 package com.synopsys.integration.pipeline.jenkins
 
-
 import com.synopsys.integration.pipeline.logging.PipelineLogger
 
 class PipelineConfiguration implements Serializable {
     public PipelineLogger logger
     public JenkinsScriptWrapper scriptWrapper
+    private Map<String, String> buildDataMap = new HashMap<>()
 
     public PipelineConfiguration(PipelineLogger logger, JenkinsScriptWrapper scriptWrapper) {
         this.logger = logger
@@ -27,4 +27,13 @@ class PipelineConfiguration implements Serializable {
     void setLogger(final PipelineLogger logger) {
         this.logger = logger
     }
+
+    void addToBuildDataMap(String key, String value) {
+        buildDataMap.put(key, value)
+    }
+
+    Map<String, String> getBuildDataMap() {
+        return buildDataMap
+    }
+
 }

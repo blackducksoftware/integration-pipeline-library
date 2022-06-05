@@ -14,7 +14,7 @@ class GradleStage extends Stage {
     GradleStage(PipelineConfiguration pipelineConfiguration, String stageName) {
         super(pipelineConfiguration, stageName)
     }
-    
+
     @Override
     void stageExecution() throws PipelineException, Exception {
         getPipelineConfiguration().getLogger().info("running gradle ${gradleExe} ${gradleOptions}")
