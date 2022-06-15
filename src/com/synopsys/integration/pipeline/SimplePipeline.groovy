@@ -76,10 +76,6 @@ class SimplePipeline extends Pipeline {
         this.commonRunDirectory = commonRunDirectory
     }
 
-    GithubReleaseStage2 addGithubReleaseStage2(String stageName) {
-        GithubReleaseStage2 githubReleaseStage2 = new GithubReleaseStage2(getPipelineConfiguration(), stageName)
-        return addCommonStage(githubReleaseStage2)
-    }
 
     ArchiveStage addArchiveStage(String archiveFilePattern) {
         return addArchiveStage('Archive', archiveFilePattern)
@@ -205,6 +201,11 @@ class SimplePipeline extends Pipeline {
     GithubReleaseStage addGithubReleaseStageByPattern(String stageName, String branch, String artifactPattern, String artifactDirectory) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), artifactPattern, artifactDirectory, branch)
         return addCommonStage(githubReleaseStage)
+    }
+
+    GithubReleaseStage2 addGithubReleaseStage2(String stageName) {
+        GithubReleaseStage2 githubReleaseStage2 = new GithubReleaseStage2(getPipelineConfiguration(), stageName)
+        return addCommonStage(githubReleaseStage2)
     }
 
     GitStage addGitStage(String url, String branch, boolean gitPolling) {
