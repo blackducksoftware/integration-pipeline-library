@@ -60,8 +60,6 @@ class SimplePipeline extends Pipeline {
         pipeline.setUrl(url)
         pipeline.setGithubCredentialsId(gitStage.getCredentialsId())
 
-        GithubReleaseStage2 grs2 = entry()
-
         return pipeline
     }
 
