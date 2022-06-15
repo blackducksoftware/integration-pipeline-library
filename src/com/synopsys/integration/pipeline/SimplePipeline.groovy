@@ -19,6 +19,7 @@ import com.synopsys.integration.pipeline.tools.DetectStage
 import com.synopsys.integration.pipeline.tools.DockerImage
 import com.synopsys.integration.pipeline.utilities.GradleUtils
 import com.synopsys.integration.pipeline.versioning.GithubReleaseStage
+import com.synopsys.integration.pipeline.versioning.GithubReleaseStage2
 import com.synopsys.integration.pipeline.versioning.NextSnapshotStage
 import com.synopsys.integration.pipeline.versioning.RemoveSnapshotStage
 import org.apache.commons.lang3.BooleanUtils
@@ -59,6 +60,8 @@ class SimplePipeline extends Pipeline {
         pipeline.setUrl(url)
         pipeline.setGithubCredentialsId(gitStage.getCredentialsId())
 
+        GithubReleaseStage2 grs2 = entry()
+
         return pipeline
     }
 
@@ -73,6 +76,11 @@ class SimplePipeline extends Pipeline {
     SimplePipeline(CpsScript script, String commonRunDirectory) {
         super(script)
         this.commonRunDirectory = commonRunDirectory
+    }
+
+    GithubReleaseStage2 addGithubReleaseStage2(String stageName) {
+        GithubReleaseStage2 githubReleaseStage2 = new GithubReleaseStage2(getPipelineConfiguration(), stageName)
+        return addCommonStage(githubReleaseStage2)
     }
 
     ArchiveStage addArchiveStage(String archiveFilePattern) {
