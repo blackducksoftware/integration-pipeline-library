@@ -204,7 +204,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStage2 addGithubReleaseStage2(String stageName) {
-        GithubReleaseStage2 githubReleaseStage2 = new GithubReleaseStage2(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE))
+        GithubReleaseStage2 githubReleaseStage2 = new GithubReleaseStage2(getPipelineConfiguration(), stageName)
         return addCommonStage(githubReleaseStage2)
     }
 
