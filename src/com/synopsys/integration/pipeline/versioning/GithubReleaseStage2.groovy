@@ -12,44 +12,25 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 class GithubReleaseStage2 extends Stage{
-    public static final String accept = 'application/vnd.github.v3+json'
-    public static final String DEFAULT_GITHUB_OWNER = 'blackducksoftware'
-    public static final String DEFAULT_RELEASE_MESSAGE = 'Auto Release'
-    public static final String DEFAULT_SCRIPT_URL = 'https://github.com/blackducksoftware/github-auto-release/releases/download/2.1.0/github_auto_release.sh'
-
-    private final boolean runRelease
-    private final String artifactFile
-    private final String artifactPattern
-    private final String artifactDirectory
-    private final String branch
-
-    private String gitToolName = GitStage.DEFAULT_GIT_TOOL
-    private String owner = DEFAULT_GITHUB_OWNER
-    private String releaseDescription = DEFAULT_RELEASE_MESSAGE
-    private String releaseScriptUrl = DEFAULT_SCRIPT_URL
-    private String project = null
-
-    //private String owner
+    private String owner
     private String repo
     private String tag_name
     private String target_commitish
-    private String name
+    private String name2
     private String body
 
-    GithubReleaseStage2 (PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease) {
+    GithubReleaseStage2 (PipelineConfiguration pipelineConfiguration, String stageName) {
         super(pipelineConfiguration, stageName)
-        this.runRelease = runRelease
     }
 
     @Override
     void stageExecution() throws PipelineException, Exception {
-        setOwner("github848")
-        setRepo("REPO")
-        settagname("v1.0.5")
-        setName("Bob")
-        setBody("Testing from repository")
-
         try {
+            setOwner("github848")
+            setRepo("REPO")
+            settagname("v1.0.5")
+            setName("Bob")
+            setBody("Testing from repository")
             println("Hello")
             //getPipelineConfiguration().getScriptWrapper().executeCommandWithException(commandLines.join(" \n"))
         } catch (Exception e) {
@@ -90,11 +71,11 @@ class GithubReleaseStage2 extends Stage{
     }
 
     String getName() {
-        return name
+        return name2
     }
 
     void setName(String nam) {
-        name = nam
+        name2= nam
     }
 
     String getBody() {
