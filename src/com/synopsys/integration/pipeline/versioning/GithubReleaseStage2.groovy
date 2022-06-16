@@ -4,6 +4,7 @@ import com.synopsys.integration.model.GithubBranchModel
 import com.synopsys.integration.pipeline.exception.GitHubReleaseException
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.exception.PrepareForReleaseException
+import com.synopsys.integration.pipeline.scm.GitStage
 import com.synopsys.integration.utilities.GithubBranchParser
 import org.apache.commons.lang3.StringUtils
 import com.synopsys.integration.pipeline.exception.PipelineException
@@ -12,6 +13,21 @@ import com.synopsys.integration.pipeline.model.Stage
 
 class GithubReleaseStage2 extends Stage{
     public static final String accept = 'application/vnd.github.v3+json'
+    public static final String DEFAULT_GITHUB_OWNER = 'blackducksoftware'
+    public static final String DEFAULT_RELEASE_MESSAGE = 'Auto Release'
+    public static final String DEFAULT_SCRIPT_URL = 'https://github.com/blackducksoftware/github-auto-release/releases/download/2.1.0/github_auto_release.sh'
+
+    private final boolean runRelease
+    private final String artifactFile
+    private final String artifactPattern
+    private final String artifactDirectory
+    private final String branch
+
+    private String gitToolName = GitStage.DEFAULT_GIT_TOOL
+    private String owner = DEFAULT_GITHUB_OWNER
+    private String releaseDescription = DEFAULT_RELEASE_MESSAGE
+    private String releaseScriptUrl = DEFAULT_SCRIPT_URL
+    private String project = null
 
     private String owner
     private String repo
@@ -20,8 +36,9 @@ class GithubReleaseStage2 extends Stage{
     private String name
     private String body
 
-    GithubReleaseStage2 (PipelineConfiguration pipelineConfiguration, String stageName) {
+    GithubReleaseStage2 (PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease) {
         super(pipelineConfiguration, stageName)
+        this.runRelease = runRelease
     }
 
     @Override
