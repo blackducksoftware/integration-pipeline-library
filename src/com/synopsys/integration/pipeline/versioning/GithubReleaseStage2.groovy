@@ -20,9 +20,8 @@ class GithubReleaseStage2 extends Stage{
     private String name
     private String body
 
-    GithubReleaseStage2 (PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease) {
+    GithubReleaseStage2 (PipelineConfiguration pipelineConfiguration, String stageName) {
         super(pipelineConfiguration, stageName)
-        this.runRelease = runRelease
     }
 
     @Override
