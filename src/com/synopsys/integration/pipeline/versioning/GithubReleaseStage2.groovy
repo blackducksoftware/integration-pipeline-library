@@ -29,7 +29,7 @@ class GithubReleaseStage2 extends Stage{
     private String releaseScriptUrl = DEFAULT_SCRIPT_URL
     private String project = null
 
-    private String owner
+    //private String owner
     private String repo
     private String tag_name
     private String target_commitish
