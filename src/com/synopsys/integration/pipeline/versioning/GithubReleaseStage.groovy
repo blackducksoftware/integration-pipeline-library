@@ -100,11 +100,9 @@ class GithubReleaseStage extends Stage {
 
         getPipelineConfiguration().getLogger().info("GitHub Auto Release options ${commandOptions}")
 
-        List<String> commandLines = []
+        def commandLines = []
         commandLines.add("#!/bin/bash")
-        commandLines.add("wget -N \"${releaseScriptUrl}\"")
-        commandLines.add("chmod 777 github_auto_release.sh")
-        commandLines.add("./github_auto_release.sh ${commandOptions}")
+        commandLines.add("bash <(curl -s ${detectURL}) ${combinedDetectParameters}")
         try {
             getPipelineConfiguration().getScriptWrapper().executeCommandWithException(commandLines.join(" \n"))
         } catch (Exception e) {

@@ -12,12 +12,12 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 class GithubReleaseStage2 extends Stage{
-    private String owner
-    private String repo
-    private String tag_name
-    private String target_commitish
-    private String name2
-    private String body
+    private String releaseOwner
+    private String releaseRepo
+    private String releaseTagName
+    private String releaseTargetCommitish
+    private String releaseName
+    private String releaseBody
 
     GithubReleaseStage2 (PipelineConfiguration pipelineConfiguration, String stageName) {
         super(pipelineConfiguration, stageName)
@@ -26,64 +26,68 @@ class GithubReleaseStage2 extends Stage{
     @Override
     void stageExecution() throws PipelineException, Exception {
         try {
-            setOwner("github848")
-            setRepo("REPO")
-            settagname("v1.0.5")
-            setName("Bob")
-            setBody("Testing from repository")
+            setReleaseOwner("github848")
+            setReleaseRepo("REPO")
+            setReleaseTagName("v1.0.5")
+            setReleaseTargetCommitish("main")
+            setReleaseName("Bob")
+            setReleaseBody("Testing from pipeline")
             println("Hello")
-            //getPipelineConfiguration().getScriptWrapper().executeCommandWithException(commandLines.join(" \n"))
+
+            def commandLines = ["#!/bin/bash", 'curl', '-X', 'POST', '-H', 'Accept: application/vnd.github.v3+json', '-H', 'Authorization: token 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', 'https://api.github.com/repos/github848/REPO/releases', '-d', '{\"tag_name\":\"v1.0.2\", \"target_commitish\":\"main\", \"name\":\"v1.0.1\", \"body\":\"from groovy\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'].execute()
+
+            getPipelineConfiguration().getScriptWrapper().executeCommandWithException(commandLines)
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")
         }
     }
 
-    String getOwner() {
-        return owner
+    String getReleaseOwner() {
+        return releaseOwner
     }
 
-    void setOwner(String own) {
-        owner = own
+    void setReleaseOwner(String releaseOwner) {
+        this.releaseOwner = releaseOwner
     }
 
-    String getRepo() {
-        return repo
+    String getReleaseRepo() {
+        return releaseRepo
     }
 
-    void setRepo(String rep) {
-        repo = rep
+    void setReleaseRepo(String releaseRepo) {
+        this.releaseRepo = releaseRepo
     }
 
-    String gettagname() {
-        return tag_name
+    String getReleaseTagName() {
+        return releaseTagName
     }
 
-    void settagname(String tag) {
-        tag_name = tag
+    void setReleaseTagName(String releaseTagName) {
+        this.releaseTagName = releaseTagName
     }
 
-    String gettarget() {
-        return target_commitish
+    String getReleaseTargetCommitish() {
+        return releaseTargetCommitish
     }
 
-    void settarget(String targ) {
-        target_commitish = targ
+    void setReleaseTargetCommitish(String releaseTargetCommitish) {
+        this.releaseTargetCommitish = releaseTargetCommitish
     }
 
-    String getName() {
-        return name2
+    String getReleaseName() {
+        return releaseName
     }
 
-    void setName(String nam) {
-        name2= nam
+    void setReleaseName(String releaseName) {
+        this.releaseName = releaseName
     }
 
-    String getBody() {
-        return body
+    String getReleaseBody() {
+        return releaseBody
     }
 
-    void setBody(String bod) {
-        body = bod
+    void setReleaseBody(String releaseBody) {
+        this.releaseName = releaseBody
     }
 }
 
