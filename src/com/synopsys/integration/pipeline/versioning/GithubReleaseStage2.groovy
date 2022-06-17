@@ -34,7 +34,7 @@ class GithubReleaseStage2 extends Stage{
             setReleaseBody("Testing from pipeline")
             println("Hello")
 
-            def commandLines = ["#!/bin/bash", 'curl', '-X', 'POST', '-H', 'Accept: application/vnd.github.v3+json', '-H', 'Authorization: token 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', 'https://api.github.com/repos/github848/REPO/releases', '-d', '{\"tag_name\":\"v1.0.2\", \"target_commitish\":\"main\", \"name\":\"v1.0.1\", \"body\":\"from groovy\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'].execute()
+            def commandLines = ['curl', '-X', 'POST', '-H', 'Accept: application/vnd.github.v3+json', '-H', 'Authorization: token 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', 'https://api.github.com/repos/github848/REPO/releases', '-d', '{\"tag_name\":\"v1.0.2\", \"target_commitish\":\"main\", \"name\":\"v1.0.1\", \"body\":\"from groovy\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'].execute()
 
             getPipelineConfiguration().getScriptWrapper().executeCommandWithException(commandLines)
         } catch (Exception e) {
