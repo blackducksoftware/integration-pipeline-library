@@ -36,7 +36,7 @@ class GithubReleaseStage2 extends Stage{
             //println("Hello")
 
             getPipelineConfiguration().getLogger().info("anything")
-            String stringCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/github848/REPO/releases -d '{\"tag_name\":\"v1.0.11\", \"target_commitish\":\"main\", \"name\":\"v1.0.11\", \"body\":\"from groovy, joining as string\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'"
+            String stringCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/github848/REPO/releases -d '{\"tag_name\":\"v1.0.12\", \"target_commitish\":\"main\", \"name\":\"v1.0.12\", \"body\":\"from the pipeline\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'"
 
             def commandLines = []
             commandLines.add("#!/bin/bash")
