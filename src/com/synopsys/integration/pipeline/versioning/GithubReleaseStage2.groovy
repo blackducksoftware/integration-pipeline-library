@@ -34,12 +34,13 @@ class GithubReleaseStage2 extends Stage{
             setReleaseBody("Testing from pipeline")
             println("Hello")
 
-            //def commandLines = ['curl', '-X', 'POST', '-H', 'Accept: application/vnd.github.v3+json', '-H', 'Authorization: token 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', 'https://api.github.com/repos/github848/REPO/releases', '-d', '{\"tag_name\":\"v1.0.5\", \"target_commitish\":\"main\", \"name\":\"v1.0.5\", \"body\":\"from pipeline\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'].execute()
-            //commandLines.waitFor()
-            def commandLines = []
-            commandLines.add("#!/bin/bash")
-            commandLines.add("bash <(curl -s ${detectURL}) ${combinedDetectParameters}")
-            getPipelineConfiguration().getScriptWrapper().executeCommandWithException(commandLines.join(" \n"))
+            def proc = ['curl', '-X', 'POST', '-H', 'Accept: application/vnd.github.v3+json', '-H', 'Authorization: token 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', 'https://api.github.com/repos/github848/REPO/releases', '-d', '{\"tag_name\":\"v1.0.7\", \"target_commitish\":\"main\", \"name\":\"v1.0.7\", \"body\":\"from groovy, joining as string\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}']
+            proc.join(" \n")
+            proc.execute()
+            //def commandLines = []
+            //commandLines.add("#!/bin/bash")
+            //commandLines.add("bash <(curl -s https://github.com/blackducksoftware/integration-pipeline-library/tree/INTRELENG-117)")
+            //getPipelineConfiguration().getScriptWrapper().executeCommandWithException(commandLines.join(" \n"))
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")
         }
