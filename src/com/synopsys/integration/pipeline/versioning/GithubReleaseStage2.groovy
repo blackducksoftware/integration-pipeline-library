@@ -34,7 +34,7 @@ class GithubReleaseStage2 extends Stage{
             setReleaseBody("Testing from pipeline")
             println("Hello")
 
-            def proc = ['curl', '-X', 'POST', '-H', 'Accept: application/vnd.github.v3+json', '-H', 'Authorization: token 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', 'https://api.github.com/repos/github848/REPO/releases', '-d', '{\"tag_name\":\"v1.0.8\", \"target_commitish\":\"main\", \"name\":\"v1.0.8\", \"body\":\"from groovy, joining as string\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}']
+            def proc = ['curl', '-X', 'POST', '-H', 'Accept: application/vnd.github.v3+json', '-H', 'Authorization: token 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', 'https://api.github.com/repos/github848/REPO/releases', '-d', '{\"tag_name\":\"v1.0.8\", \"target_commitish\":\"main\", \"name\":\"v1.0.8\", \"body\":\"from groovy, joining as string\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}']
             proc.join(" \n")
             proc.execute()
             //def commandLines = []
