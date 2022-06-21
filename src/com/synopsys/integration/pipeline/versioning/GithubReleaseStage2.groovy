@@ -29,14 +29,14 @@ class GithubReleaseStage2 extends Stage{
         try {
             setReleaseOwner("github848")
             setReleaseRepo("REPO")
-            setReleaseTagName("v1.0.5")
+            setReleaseTagName()
             setReleaseTargetCommitish("main")
             setReleaseName("Bob")
             setReleaseBody("Testing from pipeline")
             //println("Hello")
 
             getPipelineConfiguration().getLogger().info("anything")
-            String stringCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/github848/REPO/releases -d '{\"tag_name\":\"v1.0.9\", \"target_commitish\":\"main\", \"name\":\"v1.0.9\", \"body\":\"from groovy, joining as string\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'"
+            String stringCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/github848/REPO/releases -d '{\"tag_name\":\"v1.0.11\", \"target_commitish\":\"main\", \"name\":\"v1.0.11\", \"body\":\"from groovy, joining as string\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'"
 
             def commandLines = []
             commandLines.add("#!/bin/bash")
