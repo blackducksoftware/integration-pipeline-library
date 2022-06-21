@@ -11,6 +11,8 @@ import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
+import java.text.SimpleDateFormat
+
 class GithubReleaseStage2 extends Stage{
     private String releaseOwner
     private String releaseRepo
@@ -29,14 +31,15 @@ class GithubReleaseStage2 extends Stage{
         try {
             setReleaseOwner("github848")
             setReleaseRepo("REPO")
-            setReleaseTagName()
+            String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
+            setReleaseTagName(timeStamp)
             setReleaseTargetCommitish("main")
             setReleaseName("Bob")
             setReleaseBody("Testing from pipeline")
             //println("Hello")
 
             getPipelineConfiguration().getLogger().info("anything")
-            String stringCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/github848/REPO/releases -d '{\"tag_name\":\"v1.0.12\", \"target_commitish\":\"main\", \"name\":\"v1.0.12\", \"body\":\"from the pipeline\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'"
+            String stringCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/github848/REPO/releases -d '{\"tag_name\":${getReleaseTagName()}, \"target_commitish\":\"main\", \"name\":${getReleaseTagName()}, \"body\":\"from the pipeline\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'"
 
             def commandLines = []
             commandLines.add("#!/bin/bash")
