@@ -33,6 +33,7 @@ class GithubReleaseStage2 extends Stage{
             setReleaseRepo("REPO")
             String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
             setReleaseTagName(timeStamp)
+            //setting branch
             setReleaseTargetCommitish("main")
             setReleaseName("Bob")
             setReleaseBody("Testing from pipeline")
@@ -45,7 +46,7 @@ class GithubReleaseStage2 extends Stage{
             commandLines.add("#!/bin/bash")
             commandLines.add("bash <(${stringCommandLines})")
 
-            def output = getPipelineConfiguration().getScriptWrapper().executeCommand(commandLines.join(" \n"), true)
+            def output = getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(commandLines.join(" \n"), true)
             getPipelineConfiguration().getLogger().info(output)
 
 
