@@ -36,7 +36,7 @@ class GithubReleaseStage2 extends Stage{
             //setting branch
             setReleaseTargetCommitish("main")
             setReleaseName("Bob")
-            setReleaseBody("Testing from pipeline")
+            setReleaseBody("Testing from pipeline -- with HTTP check")
             //println("Hello")
 
             getPipelineConfiguration().getLogger().info("anything")
