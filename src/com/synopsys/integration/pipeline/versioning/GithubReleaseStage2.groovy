@@ -46,7 +46,7 @@ class GithubReleaseStage2 extends Stage{
             commandLines.add("#!/bin/bash")
             commandLines.add("bash <(${stringCommandLines})")
 
-            def output = getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(commandLines.join(" \n"), true)
+            def output = getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(commandLines.join(" \n"), '201')
             getPipelineConfiguration().getLogger().info(output)
 
 

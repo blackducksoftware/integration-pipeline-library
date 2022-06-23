@@ -95,8 +95,13 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         String receivedHttpStatusCode = stdOut.substring(stdOut.length() - 3)
 
         // If receivedHttpStatusCode != expectedHttpStatusCode throw. Otherwise return jsonOutput
-
-        return jsonOutput
+        if (!receivedHttpStatusCode.equals(expectedHttpStatusCode)
+        {
+            throw new Exception("not successful HTTP 201")
+        }
+        else{
+            return jsonOutput
+        }
     }
 
     @Override
