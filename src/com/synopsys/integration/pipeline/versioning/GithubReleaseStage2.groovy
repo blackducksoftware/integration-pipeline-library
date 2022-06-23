@@ -36,7 +36,7 @@ class GithubReleaseStage2 extends Stage{
             //setting branch
             setReleaseTargetCommitish("main")
             setReleaseName("Bob")
-            setReleaseBody("Testing from pipeline -- with HTTP check")
+            setReleaseBody("Testing from pipeline -- with HTTP check 2")
             //println("Hello")
 
             getPipelineConfiguration().getLogger().info("anything")
@@ -46,7 +46,7 @@ class GithubReleaseStage2 extends Stage{
             commandLines.add("#!/bin/bash")
             commandLines.add("bash <(${stringCommandLines})")
 
-            def output = getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(commandLines.join(" \n"), "201")
+            def output = getPipelineConfiguration().getScriptWrapper().executeCommand(commandLines.join(" \n"), true)
             getPipelineConfiguration().getLogger().info(output)
 
 
