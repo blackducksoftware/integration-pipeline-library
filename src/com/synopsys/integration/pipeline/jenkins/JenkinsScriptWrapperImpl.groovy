@@ -89,6 +89,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         // New line for http_code??
         String newCommand = command + " --write-out %{http_code}"
         String stdOut = executeCommand(newCommand, true)
+        println(stdOut)
 
         // Edit stdOut into 2 pieces: 1st is the json, 2nd is the http_status_code
         String jsonOutput = stdOut//.substring(0, stdOut.length() - 3)
