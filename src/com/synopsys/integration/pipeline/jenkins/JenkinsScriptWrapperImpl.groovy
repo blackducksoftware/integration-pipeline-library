@@ -85,14 +85,16 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    void executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode, String jsonResponse) {
+    void executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode, String jsonResponseFileName) {
         // adding the http code checker command and sending output into jsonResponse file
-        String newCommand = command + " -o ${jsonResponse} -w %{http_code}"
+        String newCommand = command + " -o ${jsonResponseFileName} -w %{http_code}"
         String receivedHttpStatusCode = executeCommand(newCommand, true)
 
-        // If receivedHttpStatusCode != expectedHttpStatusCode throw. Otherwise return jsonOutput. 201 is the successcode
+        archiveArtifacts(jsonResponseFileName)
+
+        // If receivedHttpStatusCode != expectedHttpStatusCode throw. 201 is the successcode
         if (!receivedHttpStatusCode.equals(expectedHttpStatusCode)) {
-            throw new Exception("Did not return 201 HTTP code, not successful")
+            throw new Exception("Did not return ${expectedHttpStatusCode} HTTP code, not successful")
         }
     }
 

@@ -41,24 +41,13 @@ class GithubReleaseStage2 extends Stage{
             setReleaseTargetCommitish("main")
             setReleaseName("Bob")
             setReleaseBody("Testing from pipeline -- with HTTP check 2")
-            //println("Hello")
 
             getPipelineConfiguration().getLogger().info("anything")
-            String stringCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getReleaseTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
-
+            String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getReleaseTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
 
             getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, "201", RELEASE_FILE)
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE) as String)
 
-
-            //def commandLines = ['curl', '-X', 'POST', '-H', 'Accept: application/vnd.github.v3+json', '-H', 'Authorization: token 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', 'https://api.github.com/repos/github848/REPO/releases', '-d', '{\"tag_name\":\"v1.0.8\", \"target_commitish\":\"main\", \"name\":\"v1.0.8\", \"body\":\"from groovy, joining as string\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}']
-            //proc.join(" \n")
-            //proc.execute()
-            //getPipelineConfiguration().getScriptWrapper().executeCommandWithException(commandLines.join(" \n"))
-            //def commandLines = []
-            //commandLines.add("#!/bin/bash")
-            //commandLines.add("bash <(curl -s https://github.com/blackducksoftware/integration-pipeline-library/tree/INTRELENG-117)")
-            //getPipelineConfiguration().getScriptWrapper().executeCommandWithException(commandLines.join(" \n"))
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")
         }
