@@ -98,7 +98,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         //if (receivedHttpStatusCode != expectedHttpStatusCode) {
         //    throw new Exception("not successful HTTP 201")
         //} else{
-        return jsonOutput
+        return newCommand
         //}
     }
 
