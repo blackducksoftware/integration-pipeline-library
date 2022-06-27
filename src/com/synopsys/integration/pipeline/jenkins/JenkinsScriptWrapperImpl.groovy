@@ -86,7 +86,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
 
     @Override
     String executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode) {
-        // New line for http_code??
+        // substringing away the bin/bash stuff, adding the http code checker command
         String newCommand = command.substring(20, command.length()-1) + " -w %{http_code}"
         String stdOut = executeCommand(newCommand, true)
 
@@ -94,9 +94,9 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         String jsonOutput = stdOut.substring(0, stdOut.length() - 3)
         String receivedHttpStatusCode = stdOut.substring(stdOut.length() - 3)
 
-        // If receivedHttpStatusCode != expectedHttpStatusCode throw. Otherwise return jsonOutput
+        // If receivedHttpStatusCode != expectedHttpStatusCode throw. Otherwise return jsonOutput. 201 is the successcode
         if (receivedHttpStatusCode != expectedHttpStatusCode) {
-            throw new Exception("not successful HTTP 201")
+            throw new Exception("Did not return 201 HTTP code, not successful")
         } else{
             return jsonOutput
         }
