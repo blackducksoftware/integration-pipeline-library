@@ -14,6 +14,7 @@ import com.synopsys.integration.pipeline.model.Stage
 import java.text.SimpleDateFormat
 
 class GithubReleaseStage2 extends Stage{
+    public static String RELEASE_FILE = 'release.json'
     private String releaseOwner
     private String releaseRepo
     private String releaseTagName
@@ -34,7 +35,7 @@ class GithubReleaseStage2 extends Stage{
         try {
             setReleaseOwner("github848")
             setReleaseRepo("REPO")
-            String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
+            String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date())
             setReleaseTagName(timeStamp)
             //setting branch
             setReleaseTargetCommitish("main")
@@ -46,9 +47,8 @@ class GithubReleaseStage2 extends Stage{
             String stringCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getReleaseTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
 
 
-            def output = getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, "201")
-            getPipelineConfiguration().getLogger().info("start")
-            getPipelineConfiguration().getLogger().info(output)
+            getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, "201", RELEASE_FILE)
+            getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE) as String)
 
 
             //def commandLines = ['curl', '-X', 'POST', '-H', 'Accept: application/vnd.github.v3+json', '-H', 'Authorization: token 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', 'https://api.github.com/repos/github848/REPO/releases', '-d', '{\"tag_name\":\"v1.0.8\", \"target_commitish\":\"main\", \"name\":\"v1.0.8\", \"body\":\"from groovy, joining as string\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}']

@@ -31,7 +31,7 @@ interface JenkinsScriptWrapper extends Serializable {
 
     String executeCommand(String command, Boolean returnStdout)
 
-    String executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode)
+    void executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode, String jsonResponse)
 
     void executeCommandWithException(String command) throws CommandExecutionException
 
