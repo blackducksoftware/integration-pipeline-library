@@ -50,7 +50,7 @@ class GithubReleaseStage2 extends Stage{
             commandLines.add("bash <(${stringCommandLines})")
 
             def output = getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(commandLines.join(" \n"), "201")
-            getPipelineConfiguration().getLogger().info(output)
+            getPipelineConfiguration().getLogger().info("newCommand")
 
 
             //def commandLines = ['curl', '-X', 'POST', '-H', 'Accept: application/vnd.github.v3+json', '-H', 'Authorization: token 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', 'https://api.github.com/repos/github848/REPO/releases', '-d', '{\"tag_name\":\"v1.0.8\", \"target_commitish\":\"main\", \"name\":\"v1.0.8\", \"body\":\"from groovy, joining as string\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}']
