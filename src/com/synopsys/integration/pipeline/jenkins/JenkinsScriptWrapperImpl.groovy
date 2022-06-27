@@ -87,7 +87,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     @Override
     String executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode) {
         // New line for http_code??
-        String newCommand = command + " -w %{http_code}"
+        String newCommand = command
         String stdOut = executeCommand(newCommand)
 
         // Edit stdOut into 2 pieces: 1st is the json, 2nd is the http_status_code
