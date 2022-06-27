@@ -43,13 +43,14 @@ class GithubReleaseStage2 extends Stage{
             //println("Hello")
 
             getPipelineConfiguration().getLogger().info("anything")
-            String stringCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getReleaseTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
+            String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getReleaseTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
 
             def commandLines = []
             commandLines.add("#!/bin/bash")
             commandLines.add("bash <(${stringCommandLines})")
 
             def output = getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(commandLines.join(" \n"), "201")
+            getPipelineConfiguration().getLogger().info("start")
             getPipelineConfiguration().getLogger().info(output)
 
 
