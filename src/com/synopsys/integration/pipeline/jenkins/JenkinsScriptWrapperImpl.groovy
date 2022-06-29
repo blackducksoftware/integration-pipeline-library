@@ -90,6 +90,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         String newCommand = command + " -o ${jsonResponseFileName} -w %{http_code}"
         String receivedHttpStatusCode = executeCommand(newCommand, true)
 
+        //adding artifact to the release
         archiveArtifacts(jsonResponseFileName)
 
         // If receivedHttpStatusCode != expectedHttpStatusCode throw. 201 is the successcode
