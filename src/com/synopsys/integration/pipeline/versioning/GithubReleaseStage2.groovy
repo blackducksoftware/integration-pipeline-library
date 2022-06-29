@@ -49,7 +49,7 @@ class GithubReleaseStage2 extends Stage{
             getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, "201", RELEASE_FILE)
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE) as String)
 
-            //String assetCommandLines = "curl -X POST -H \"Authorization: token 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\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"build/lib/release-test-0.1.134-SNAPSHOT.jar\")\" -H \"Content-Length: \$(wc -c <\"build/lib/release-test-0.1.134-SNAPSHOT.jar\" | xargs)\" -T \"build/lib/release-test-0.1.134-SNAPSHOT.jar\" \"https://uploads.github.com/repos/github848/REPO/releases/70680724/assets?name=testgroovy.txt\" | cat"
+            //String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"build/lib/release-test-0.1.134-SNAPSHOT.jar\")\" -H \"Content-Length: \$(wc -c <\"build/lib/release-test-0.1.134-SNAPSHOT.jar\" | xargs)\" -T \"build/lib/release-test-0.1.134-SNAPSHOT.jar\" \"https://uploads.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases/70680724/assets?name=testgroovy.txt\" | cat"
             //getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE)
             //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(ASSET_FILE) as String)
 
