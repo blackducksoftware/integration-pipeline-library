@@ -95,7 +95,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
 
         // If receivedHttpStatusCode != expectedHttpStatusCode throw. 201 is the successcode
         if (!receivedHttpStatusCode.equals(expectedHttpStatusCode)) {
-            throw new Exception("Did not return ${expectedHttpStatusCode} HTTP code, not successful")
+            throw new Exception("Did not return ${expectedHttpStatusCode} HTTP code, not successful. Instead returned ${receivedHttpStatusCode}")
         }
     }
 
