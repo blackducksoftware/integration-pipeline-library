@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat
 class GithubAssetStage extends Stage{
     public static String RELEASE_FILE = 'release.json'
     public static String ASSET_FILE = 'assets.json'
+    private String githubToken
 
     GithubAssetStage(PipelineConfiguration pipelineConfiguration, String stageName) {
         super(pipelineConfiguration, stageName)
