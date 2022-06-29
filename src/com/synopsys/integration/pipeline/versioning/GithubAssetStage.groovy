@@ -23,6 +23,7 @@ class GithubAssetStage extends Stage{
             getPipelineConfiguration().getLogger().info("hello")
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE)["upload_url"] as String)
 
+            //taking the upload URL out of the json file from creating the release, and deleting the part at the end we don't want
             String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE)["upload_url"] as String)
             uploadUrl = uploadUrl.substring(0, uploadUrl.length() - 13)
 
