@@ -55,7 +55,7 @@ class GithubReleaseStage2 extends Stage{
             String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE)["upload_url"] as String)
             uploadUrl = uploadUrl.substring(0, uploadUrl.length() - 13)
 
-            String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"build/libs/release-test-0.1.134-SNAPSHOT.jar\")\" -H \"Content-Length: \$(wc -c <\"build/libs/release-test-0.1.134-SNAPSHOT.jar\" | xargs)\" -T \"build/libs/release-test-0.1.134-SNAPSHOT.jar\" \"${uploadUrl}?name=testgroovy.jar\"" //| cat"
+            String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"build/libs/release-test-0.1.134-SNAPSHOT.jar\")\" -H \"Content-Length: \$(wc -c <\"build/libs/release-test-0.1.134-SNAPSHOT.jar\" | xargs)\" -T \"build/libs/release-test-0.1.134-SNAPSHOT.jar\" \"${uploadUrl}?name=testgroovy.jar\""
             //getPipelineConfiguration().getLogger().info(assetCommandLines)
             getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE)
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(ASSET_FILE) as String)

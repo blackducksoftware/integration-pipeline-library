@@ -90,6 +90,8 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         String newCommand = command + " -o ${jsonResponseFileName} -w %{http_code}"
         String receivedHttpStatusCode = executeCommand(newCommand, true)
 
+        writeJsonFile(jsonResponseFileName, readJsonFile(jsonResponseFileName))
+
         //adding artifact to the release
         archiveArtifacts(jsonResponseFileName)
 
