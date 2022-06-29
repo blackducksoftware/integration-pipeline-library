@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat
 
 class GithubReleaseStage2 extends Stage{
     public static String RELEASE_FILE = 'release.json'
-    public static String ASSET_FILE = 'assets.json'
+    //public static String ASSET_FILE = 'assets.json'
     private String releaseOwner
     private String releaseRepo
     private String releaseTagName
@@ -27,9 +27,6 @@ class GithubReleaseStage2 extends Stage{
     GithubReleaseStage2 (PipelineConfiguration pipelineConfiguration, String stageName) {
         super(pipelineConfiguration, stageName)
     }
-
-
-
 
     @Override
     void stageExecution() throws PipelineException, Exception {
@@ -49,16 +46,16 @@ class GithubReleaseStage2 extends Stage{
             getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, "201", RELEASE_FILE)
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE) as String)
 
-            getPipelineConfiguration().getLogger().info("hello")
-            getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE)["upload_url"] as String)
+            //getPipelineConfiguration().getLogger().info("hello")
+            //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE)["upload_url"] as String)
 
-            String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE)["upload_url"] as String)
-            uploadUrl = uploadUrl.substring(0, uploadUrl.length() - 13)
+            //String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE)["upload_url"] as String)
+            //uploadUrl = uploadUrl.substring(0, uploadUrl.length() - 13)
 
-            String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"build/libs/release-test-0.1.134-SNAPSHOT.jar\")\" -H \"Content-Length: \$(wc -c <\"build/libs/release-test-0.1.134-SNAPSHOT.jar\" | xargs)\" -T \"build/libs/release-test-0.1.134-SNAPSHOT.jar\" \"${uploadUrl}?name=testgroovy.jar\""
+            //String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"build/libs/release-test-0.1.134-SNAPSHOT.jar\")\" -H \"Content-Length: \$(wc -c <\"build/libs/release-test-0.1.134-SNAPSHOT.jar\" | xargs)\" -T \"build/libs/release-test-0.1.134-SNAPSHOT.jar\" \"${uploadUrl}?name=testgroovy.jar\""
             //getPipelineConfiguration().getLogger().info(assetCommandLines)
-            getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE)
-            getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(ASSET_FILE) as String)
+            //getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE)
+            //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(ASSET_FILE) as String)
 
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")

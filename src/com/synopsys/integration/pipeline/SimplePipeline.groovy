@@ -18,6 +18,7 @@ import com.synopsys.integration.pipeline.setup.SetJdkStage
 import com.synopsys.integration.pipeline.tools.DetectStage
 import com.synopsys.integration.pipeline.tools.DockerImage
 import com.synopsys.integration.pipeline.utilities.GradleUtils
+import com.synopsys.integration.pipeline.versioning.GithubAssetStage
 import com.synopsys.integration.pipeline.versioning.GithubReleaseStage
 import com.synopsys.integration.pipeline.versioning.GithubReleaseStage2
 import com.synopsys.integration.pipeline.versioning.NextSnapshotStage
@@ -206,6 +207,11 @@ class SimplePipeline extends Pipeline {
     GithubReleaseStage2 addGithubReleaseStage2(String stageName) {
         GithubReleaseStage2 githubReleaseStage2 = new GithubReleaseStage2(getPipelineConfiguration(), stageName)
         return addCommonStage(githubReleaseStage2)
+    }
+
+    GithubAssetStage addGithubAssetStage(String stageName) {
+        GithubAssetStage githubAssetStage = new GithubAssetStage(getPipelineConfiguration(), stageName)
+        return addCommonStage(githubAssetStage)
     }
 
     GitStage addGitStage(String url, String branch, boolean gitPolling) {
