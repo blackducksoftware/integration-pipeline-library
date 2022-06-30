@@ -205,7 +205,13 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStage2 addGithubReleaseStage2(String stageName) {
+        return addGithubReleaseStage2(stageName, "")
+    }
+
+    GithubReleaseStage2 addGithubReleaseStage2(String stageName, String assetName) {
         GithubReleaseStage2 githubReleaseStage2 = new GithubReleaseStage2(getPipelineConfiguration(), stageName)
+        if (assetName.length() > 0)
+            addGithubAssetStage("Add Github Attachments")
         return addCommonStage(githubReleaseStage2)
     }
 
