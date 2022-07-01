@@ -53,11 +53,12 @@ class SimplePipeline extends Pipeline {
         pipeline.addCleanupStep(relativeDirectory)
         pipeline.addSetJdkStage(jdkToolName)
 
-        String gitBranch = pipeline.determineGitBranch(branch)
+        String gitBranch = branch
 
         if (isPopBuild) {
             pipeline.setDirectoryFromUrl(url)
         } else {
+            gitBranch = pipeline.determineGitBranch(branch)
             pipeline.setDirectoryFromBranch(gitBranch)
         }
 
