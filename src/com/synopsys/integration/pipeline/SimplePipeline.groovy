@@ -45,12 +45,22 @@ class SimplePipeline extends Pipeline {
     public static final String ENG_HUB_PRD_TOKEN = 'ENG_HUB_PRD_TOKEN'
 
     static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling) {
+        return COMMON_PIPELINE(script, branch, relativeDirectory, url, jdkToolName, gitPolling, false)
+    }
+
+    static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling, boolean isPopBuild) {
         SimplePipeline pipeline = new SimplePipeline(script, relativeDirectory)
         pipeline.addCleanupStep(relativeDirectory)
         pipeline.addSetJdkStage(jdkToolName)
 
         String gitBranch = pipeline.determineGitBranch(branch)
-        pipeline.setDirectoryFromBranch(gitBranch)
+
+        if (isPopBuild) {
+            pipeline.setDirectoryFromUrl(url)
+        } else {
+            pipeline.setDirectoryFromBranch(gitBranch)
+        }
+
         GitStage gitStage = pipeline.addGitStage(url, gitBranch, gitPolling)
         gitStage.setChangelog(true)
 
@@ -400,5 +410,11 @@ class SimplePipeline extends Pipeline {
             directory = StringUtils.substringAfterLast(branch, '/')
         }
         this.commonRunDirectory = directory
+    }
+
+    void setDirectoryFromUrl(String url) {
+        String inputUrl = StringUtils.substringAfterLast(url, '/')
+        inputUrl = StringUtils.substringBeforeLast(inputUrl, '.')
+        this.commonRunDirectory = inputUrl
     }
 }
