@@ -204,8 +204,8 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(githubReleaseStage)
     }
 
-    GithubReleaseStage2 addGithubReleaseStage2(String stageName) {
-        return addGithubReleaseStage2(stageName, "")
+    GithubReleaseStage2 addGithubReleaseStage2(String stageName, String releaseOwner, String releaseRepo) {
+        return addGithubReleaseStage2(stageName, "", releaseOwner, releaseRepo)
     }
 
     GithubReleaseStage2 addGithubReleaseStage2(String stageName, String assetName, String releaseOwner, String releaseRepo) {
