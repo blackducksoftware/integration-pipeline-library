@@ -78,6 +78,8 @@ class SimplePipeline extends Pipeline {
     public String commonRunDirectory
     public String url
     public String githubCredentialsId
+    public String releaseOwner
+    public String releaseRepo
 
     SimplePipeline(CpsScript script) {
         this(script, '.')
@@ -215,11 +217,11 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(githubReleaseStage)
     }
 
-    GithubReleaseStage2 addGithubReleaseStage2(String stageName, String releaseOwner, String releaseRepo) {
-        return addGithubReleaseStage2(stageName, "", releaseOwner, releaseRepo)
+    GithubReleaseStage2 addGithubReleaseStage2(String stageName) {
+        return addGithubReleaseStage2(stageName, "")
     }
 
-    GithubReleaseStage2 addGithubReleaseStage2(String stageName, String assetName, String releaseOwner, String releaseRepo) {
+    GithubReleaseStage2 addGithubReleaseStage2(String stageName, String assetName) {
         GithubReleaseStage2 githubReleaseStage2 = new GithubReleaseStage2(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo)
         if (assetName.length() > 0)
             addGithubAssetStage("Add Github Attachments", assetName)
@@ -414,6 +416,12 @@ class SimplePipeline extends Pipeline {
 
     void setUrl(final String url) {
         this.url = url
+        String removeHttp = url.substring(8, url.length())
+        if (removeHttp.substring(removeHttp.length() - 4, removeHttp.length()) == '.git')
+            removeHttp = removeHttp.substring(0, removeHttp.length() - 4)
+        String[] urlParameters = removeHttp.split("/")
+        releaseOwner = urlParameters[1]
+        releaseRepo = urlParameters[2]
     }
 
     String getGithubCredentialsId() {
