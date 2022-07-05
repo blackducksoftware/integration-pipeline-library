@@ -28,6 +28,7 @@ class GithubReleaseStage2 extends Stage{
         super(pipelineConfiguration, stageName)
         this.releaseOwner = releaseOwner
         this.releaseRepo = releaseRepo
+
     }
 
     @Override
@@ -37,7 +38,6 @@ class GithubReleaseStage2 extends Stage{
             setReleaseTagName(timeStamp)
             //setting branch
             setReleaseTargetCommitish("main")
-            setReleaseName("Bob")
             setReleaseBody("Auto Release")
 
             getPipelineConfiguration().getLogger().info("anything")
