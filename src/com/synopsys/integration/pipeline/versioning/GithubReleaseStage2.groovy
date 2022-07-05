@@ -37,8 +37,8 @@ class GithubReleaseStage2 extends Stage{
             String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date())
             setReleaseTagName(timeStamp)
             //setting branch
-            setReleaseTargetCommitish("main")
-            setReleaseBody("Auto Release")
+            setReleaseTargetCommitish("master")
+            setReleaseBody("Austin testing Auto Release")
 
             getPipelineConfiguration().getLogger().info("anything")
             String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getReleaseTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
