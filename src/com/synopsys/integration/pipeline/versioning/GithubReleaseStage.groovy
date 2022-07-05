@@ -14,6 +14,7 @@ class GithubReleaseStage extends Stage {
     public static final String DEFAULT_GITHUB_OWNER = 'blackducksoftware'
     public static final String DEFAULT_RELEASE_MESSAGE = 'Auto Release'
     public static final String DEFAULT_SCRIPT_URL = 'https://github.com/blackducksoftware/github-auto-release/releases/download/2.1.0/github_auto_release.sh'
+    public static final String GITHUB_RELEASE_VERSION = 'GITHUB_RELEASE_VERSION'
 
     private final boolean runRelease
     private final String artifactFile
@@ -62,9 +63,9 @@ class GithubReleaseStage extends Stage {
             getPipelineConfiguration().getLogger().info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
             return
         }
-        String version = getPipelineConfiguration().getScriptWrapper().getJenkinsProperty('GITHUB_RELEASE_VERSION')
+        String version = getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(GITHUB_RELEASE_VERSION)
         if (StringUtils.isBlank(version)) {
-            throw new PrepareForReleaseException('Could not find the "GITHUB_RELEASE_VERSION" environment variable. Will not perform the GitHub release.')
+            throw new PrepareForReleaseException("Could not find the \"${GITHUB_RELEASE_VERSION}\" environment variable. Will not perform the GitHub release.")
         }
         List<String> options = []
         options.add('-o')
