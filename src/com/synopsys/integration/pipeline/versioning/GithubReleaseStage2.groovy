@@ -24,38 +24,27 @@ class GithubReleaseStage2 extends Stage{
     private String releaseBody
     private String githubToken
 
-    GithubReleaseStage2 (PipelineConfiguration pipelineConfiguration, String stageName) {
+    GithubReleaseStage2 (PipelineConfiguration pipelineConfiguration, String stageName, String releaseOwner, String releaseRepo) {
         super(pipelineConfiguration, stageName)
+        this.releaseOwner = releaseOwner
+        this.releaseRepo = releaseRepo
     }
 
     @Override
     void stageExecution() throws PipelineException, Exception {
         try {
-            setReleaseOwner("github848")
-            setReleaseRepo("REPO")
             String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date())
             setReleaseTagName(timeStamp)
             //setting branch
             setReleaseTargetCommitish("main")
             setReleaseName("Bob")
-            setReleaseBody("Testing from pipeline -- with HTTP check 2")
+            setReleaseBody("Auto Release")
 
             getPipelineConfiguration().getLogger().info("anything")
             String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getReleaseTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
 
             getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, "201", RELEASE_FILE)
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE) as String)
-
-            //getPipelineConfiguration().getLogger().info("hello")
-            //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE)["upload_url"] as String)
-
-            //String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE)["upload_url"] as String)
-            //uploadUrl = uploadUrl.substring(0, uploadUrl.length() - 13)
-
-            //String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"build/libs/release-test-0.1.134-SNAPSHOT.jar\")\" -H \"Content-Length: \$(wc -c <\"build/libs/release-test-0.1.134-SNAPSHOT.jar\" | xargs)\" -T \"build/libs/release-test-0.1.134-SNAPSHOT.jar\" \"${uploadUrl}?name=testgroovy.jar\""
-            //getPipelineConfiguration().getLogger().info(assetCommandLines)
-            //getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE)
-            //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(ASSET_FILE) as String)
 
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")
@@ -66,16 +55,8 @@ class GithubReleaseStage2 extends Stage{
         return releaseOwner
     }
 
-    void setReleaseOwner(String releaseOwner) {
-        this.releaseOwner = releaseOwner
-    }
-
     String getReleaseRepo() {
         return releaseRepo
-    }
-
-    void setReleaseRepo(String releaseRepo) {
-        this.releaseRepo = releaseRepo
     }
 
     String getReleaseTagName() {
