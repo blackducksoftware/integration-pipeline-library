@@ -11,9 +11,11 @@ import java.text.SimpleDateFormat
 class GithubAssetStage extends Stage{
     public static String ASSET_FILE = 'assets.json'
     private String githubToken
+    private String assetName
 
-    GithubAssetStage(PipelineConfiguration pipelineConfiguration, String stageName) {
+    GithubAssetStage(PipelineConfiguration pipelineConfiguration, String stageName, String assetName) {
         super(pipelineConfiguration, stageName)
+        this.assetName = assetName
     }
 
     @Override
@@ -26,7 +28,7 @@ class GithubAssetStage extends Stage{
             String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage2.RELEASE_FILE)["upload_url"] as String)
             uploadUrl = uploadUrl.substring(0, uploadUrl.length() - 13)
 
-            String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"build/libs/release-test-0.1.134-SNAPSHOT.jar\")\" -H \"Content-Length: \$(wc -c <\"build/libs/release-test-0.1.134-SNAPSHOT.jar\" | xargs)\" -T \"build/libs/release-test-0.1.134-SNAPSHOT.jar\" \"${uploadUrl}?name=\$(basename build/libs/release-test-0.1.134-SNAPSHOT.jar)\""
+            String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName()}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName()}\" | xargs)\" -T \"${getAssetName()}\" \"${uploadUrl}?name=\$(basename ${getAssetName()})\""
             //getPipelineConfiguration().getLogger().info(assetCommandLines)
             getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE)
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(ASSET_FILE) as String)
@@ -42,6 +44,10 @@ class GithubAssetStage extends Stage{
 
     void setGithubToken(String githubToken) {
         this.githubToken = githubToken
+    }
+
+    String getAssetName() {
+        return assetName
     }
 }
 
