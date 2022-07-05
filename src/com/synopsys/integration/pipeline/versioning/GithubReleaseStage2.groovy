@@ -37,7 +37,7 @@ class GithubReleaseStage2 extends Stage{
             String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date())
             setReleaseTagName(timeStamp)
             //setting branch
-            setReleaseTargetCommitish("master")
+            setReleaseTargetCommitish("INTRELENG-117")
             setReleaseBody("Austin testing Auto Release")
 
             getPipelineConfiguration().getLogger().info("anything")
