@@ -42,7 +42,7 @@ class GithubReleaseStage2 extends Stage{
             setReleaseTargetCommitish("master")
             setReleaseBody("Austin testing Auto Release")
 
-            getPipelineConfiguration().getLogger().info(BUILD_FILE["GIT_LOCAL_BRANCH"] as String)
+            getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(BUILD_FILE)["GIT_LOCAL_BRANCH"] as String)
             getPipelineConfiguration().getLogger().info("anything")
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(GITHUB_RELEASE_VERSION))
 
