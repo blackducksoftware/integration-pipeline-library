@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat
 class GithubAssetStage extends Stage{
     public static String ASSET_FILE = 'assets.json'
     private String githubToken
-    private ArrayList<String> assetNames
+    private String[] assetNames
 
     GithubAssetStage(PipelineConfiguration pipelineConfiguration, String stageName, String[] assetNames) {
         super(pipelineConfiguration, stageName)
