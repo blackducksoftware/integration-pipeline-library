@@ -34,7 +34,7 @@ class GithubAssetStage extends Stage{
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(ASSET_FILE) as String)
 
             getPipelineConfiguration().getLogger().info("hello")
-            getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage2.BUILD_FILE)["GIT_LOCAL_BRANCH"] as String)
+            //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage2.BUILD_FILE)["GIT_LOCAL_BRANCH"] as String)
 
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")
