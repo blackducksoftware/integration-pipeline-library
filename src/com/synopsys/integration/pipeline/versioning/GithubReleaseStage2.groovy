@@ -24,7 +24,6 @@ class GithubReleaseStage2 extends Stage{
     private String releaseName
     private String releaseBody
     private String githubToken
-    public static final String GITHUB_RELEASE_VERSION = 'GITHUB_RELEASE_VERSION'
 
     GithubReleaseStage2 (PipelineConfiguration pipelineConfiguration, String stageName, String releaseOwner, String releaseRepo) {
         super(pipelineConfiguration, stageName)
@@ -43,7 +42,7 @@ class GithubReleaseStage2 extends Stage{
             setReleaseBody("Austin testing Auto Release")
 
             getPipelineConfiguration().getLogger().info("anything")
-            getPipelineConfiguration().getLogger().info("hello1" + getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(GITHUB_RELEASE_VERSION))
+            getPipelineConfiguration().getLogger().info("hello1" + getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(GithubReleaseStage.GITHUB_RELEASE_VERSION))
 
             String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getReleaseTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
 

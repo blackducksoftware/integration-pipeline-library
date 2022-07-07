@@ -32,7 +32,6 @@ class GithubAssetStage extends Stage{
                 String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName(i)}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName(i)}\" | xargs)\" -T \"${getAssetName(i)}\" \"${uploadUrl}?name=\$(basename ${getAssetName(i)})\""
                 //getPipelineConfiguration().getLogger().info(assetCommandLines)
                 getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheckNumber(assetCommandLines, "201", ASSET_FILE, i)
-                //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(ASSET_FILE) as String)
             }
 
             //String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName()}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName()}\" | xargs)\" -T \"${getAssetName()}\" \"${uploadUrl}?name=\$(basename ${getAssetName()})\""
