@@ -39,6 +39,7 @@ class GithubReleaseStage extends Stage{
             getPipelineConfiguration().getLogger().info("anything")
             //getPipelineConfiguration().getLogger().info("hello1" + getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(GithubReleaseStageLegacy.GITHUB_RELEASE_VERSION))
             getPipelineConfiguration().getLogger().info("hello1" + getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RemoveSnapshotStage.RELEASE_COMMIT_HASH))
+            getPipelineConfiguration().getLogger().info("hello1" + RemoveSnapshotStage.getBranch())
             
 
             String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getReleaseTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
