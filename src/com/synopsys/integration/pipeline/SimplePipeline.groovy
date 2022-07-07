@@ -19,8 +19,8 @@ import com.synopsys.integration.pipeline.tools.DetectStage
 import com.synopsys.integration.pipeline.tools.DockerImage
 import com.synopsys.integration.pipeline.utilities.GradleUtils
 import com.synopsys.integration.pipeline.versioning.GithubAssetStage
+import com.synopsys.integration.pipeline.versioning.GithubReleaseStageLegacy
 import com.synopsys.integration.pipeline.versioning.GithubReleaseStage
-import com.synopsys.integration.pipeline.versioning.GithubReleaseStage2
 import com.synopsys.integration.pipeline.versioning.NextSnapshotStage
 import com.synopsys.integration.pipeline.versioning.RemoveSnapshotStage
 import org.apache.commons.lang3.BooleanUtils
@@ -190,43 +190,43 @@ class SimplePipeline extends Pipeline {
         return emailPipelineWrapper
     }
 
-    GithubReleaseStage addGithubReleaseStage(String branch) {
-        return addGithubReleaseStage('GitHub Release', branch)
+    GithubReleaseStageLegacy addGithubReleaseStageLegacy(String branch) {
+        return addGithubReleaseStageLegacy('GitHub Release', branch)
     }
 
-    GithubReleaseStage addGithubReleaseStage(String stageName, String branch) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), branch)
+    GithubReleaseStageLegacy addGithubReleaseStageLegacy(String stageName, String branch) {
+        GithubReleaseStageLegacy githubReleaseStage = new GithubReleaseStageLegacy(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), branch)
         return addCommonStage(githubReleaseStage)
     }
 
-    GithubReleaseStage addGithubReleaseStageByFile(String branch, String artifactFile) {
+    GithubReleaseStageLegacy addGithubReleaseStageByFile(String branch, String artifactFile) {
         return addGithubReleaseStageByFile('GitHub Release', branch, artifactFile)
     }
 
-    GithubReleaseStage addGithubReleaseStageByFile(String stageName, String branch, String artifactFile) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), artifactFile, branch)
+    GithubReleaseStageLegacy addGithubReleaseStageByFile(String stageName, String branch, String artifactFile) {
+        GithubReleaseStageLegacy githubReleaseStage = new GithubReleaseStageLegacy(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), artifactFile, branch)
         return addCommonStage(githubReleaseStage)
     }
 
-    GithubReleaseStage addGithubReleaseStageByPattern(String branch, String artifactPattern, String artifactDirectory) {
+    GithubReleaseStageLegacy addGithubReleaseStageByPattern(String branch, String artifactPattern, String artifactDirectory) {
         return addGithubReleaseStageByPattern('GitHub Release', branch, artifactPattern, artifactDirectory)
     }
 
-    GithubReleaseStage addGithubReleaseStageByPattern(String stageName, String branch, String artifactPattern, String artifactDirectory) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), artifactPattern, artifactDirectory, branch)
+    GithubReleaseStageLegacy addGithubReleaseStageByPattern(String stageName, String branch, String artifactPattern, String artifactDirectory) {
+        GithubReleaseStageLegacy githubReleaseStage = new GithubReleaseStageLegacy(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), artifactPattern, artifactDirectory, branch)
         return addCommonStage(githubReleaseStage)
     }
 
-    GithubReleaseStage2 addGithubReleaseStage2(String stageName) {
-        GithubReleaseStage2 githubReleaseStage2 = new GithubReleaseStage2(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo)
-        return addCommonStage(githubReleaseStage2)
+    GithubReleaseStage addGithubReleaseStage(String stageName) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo)
+        return addCommonStage(githubReleaseStage)
     }
 
-    GithubReleaseStage2 addGithubReleaseStage2(String stageName, String[] assetNames) {
-        GithubReleaseStage2 githubReleaseStage2 = new GithubReleaseStage2(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo)
+    GithubReleaseStage addGithubReleaseStage(String stageName, String[] assetNames) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo)
         if (assetNames.length > 0)
             addGithubAssetStage("Add Github Attachments", assetNames)
-        return addCommonStage(githubReleaseStage2)
+        return addCommonStage(githubReleaseStage)
     }
 
     GithubAssetStage addGithubAssetStage(String stageName, String[] assetNames) {

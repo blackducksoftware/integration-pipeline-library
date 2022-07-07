@@ -84,7 +84,7 @@ class RemoveSnapshotStage extends Stage {
         String commitHash = jenkinsScriptWrapper.executeCommand("${gitPath} rev-parse HEAD", true).trim()
         pipelineConfiguration.addToBuildDataMap(RELEASE_COMMIT_HASH, commitHash)
 
-        jenkinsScriptWrapper.setJenkinsProperty(GithubReleaseStage.GITHUB_RELEASE_VERSION, newVersion)
+        jenkinsScriptWrapper.setJenkinsProperty(GithubReleaseStageLegacy.GITHUB_RELEASE_VERSION, newVersion)
         jenkinsScriptWrapper.setJenkinsProperty(RELEASE_COMMIT_HASH, commitHash)
     }
 

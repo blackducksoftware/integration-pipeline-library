@@ -6,8 +6,6 @@ import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
-import java.text.SimpleDateFormat
-
 class GithubAssetStage extends Stage{
     public static String ASSET_FILE = 'assets.json'
     private String githubToken
@@ -22,10 +20,10 @@ class GithubAssetStage extends Stage{
     void stageExecution() throws PipelineException, Exception {
         try {
             getPipelineConfiguration().getLogger().info("hello")
-            getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage2.RELEASE_FILE)["upload_url"] as String)
+            getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage.RELEASE_FILE)["upload_url"] as String)
 
             //taking the upload URL out of the json file from creating the release, and deleting the part at the end we don't want
-            String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage2.RELEASE_FILE)["upload_url"] as String)
+            String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage.RELEASE_FILE)["upload_url"] as String)
             uploadUrl = uploadUrl.substring(0, uploadUrl.length() - 13)
 
             for (int i = 0; i < assetNames.length; i++) {
@@ -40,7 +38,7 @@ class GithubAssetStage extends Stage{
             //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(ASSET_FILE) as String)
 
             getPipelineConfiguration().getLogger().info("hello")
-            //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage2.BUILD_FILE)["GIT_LOCAL_BRANCH"] as String)
+            //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage.BUILD_FILE)["GIT_LOCAL_BRANCH"] as String)
 
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")
