@@ -11,11 +11,11 @@ import java.text.SimpleDateFormat
 class GithubAssetStage extends Stage{
     public static String ASSET_FILE = 'assets.json'
     private String githubToken
-    private String assetName
+    private ArrayList<String> assetNames
 
-    GithubAssetStage(PipelineConfiguration pipelineConfiguration, String stageName, String assetName) {
+    GithubAssetStage(PipelineConfiguration pipelineConfiguration, String stageName, String[] assetNames) {
         super(pipelineConfiguration, stageName)
-        this.assetName = assetName
+        this.assetNames = assetNames
     }
 
     @Override
@@ -28,10 +28,17 @@ class GithubAssetStage extends Stage{
             String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage2.RELEASE_FILE)["upload_url"] as String)
             uploadUrl = uploadUrl.substring(0, uploadUrl.length() - 13)
 
-            String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName()}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName()}\" | xargs)\" -T \"${getAssetName()}\" \"${uploadUrl}?name=\$(basename ${getAssetName()})\""
+            for (int i = 0; i < assetNames.length; i++) {
+                String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName(i)}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName(i)}\" | xargs)\" -T \"${getAssetName(i)}\" \"${uploadUrl}?name=\$(basename ${getAssetName(i)})\""
+                //getPipelineConfiguration().getLogger().info(assetCommandLines)
+                getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE)
+                getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(ASSET_FILE) as String)
+            }
+
+            //String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName()}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName()}\" | xargs)\" -T \"${getAssetName()}\" \"${uploadUrl}?name=\$(basename ${getAssetName()})\""
             //getPipelineConfiguration().getLogger().info(assetCommandLines)
-            getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE)
-            getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(ASSET_FILE) as String)
+            //getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE)
+            //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(ASSET_FILE) as String)
 
             getPipelineConfiguration().getLogger().info("hello")
             //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage2.BUILD_FILE)["GIT_LOCAL_BRANCH"] as String)
@@ -49,8 +56,8 @@ class GithubAssetStage extends Stage{
         this.githubToken = githubToken
     }
 
-    String getAssetName() {
-        return assetName
+    String getAssetName(int i) {
+        return assetNames[i]
     }
 }
 
