@@ -31,10 +31,10 @@ class GithubReleaseStage extends Stage{
     void stageExecution() throws PipelineException, Exception {
         try {
             String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date())
-            setReleaseTagName(timeStamp)
+            setReleaseTagName(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(GithubReleaseStageLegacy.GITHUB_RELEASE_VERSION))
             //setting branch
             setReleaseTargetCommitish("master")
-            setReleaseBody("Austin testing Auto Release")
+            setReleaseBody(timeStamp + " Austin testing Auto Release")
 
             getPipelineConfiguration().getLogger().info("anything")
             getPipelineConfiguration().getLogger().info("hello1" + getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(GithubReleaseStageLegacy.GITHUB_RELEASE_VERSION))
