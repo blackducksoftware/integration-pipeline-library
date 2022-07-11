@@ -70,6 +70,7 @@ class SimplePipeline extends Pipeline {
         pipeline.addApiTokenStage()
 
         pipeline.setUrl(url)
+        pipeline.setDirectoryFromBranch(branch)
         pipeline.setGithubCredentialsId(gitStage.getCredentialsId())
 
         return pipeline
@@ -218,7 +219,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStage addGithubReleaseStage(String stageName) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo, githubCredentialsId)
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo, githubCredentialsId, commonRunDirectory)
         return addCommonStage(githubReleaseStage)
     }
 

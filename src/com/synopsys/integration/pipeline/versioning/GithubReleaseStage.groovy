@@ -20,12 +20,14 @@ class GithubReleaseStage extends Stage{
     private String releaseBody
     private String githubToken
     private String githubCredentialsId
+    private String commonRunDirectory
 
-    GithubReleaseStage(PipelineConfiguration pipelineConfiguration, String stageName, String releaseOwner, String releaseRepo, String githubCredentialsId) {
+    GithubReleaseStage(PipelineConfiguration pipelineConfiguration, String stageName, String releaseOwner, String releaseRepo, String githubCredentialsId, String commonRunDirectory) {
         super(pipelineConfiguration, stageName)
         this.releaseOwner = releaseOwner
         this.releaseRepo = releaseRepo
         this.githubCredentialsId = githubCredentialsId
+        this.commonRunDirectory = commonRunDirectory
     }
 
     @Override
@@ -39,10 +41,9 @@ class GithubReleaseStage extends Stage{
 
             getPipelineConfiguration().getLogger().info("anything")
             getPipelineConfiguration().getLogger().info("hello1" + getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RemoveSnapshotStage.RELEASE_COMMIT_HASH))
-            getPipelineConfiguration().getLogger().info("hello2" + RemoveSnapshotStage.branch)
             
 
-            String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getReleaseTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
+            String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getCommonRunDirectory()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
 
             getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, "201", RELEASE_FILE, githubCredentialsId, pipelineConfiguration)
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE) as String)
@@ -96,12 +97,9 @@ class GithubReleaseStage extends Stage{
         return githubToken
     }
 
-    void setGithubToken(String githubToken) {
-        this.githubToken = githubToken
+    String getCommonRunDirectory() {
+        return commonRunDirectory
     }
 
-    String getGithubCredentialsId() {
-        return githubCredentialsId
-    }
 }
 

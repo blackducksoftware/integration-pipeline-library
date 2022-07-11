@@ -21,7 +21,7 @@ class RemoveSnapshotStage extends Stage {
     private final String buildTool
     private final String exe
 
-    public static String branch
+    private final String branch
     private final String url
     private final String githubCredentialsId
 
