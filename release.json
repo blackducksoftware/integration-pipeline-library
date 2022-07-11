@@ -1,9 +1,9 @@
 {
-  "url": "https://api.github.com/repos/github848/REPO/releases/70532104",
-  "assets_url": "https://api.github.com/repos/github848/REPO/releases/70532104/assets",
-  "upload_url": "https://uploads.github.com/repos/github848/REPO/releases/70532104/assets{?name,label}",
-  "html_url": "https://github.com/github848/REPO/releases/tag/v1.0.24",
-  "id": 70532104,
+  "url": "https://api.github.com/repos/blackducksoftware/ReleaseTestRepo/releases/71741213",
+  "assets_url": "https://api.github.com/repos/blackducksoftware/ReleaseTestRepo/releases/71741213/assets",
+  "upload_url": "https://uploads.github.com/repos/blackducksoftware/ReleaseTestRepo/releases/71741213/assets{?name,label}",
+  "html_url": "https://github.com/blackducksoftware/ReleaseTestRepo/releases/tag/0.1.140",
+  "id": 71741213,
   "author": {
     "login": "github848",
     "id": 70813502,
@@ -24,18 +24,18 @@
     "type": "User",
     "site_admin": false
   },
-  "node_id": "RE_kwDOHgB9cc4ENDwI",
-  "tag_name": "v1.0.24",
-  "target_commitish": "main",
-  "name": "v1.0.24",
+  "node_id": "RE_kwDOCLtw3M4ERq8d",
+  "tag_name": "0.1.140",
+  "target_commitish": "master",
+  "name": "0.1.140",
   "draft": false,
   "prerelease": false,
-  "created_at": "2022-06-14T12:24:52Z",
-  "published_at": "2022-06-24T20:14:04Z",
+  "created_at": "2022-07-11T18:18:06Z",
+  "published_at": "2022-07-11T20:00:56Z",
   "assets": [
 
   ],
-  "tarball_url": "https://api.github.com/repos/github848/REPO/tarball/v1.0.24",
-  "zipball_url": "https://api.github.com/repos/github848/REPO/zipball/v1.0.24",
-  "body": "Description of the release"
+  "tarball_url": "https://api.github.com/repos/blackducksoftware/ReleaseTestRepo/tarball/0.1.140",
+  "zipball_url": "https://api.github.com/repos/blackducksoftware/ReleaseTestRepo/zipball/0.1.140",
+  "body": "2022.07.11.14.12.01 Austin testing Auto Release"
 }
