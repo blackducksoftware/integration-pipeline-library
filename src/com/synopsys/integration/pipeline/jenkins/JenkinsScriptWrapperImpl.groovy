@@ -87,8 +87,8 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     @Override
     void executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode, String jsonResponseFileName, String githubCredentialsId, PipelineConfiguration pipelineConfiguration) {
         // adding the http code checker command and sending output into jsonResponseFileName file
-        script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', tokenVariable: 'GIT_TOKEN')]) {
-            String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_TOKEN')
+        script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+            String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
             String newCommand = command + " -H \"Authorization: token ${gitPassword}\" -o ${jsonResponseFileName} -w %{http_code}"
 
             //taking the Http status code
