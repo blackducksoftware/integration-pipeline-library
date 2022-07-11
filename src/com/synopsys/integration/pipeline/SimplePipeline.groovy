@@ -218,7 +218,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStage addGithubReleaseStage(String stageName) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo)
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo, githubCredentialsId)
         return addCommonStage(githubReleaseStage)
     }
 

@@ -19,12 +19,13 @@ class GithubReleaseStage extends Stage{
     private String releaseName
     private String releaseBody
     private String githubToken
+    private String githubCredentialsId
 
-    GithubReleaseStage(PipelineConfiguration pipelineConfiguration, String stageName, String releaseOwner, String releaseRepo) {
+    GithubReleaseStage(PipelineConfiguration pipelineConfiguration, String stageName, String releaseOwner, String releaseRepo, String githubCredentialsId) {
         super(pipelineConfiguration, stageName)
         this.releaseOwner = releaseOwner
         this.releaseRepo = releaseRepo
-
+        this.githubCredentialsId = githubCredentialsId
     }
 
     @Override
@@ -41,7 +42,7 @@ class GithubReleaseStage extends Stage{
             getPipelineConfiguration().getLogger().info("hello2" + RemoveSnapshotStage.branch)
             
 
-            String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubToken()}\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getReleaseTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
+            String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Authorization: token ${getGithubCredentialsId()}\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getReleaseTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
 
             getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, "201", RELEASE_FILE)
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE) as String)
@@ -97,6 +98,10 @@ class GithubReleaseStage extends Stage{
 
     void setGithubToken(String githubToken) {
         this.githubToken = githubToken
+    }
+
+    String getGithubCredentialsId() {
+        return githubCredentialsId
     }
 }
 
