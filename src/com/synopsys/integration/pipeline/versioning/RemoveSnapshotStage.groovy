@@ -87,9 +87,6 @@ class RemoveSnapshotStage extends Stage {
 
         jenkinsScriptWrapper.setJenkinsProperty(GithubReleaseStageLegacy.GITHUB_RELEASE_VERSION, newVersion)
         jenkinsScriptWrapper.setJenkinsProperty(RELEASE_COMMIT_HASH, commitHash)
-
-
-        SimplePipeline.setGit
     }
 
     String getBuildTool() {
