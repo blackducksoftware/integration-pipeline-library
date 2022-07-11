@@ -1,6 +1,7 @@
 package com.synopsys.integration.pipeline.versioning
 
 import com.synopsys.integration.model.GithubBranchModel
+import com.synopsys.integration.pipeline.SimplePipeline
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.exception.PrepareForReleaseException
 import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
@@ -86,6 +87,9 @@ class RemoveSnapshotStage extends Stage {
 
         jenkinsScriptWrapper.setJenkinsProperty(GithubReleaseStageLegacy.GITHUB_RELEASE_VERSION, newVersion)
         jenkinsScriptWrapper.setJenkinsProperty(RELEASE_COMMIT_HASH, commitHash)
+
+
+        SimplePipeline.setGit
     }
 
     String getBuildTool() {

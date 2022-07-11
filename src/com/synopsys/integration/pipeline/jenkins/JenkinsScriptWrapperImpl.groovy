@@ -85,15 +85,15 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    void executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode, String jsonResponseFileName) {
+    void executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode, String jsonResponseFileName, String githubCredentialsId, PipelineConfiguration pipelineConfiguration) {
         // adding the http code checker command and sending output into jsonResponseFileName file
-        //script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-        //    String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
-        //}
-        String newCommand = command + " -o ${jsonResponseFileName} -w %{http_code}"
+        script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+            String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
+            String newCommand = command + " -o ${jsonResponseFileName} -H \"Authorization: token ${gitPassword}\" -w %{http_code}"
 
-        //taking the Http status code
-        String receivedHttpStatusCode = executeCommand(newCommand, true)
+            //taking the Http status code
+            String receivedHttpStatusCode = executeCommand(newCommand, true)
+        }
 
         //ensuring the output json file is in pretty formatting
         writeJsonFile(jsonResponseFileName, readJsonFile(jsonResponseFileName))
