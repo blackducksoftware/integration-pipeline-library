@@ -3,6 +3,7 @@ package com.synopsys.integration.pipeline.jenkins
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
 import com.synopsys.integration.pipeline.scm.GitStage
 import net.sf.json.JSONObject
+import org.apache.commons.lang3.StringUtils
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
@@ -86,6 +87,9 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
 
     @Override
     void executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode, String jsonResponseFileName, String githubCredentialsId, PipelineConfiguration pipelineConfiguration, String assetNaming) {
+        if (assetNaming.length() > 0)
+            jsonResponseFileName = jsonResponseFileName + StringUtils.substringAfterLast(assetNaming, '/')
+        
         // adding the http code checker command and sending output into jsonResponseFileName file
         script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
             String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
@@ -98,9 +102,6 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
                 throw new Exception("Did not return ${expectedHttpStatusCode} HTTP code, not successful. Instead returned ${receivedHttpStatusCode}")
             }
         }
-        if (assetNaming.length() > 0)
-            jsonResponseFileName = jsonResponseFileName + assetNaming
-
         //ensuring the output json file is in pretty formatting
         writeJsonFile(jsonResponseFileName, readJsonFile(jsonResponseFileName))
 
