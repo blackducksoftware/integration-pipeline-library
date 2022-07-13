@@ -200,22 +200,22 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(githubReleaseStage)
     }
 
-    GithubReleaseStageLegacy addGithubReleaseStageByFile(String branch, String artifactFile) {
-        return addGithubReleaseStageByFile('GitHub Release', branch, artifactFile)
+    GithubReleaseStageLegacy addGithubReleaseStageLegacyByFile(String branch, String artifactFile) {
+        return addGithubReleaseStageLegacyByFile('GitHub Release', branch, artifactFile)
     }
 
-    GithubReleaseStageLegacy addGithubReleaseStageByFile(String stageName, String branch, String artifactFile) {
-        GithubReleaseStageLegacy githubReleaseStage = new GithubReleaseStageLegacy(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), artifactFile, branch)
-        return addCommonStage(githubReleaseStage)
+    GithubReleaseStageLegacy addGithubReleaseStageLegacyByFile(String stageName, String branch, String artifactFile) {
+        GithubReleaseStageLegacy githubReleaseStageLegacy = new GithubReleaseStageLegacy(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), artifactFile, branch)
+        return addCommonStage(githubReleaseStageLegacy)
     }
 
-    GithubReleaseStageLegacy addGithubReleaseStageByPattern(String branch, String artifactPattern, String artifactDirectory) {
-        return addGithubReleaseStageByPattern('GitHub Release', branch, artifactPattern, artifactDirectory)
+    GithubReleaseStageLegacy addGithubReleaseStageLegacyByPattern(String branch, String artifactPattern, String artifactDirectory) {
+        return addGithubReleaseStageLegacyByPattern('GitHub Release', branch, artifactPattern, artifactDirectory)
     }
 
-    GithubReleaseStageLegacy addGithubReleaseStageByPattern(String stageName, String branch, String artifactPattern, String artifactDirectory) {
-        GithubReleaseStageLegacy githubReleaseStage = new GithubReleaseStageLegacy(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), artifactPattern, artifactDirectory, branch)
-        return addCommonStage(githubReleaseStage)
+    GithubReleaseStageLegacy addGithubReleaseStageLegacyByPattern(String stageName, String branch, String artifactPattern, String artifactDirectory) {
+        GithubReleaseStageLegacy githubReleaseStageLegacy = new GithubReleaseStageLegacy(getPipelineConfiguration(), stageName, getJenkinsBooleanProperty(RUN_RELEASE), artifactPattern, artifactDirectory, branch)
+        return addCommonStage(githubReleaseStageLegacy)
     }
 
     GithubReleaseStage addGithubReleaseStage(String stageName) {
