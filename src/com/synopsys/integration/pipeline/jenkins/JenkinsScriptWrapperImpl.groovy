@@ -98,7 +98,8 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
                 throw new Exception("Did not return ${expectedHttpStatusCode} HTTP code, not successful. Instead returned ${receivedHttpStatusCode}")
             }
         }
-        jsonResponseFileName = jsonResponseFileName + assetNaming
+        if (assetNaming.length() > 0)
+            jsonResponseFileName = jsonResponseFileName + assetNaming
 
         //ensuring the output json file is in pretty formatting
         writeJsonFile(jsonResponseFileName, readJsonFile(jsonResponseFileName))
