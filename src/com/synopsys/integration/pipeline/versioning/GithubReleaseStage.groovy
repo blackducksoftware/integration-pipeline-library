@@ -7,6 +7,7 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 import java.text.SimpleDateFormat
+import static groovy.io.FileType.FILES
 
 class GithubReleaseStage extends Stage{
     public static String RELEASE_FILE = 'release.json'
@@ -44,6 +45,13 @@ class GithubReleaseStage extends Stage{
 
             getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, "201", RELEASE_FILE, githubCredentialsId, pipelineConfiguration)
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE) as String)
+
+            //testing
+            new File('/build/libs/').eachFileRecurse(FILES) {
+                if(it.name.endsWith('.jar') && it.name.startsWith('release-test-')) {
+                    getPipelineConfiguration().getLogger().info(it)
+                }
+            }
 
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")
