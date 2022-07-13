@@ -47,10 +47,11 @@ class GithubReleaseStage extends Stage{
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE) as String)
 
             //testing
-            new File("master/build/libs/").eachFileRecurse(FILES) {
+            new File("/build/libs/").eachFileRecurse(FILES) {
+                getPipelineConfiguration().getLogger().info("file ")
                 getPipelineConfiguration().getLogger().info("file " + it)
                 if(it.name.endsWith('.jar') && it.name.startsWith('release-test-')) {
-                    getPipelineConfiguration().getLogger().info(it)
+                    getPipelineConfiguration().getLogger().info(it.name)
                 }
             }
 
