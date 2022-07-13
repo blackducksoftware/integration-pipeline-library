@@ -8,12 +8,13 @@ import com.synopsys.integration.pipeline.model.Stage
 
 class GithubAssetStage extends Stage{
     public static String ASSET_FILE = 'assets.json'
-    private String githubToken
+    private String githubCredentialsId
     private String[] assetNames
 
-    GithubAssetStage(PipelineConfiguration pipelineConfiguration, String stageName, String[] assetNames) {
+    GithubAssetStage(PipelineConfiguration pipelineConfiguration, String stageName, String[] assetNames, String githubCredentialsId) {
         super(pipelineConfiguration, stageName)
         this.assetNames = assetNames
+        this.githubCredentialsId = githubCredentialsId
     }
 
     @Override
@@ -27,9 +28,9 @@ class GithubAssetStage extends Stage{
             uploadUrl = uploadUrl.substring(0, uploadUrl.length() - 13)
 
             for (int i = 0; i < assetNames.length; i++) {
-                String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName(i)}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName(i)}\" | xargs)\" -T \"${getAssetName(i)}\" \"${uploadUrl}?name=\$(basename ${getAssetName(i)})\""
+                String assetCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName(i)}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName(i)}\" | xargs)\" -T \"${getAssetName(i)}\" \"${uploadUrl}?name=\$(basename ${getAssetName(i)})\""
                 //getPipelineConfiguration().getLogger().info(assetCommandLines)
-                getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheckNumber(assetCommandLines, "201", ASSET_FILE, i)
+                getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE, githubCredentialsId, pipelineConfiguration, getAssetName(i))
             }
 
             //String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName()}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName()}\" | xargs)\" -T \"${getAssetName()}\" \"${uploadUrl}?name=\$(basename ${getAssetName()})\""
@@ -45,12 +46,8 @@ class GithubAssetStage extends Stage{
         }
     }
 
-    String getGithubToken() {
-        return githubToken
-    }
-
-    void setGithubToken(String githubToken) {
-        this.githubToken = githubToken
+    String getGithubCredentialsId() {
+        return githubCredentialsId
     }
 
     String getAssetName(int i) {

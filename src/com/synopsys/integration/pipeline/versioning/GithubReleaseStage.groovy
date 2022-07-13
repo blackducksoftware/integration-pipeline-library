@@ -43,17 +43,19 @@ class GithubReleaseStage extends Stage{
             targetCommitish = getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RemoveSnapshotStage.RELEASE_COMMIT_HASH)
             String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'" //-o release.json"
 
-            getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, "201", RELEASE_FILE, githubCredentialsId, pipelineConfiguration)
+            getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, "201", RELEASE_FILE, githubCredentialsId, pipelineConfiguration, "")
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE) as String)
 
             //testing
-            new File("/build/libs/").eachFileRecurse(FILES) {
-                getPipelineConfiguration().getLogger().info("file ")
-                getPipelineConfiguration().getLogger().info("file " + it)
-                if(it.name.endsWith('.jar') && it.name.startsWith('release-test-')) {
-                    getPipelineConfiguration().getLogger().info(it.name)
-                }
-            }
+            //new File("/build/libs/").eachFileRecurse(FILES) {
+             //   getPipelineConfiguration().getLogger().info("file ")
+            //    getPipelineConfiguration().getLogger().info("file " + it)
+            //    if(it.name.endsWith('.jar') && it.name.startsWith('release-test-')) {
+            //        getPipelineConfiguration().getLogger().info(it.name)
+            //    }
+            //}
+
+
 
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")

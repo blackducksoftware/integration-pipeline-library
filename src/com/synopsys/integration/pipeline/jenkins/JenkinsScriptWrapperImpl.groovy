@@ -85,7 +85,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    void executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode, String jsonResponseFileName, String githubCredentialsId, PipelineConfiguration pipelineConfiguration) {
+    void executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode, String jsonResponseFileName, String githubCredentialsId, PipelineConfiguration pipelineConfiguration, String assetNaming) {
         // adding the http code checker command and sending output into jsonResponseFileName file
         script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
             String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
@@ -98,34 +98,13 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
                 throw new Exception("Did not return ${expectedHttpStatusCode} HTTP code, not successful. Instead returned ${receivedHttpStatusCode}")
             }
         }
+        jsonResponseFileName = jsonResponseFileName + assetNaming
 
         //ensuring the output json file is in pretty formatting
         writeJsonFile(jsonResponseFileName, readJsonFile(jsonResponseFileName))
 
         //adding the json output as an artifact to the release
         archiveArtifacts(jsonResponseFileName)
-    }
-
-    @Override
-    void executeCommandWithHttpStatusCheckNumber(String command, String expectedHttpStatusCode, String jsonResponseFileName, int assetNum) {
-        jsonResponseFileName = jsonResponseFileName + (assetNum+1).toString()
-
-        // adding the http code checker command and sending output into jsonResponseFileName file
-        String newCommand = command + " -o ${jsonResponseFileName} -w %{http_code}"
-
-        //taking the Http status code
-        String receivedHttpStatusCode = executeCommand(newCommand, true)
-
-        //ensuring the output json file is in pretty formatting
-        writeJsonFile(jsonResponseFileName, readJsonFile(jsonResponseFileName))
-
-        //adding the json output as an artifact to the release
-        archiveArtifacts(jsonResponseFileName)
-
-        // If receivedHttpStatusCode != expectedHttpStatusCode throw. 201 is the success code
-        if (!receivedHttpStatusCode.equals(expectedHttpStatusCode)) {
-            throw new Exception("Did not return ${expectedHttpStatusCode} HTTP code, not successful. Instead returned ${receivedHttpStatusCode}")
-        }
     }
 
     @Override
