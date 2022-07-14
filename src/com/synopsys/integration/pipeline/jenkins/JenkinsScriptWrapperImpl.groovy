@@ -87,7 +87,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
 
     @Override
     void executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode, String jsonResponseFileName, String githubCredentialsId, PipelineConfiguration pipelineConfiguration, String assetNaming) {
-        if (assetNaming.length() > 0)
+        if (assetNaming.length() > 1)
             jsonResponseFileName = jsonResponseFileName + StringUtils.substringAfterLast(assetNaming, '/')
 
         // adding the http code checker command and sending output into jsonResponseFileName file
