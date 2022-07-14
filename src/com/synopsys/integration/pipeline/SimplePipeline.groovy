@@ -218,20 +218,20 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(githubReleaseStageLegacy)
     }
 
-    GithubReleaseStage addGithubReleaseStage(String stageName) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo, githubCredentialsId)
+    GithubReleaseStage addGithubReleaseStage() {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), "testRelease", releaseOwner, releaseRepo, githubCredentialsId)
         return addCommonStage(githubReleaseStage)
     }
 
-    GithubReleaseStage addGithubReleaseStage(String stageName, String[] assetNames) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo, githubCredentialsId)
+    GithubReleaseStage addGithubReleaseStage(String[] assetNames) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), "testRelease", releaseOwner, releaseRepo, githubCredentialsId)
         if (assetNames.length > 0)
             addGithubAssetStage("Add Github Attachments", assetNames)
         return addCommonStage(githubReleaseStage)
     }
 
-    GithubAssetStage addGithubAssetStage(String stageName, String[] assetNames) {
-        GithubAssetStage githubAssetStage = new GithubAssetStage(getPipelineConfiguration(), stageName, assetNames, githubCredentialsId)
+    GithubAssetStage addGithubAssetStage(String[] assetNames) {
+        GithubAssetStage githubAssetStage = new GithubAssetStage(getPipelineConfiguration(), "assetRelease", assetNames, githubCredentialsId)
         return addCommonStage(githubAssetStage)
     }
 
