@@ -192,7 +192,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStageLegacy addGithubReleaseStageLegacy(String branch) {
-        return addGithubReleaseStageLegacy('GitHub Release', branch)
+        return addGithubReleaseStageLegacy('Legacy Github Release', branch)
     }
 
     GithubReleaseStageLegacy addGithubReleaseStageLegacy(String stageName, String branch) {
@@ -201,7 +201,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStageLegacy addGithubReleaseStageLegacyByFile(String branch, String artifactFile) {
-        return addGithubReleaseStageLegacyByFile('GitHub Release', branch, artifactFile)
+        return addGithubReleaseStageLegacyByFile('Legacy Github Release', branch, artifactFile)
     }
 
     GithubReleaseStageLegacy addGithubReleaseStageLegacyByFile(String stageName, String branch, String artifactFile) {
@@ -210,7 +210,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStageLegacy addGithubReleaseStageLegacyByPattern(String branch, String artifactPattern, String artifactDirectory) {
-        return addGithubReleaseStageLegacyByPattern('GitHub Release', branch, artifactPattern, artifactDirectory)
+        return addGithubReleaseStageLegacyByPattern('Legacy Github Release', branch, artifactPattern, artifactDirectory)
     }
 
     GithubReleaseStageLegacy addGithubReleaseStageLegacyByPattern(String stageName, String branch, String artifactPattern, String artifactDirectory) {
@@ -219,20 +219,34 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStage addGithubReleaseStage() {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), "testRelease", releaseOwner, releaseRepo, githubCredentialsId)
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'Github Release', releaseOwner, releaseRepo, githubCredentialsId)
         return addCommonStage(githubReleaseStage)
     }
 
-    GithubReleaseStage addGithubReleaseStage(String[] assetNames) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), "testRelease", releaseOwner, releaseRepo, githubCredentialsId)
+    GithubReleaseStage addGithubReleaseStage(String stageName, String[] assetNames) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo, githubCredentialsId)
+        addCommonStage(githubReleaseStage)
         if (assetNames.length > 0)
             addGithubAssetStage(assetNames)
-        return addCommonStage(githubReleaseStage)
+        return githubReleaseStage
+    }
+
+    GithubReleaseStage addGithubReleaseStage2(String stageName, String glob) {
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo, githubCredentialsId)
+        addCommonStage(githubReleaseStage)
+        def files = script.findFiles(glob: glob)
+        String[] assets = new String[files.length]
+        for (int i = 0; i < files.length; i++)
+        {
+            assets[i] = files[i].path.substring(7)
+        }
+        if (assets.length > 0)
+            addGithubAssetStage(assets)
+        return githubReleaseStage
     }
 
     GithubAssetStage addGithubAssetStage(String[] assetNames) {
-        addGithubReleaseStage()
-        GithubAssetStage githubAssetStage = new GithubAssetStage(getPipelineConfiguration(), "assetRelease", assetNames, githubCredentialsId)
+        GithubAssetStage githubAssetStage = new GithubAssetStage(getPipelineConfiguration(), 'Github Asset Release', assetNames, githubCredentialsId)
         return addCommonStage(githubAssetStage)
     }
 
