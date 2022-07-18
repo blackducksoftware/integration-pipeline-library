@@ -5,6 +5,7 @@ import com.synopsys.integration.pipeline.exception.GitHubReleaseException
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
+import org.apache.commons.lang3.StringUtils
 
 class GithubAssetStage extends Stage{
     public static String ASSET_FILE = 'assets.json'
@@ -25,18 +26,13 @@ class GithubAssetStage extends Stage{
 
             //taking the upload URL out of the json file from creating the release, and deleting the part at the end we don't want
             String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage.RELEASE_FILE)["upload_url"] as String)
-            uploadUrl = uploadUrl.substring(0, uploadUrl.length() - 13)
+            uploadUrl = StringUtils.substringBeforeLast(uploadUrl, '{')
 
             for (int i = 0; i < assetNames.length; i++) {
                 String assetCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName(i)}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName(i)}\" | xargs)\" -T \"${getAssetName(i)}\" \"${uploadUrl}?name=\$(basename ${getAssetName(i)})\""
                 //getPipelineConfiguration().getLogger().info(assetCommandLines)
                 getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE, githubCredentialsId, pipelineConfiguration, getAssetName(i))
             }
-
-            //String assetCommandLines = "curl -X POST -H \"Authorization: token ${getGithubToken()}\" -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName()}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName()}\" | xargs)\" -T \"${getAssetName()}\" \"${uploadUrl}?name=\$(basename ${getAssetName()})\""
-            //getPipelineConfiguration().getLogger().info(assetCommandLines)
-            //getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE)
-            //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(ASSET_FILE) as String)
 
             getPipelineConfiguration().getLogger().info("hello")
             //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage.BUILD_FILE)["GIT_LOCAL_BRANCH"] as String)

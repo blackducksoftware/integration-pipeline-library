@@ -223,7 +223,7 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(githubReleaseStage)
     }
 
-    GithubReleaseStage addGithubReleaseStage(String stageName, String[] assetNames) {
+    GithubReleaseStage addGithubReleaseStageOld(String stageName, String[] assetNames) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo, githubCredentialsId)
         addCommonStage(githubReleaseStage)
         if (assetNames.length > 0)
@@ -231,14 +231,15 @@ class SimplePipeline extends Pipeline {
         return githubReleaseStage
     }
 
-    GithubReleaseStage addGithubReleaseStage2(String stageName, String glob) {
+    GithubReleaseStage addGithubReleaseStage(String stageName, String glob) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo, githubCredentialsId)
         addCommonStage(githubReleaseStage)
+        //finding files which match glob pattern
         def files = script.findFiles(glob: glob)
         String[] assets = new String[files.length]
-        for (int i = 0; i < files.length; i++)
-        {
-            assets[i] = files[i].path.substring(7)
+        for (int i = 0; i < files.length; i++) {
+            //assets[i] = files[i].path.substring(7)
+            assets[i] = StringUtils.substringAfter(files[i].path, '/')
         }
         if (assets.length > 0)
             addGithubAssetStage(assets)
