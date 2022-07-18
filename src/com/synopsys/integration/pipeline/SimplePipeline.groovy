@@ -3,6 +3,7 @@ package com.synopsys.integration.pipeline
 import com.synopsys.integration.pipeline.buildTool.GradleStage
 import com.synopsys.integration.pipeline.buildTool.MavenStage
 import com.synopsys.integration.pipeline.email.EmailPipelineWrapper
+import com.synopsys.integration.pipeline.exception.CommandExecutionException
 import com.synopsys.integration.pipeline.generic.ClosureStage
 import com.synopsys.integration.pipeline.generic.ClosureStep
 import com.synopsys.integration.pipeline.model.Stage
@@ -234,20 +235,12 @@ class SimplePipeline extends Pipeline {
     GithubReleaseStage addGithubReleaseStage(String stageName, String glob) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo, githubCredentialsId)
         addCommonStage(githubReleaseStage)
-        //finding files which match glob pattern
-        def files = script.findFiles(glob: glob)
-        String[] assets = new String[files.length]
-        for (int i = 0; i < files.length; i++) {
-            //assets[i] = files[i].path.substring(7)
-            assets[i] = StringUtils.substringAfter(files[i].path, '/')
-        }
-        if (assets.length > 0)
-            addGithubAssetStage(assets)
+        addGithubAssetStage(glob)
         return githubReleaseStage
     }
 
-    GithubAssetStage addGithubAssetStage(String[] assetNames) {
-        GithubAssetStage githubAssetStage = new GithubAssetStage(getPipelineConfiguration(), 'Github Asset Release', assetNames, githubCredentialsId)
+    GithubAssetStage addGithubAssetStage(String glob) {
+        GithubAssetStage githubAssetStage = new GithubAssetStage(getPipelineConfiguration(), 'Github Asset Release', glob, githubCredentialsId)
         return addCommonStage(githubAssetStage)
     }
 
