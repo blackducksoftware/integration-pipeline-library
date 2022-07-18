@@ -39,7 +39,7 @@ class GithubAssetStage extends Stage{
             assetNames = new String[files.length]
             for (int i = 0; i < files.length; i++) {
                 //assetNames[i] = StringUtils.substringAfter(files[i].path, '/')
-                assetNames = files[i].path
+                assetNames[i] = files[i].path
             }
 
             for (int i = 0; i < assetNames.length; i++) {
