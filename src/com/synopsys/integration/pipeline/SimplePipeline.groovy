@@ -240,7 +240,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubAssetStage addGithubAssetStage(String glob) {
-        GithubAssetStage githubAssetStage = new GithubAssetStage(getPipelineConfiguration(), 'Github Asset Release', glob, githubCredentialsId)
+        GithubAssetStage githubAssetStage = new GithubAssetStage(getPipelineConfiguration(), 'Github Asset Release', glob, githubCredentialsId, script)
         return addCommonStage(githubAssetStage)
     }
 

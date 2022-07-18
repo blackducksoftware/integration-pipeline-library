@@ -5,6 +5,7 @@ import com.synopsys.integration.pipeline.exception.GitHubReleaseException
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
+import org.jenkinsci.plugins.workflow.cps.CpsScript
 import org.apache.commons.lang3.StringUtils
 
 class GithubAssetStage extends Stage{
@@ -12,11 +13,13 @@ class GithubAssetStage extends Stage{
     private String githubCredentialsId
     private String glob
     private String[] assetNames
+    final CpsScript script
 
-    GithubAssetStage(PipelineConfiguration pipelineConfiguration, String stageName, String glob, String githubCredentialsId) {
+    GithubAssetStage(PipelineConfiguration pipelineConfiguration, String stageName, String glob, String githubCredentialsId, final CpsScript script) {
         super(pipelineConfiguration, stageName)
         this.glob = glob
         this.githubCredentialsId = githubCredentialsId
+        this.script = script
     }
 
     @Override
