@@ -38,7 +38,8 @@ class GithubAssetStage extends Stage{
                 throw new Exception("no files found matching input glob")
             assetNames = new String[files.length]
             for (int i = 0; i < files.length; i++) {
-                assetNames[i] = StringUtils.substringAfter(files[i].path, '/')
+                //assetNames[i] = StringUtils.substringAfter(files[i].path, '/')
+                assetNames = files[i].path
             }
 
             for (int i = 0; i < assetNames.length; i++) {
