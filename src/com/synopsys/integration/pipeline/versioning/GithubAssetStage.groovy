@@ -39,16 +39,15 @@ class GithubAssetStage extends Stage{
             assetNames = new String[files.length]
             for (int i = 0; i < files.length; i++) {
                 assetNames[i] = files[i].path
-            }
-
-            for (int i = 0; i < assetNames.length; i++) {
                 String assetCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName(i)}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName(i)}\" | xargs)\" -T \"${getAssetName(i)}\" \"${uploadUrl}?name=\$(basename ${getAssetName(i)})\""
-                //getPipelineConfiguration().getLogger().info(assetCommandLines)
                 getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE, githubCredentialsId, pipelineConfiguration, getAssetName(i))
             }
 
-            getPipelineConfiguration().getLogger().info("hello")
-            //getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage.BUILD_FILE)["GIT_LOCAL_BRANCH"] as String)
+            //for (int i = 0; i < assetNames.length; i++) {
+           //     String assetCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName(i)}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName(i)}\" | xargs)\" -T \"${getAssetName(i)}\" \"${uploadUrl}?name=\$(basename ${getAssetName(i)})\""
+                //getPipelineConfiguration().getLogger().info(assetCommandLines)
+           //     getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE, githubCredentialsId, pipelineConfiguration, getAssetName(i))
+           // }
 
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")
