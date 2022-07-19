@@ -8,8 +8,6 @@ import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     final CpsScript script
-    String gitUsername2
-    String gitPassword2
 
     JenkinsScriptWrapperImpl(final CpsScript script) {
         this.script = script
@@ -105,9 +103,8 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
             //}
         //}
 
-        returnGithubCredentials(githubCredentialsId, pipelineConfiguration)
         // adding the http code checker command and sending output into jsonResponseFileName file
-        String newCommand = command + " -H \"Authorization: token ${gitPassword2}\" -o ${jsonResponseFileName} -w %{http_code}"
+        String newCommand = command + " -H \"Authorization: token ${returnGithubCredentials(githubCredentialsId, pipelineConfiguration)}\" -o ${jsonResponseFileName} -w %{http_code}"
 
         //taking the Http status code
         String receivedHttpStatusCode = executeCommand(newCommand, true)
@@ -125,11 +122,12 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    void returnGithubCredentials(String githubCredentialsId, PipelineConfiguration pipelineConfiguration) {
+    String returnGithubCredentials(String githubCredentialsId, PipelineConfiguration pipelineConfiguration) {
         script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-            gitPassword2 = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
-            gitUsername2 = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
+            String gitPassword2 = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
+            String gitUsername2 = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
         }
+        returb gitPassword2
     }
 
     @Override
