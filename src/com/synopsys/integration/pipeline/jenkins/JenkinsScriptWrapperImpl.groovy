@@ -126,8 +126,8 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
             String gitPassword2 = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
             String gitUsername2 = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
+            return gitPassword2
         }
-        return gitPassword2
     }
 
     @Override
