@@ -8,6 +8,8 @@ import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     final CpsScript script
+    String gitUsername2
+    String gitPassword2
 
     JenkinsScriptWrapperImpl(final CpsScript script) {
         this.script = script
@@ -91,22 +93,43 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
             jsonResponseFileName = jsonResponseFileName + StringUtils.substringAfterLast(assetNaming, '/')
 
         // adding the http code checker command and sending output into jsonResponseFileName file
-        script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-            String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
-            String newCommand = command + " -H \"Authorization: token ${gitPassword}\" -o ${jsonResponseFileName} -w %{http_code}"
+        //script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+            //String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
+            //String newCommand = command + " -H \"Authorization: token ${gitPassword}\" -o ${jsonResponseFileName} -w %{http_code}"
 
             //taking the Http status code
-            String receivedHttpStatusCode = executeCommand(newCommand, true)
+            //String receivedHttpStatusCode = executeCommand(newCommand, true)
             // If receivedHttpStatusCode != expectedHttpStatusCode throw. 201 is the success code
-            if (receivedHttpStatusCode != (expectedHttpStatusCode)) {
-                throw new Exception("Did not return ${expectedHttpStatusCode} HTTP code, not successful. Instead returned ${receivedHttpStatusCode}")
-            }
+            //if (receivedHttpStatusCode != (expectedHttpStatusCode)) {
+            //    throw new Exception("Did not return ${expectedHttpStatusCode} HTTP code, not successful. Instead returned ${receivedHttpStatusCode}")
+            //}
+        //}
+
+        returnGithubCredentials(githubCredentialsId, pipelineConfiguration)
+        // adding the http code checker command and sending output into jsonResponseFileName file
+        String newCommand = command + " -H \"Authorization: token ${gitPassword2}\" -o ${jsonResponseFileName} -w %{http_code}"
+
+        //taking the Http status code
+        String receivedHttpStatusCode = executeCommand(newCommand, true)
+        // If receivedHttpStatusCode != expectedHttpStatusCode throw. 201 is the success code
+        if (receivedHttpStatusCode != (expectedHttpStatusCode)) {
+            throw new Exception("Did not return ${expectedHttpStatusCode} HTTP code, not successful. Instead returned ${receivedHttpStatusCode}")
         }
+
+
         //ensuring the output json file is in pretty formatting
         writeJsonFile(jsonResponseFileName, readJsonFile(jsonResponseFileName))
 
         //adding the json output as an artifact to the release
         archiveArtifacts(jsonResponseFileName)
+    }
+
+    @Override
+    void returnGithubCredentials(String githubCredentialsId, PipelineConfiguration pipelineConfiguration) {
+        script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+            gitPassword2 = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
+            gitUsername2 = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
+        }
     }
 
     @Override
