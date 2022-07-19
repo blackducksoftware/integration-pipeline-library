@@ -127,7 +127,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
             String gitPassword2 = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
             String gitUsername2 = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
         }
-        returb gitPassword2
+        return gitPassword2
     }
 
     @Override
