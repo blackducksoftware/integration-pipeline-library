@@ -155,13 +155,20 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     @Override
     void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws CommandExecutionException {
         assert url.startsWith(GitStage.GITHUB_HTTPS): "Required to use " + GitStage.GITHUB_HTTPS + " when publishing to github"
-        script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-            String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
-            String gitUsername = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
-            String adjustedBranch = url.replace("https://", "https://${gitUsername}:${gitPassword}@")
 
-            executeCommandWithException("${gitPath} push ${adjustedBranch}")
-        }
+        String adjustedBranch = url.replace("https://", "https://${USERNAME_SEARCH_TOKEN}:${PASSWORD_SEARCH_TOKEN}@")
+        String pushCommand = "${gitPath} push ${adjustedBranch}"
+        String pushCommandStdOut = executeWithCredentials(pipelineConfiguration, pushCommand, githubCredentialsId)
+        pipelineConfiguration.getLogger().info("hello1 " + pushCommandStdOut)
+        //assert pushCommandStdOut.contains("abc")
+
+        //script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+        //    String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
+        //    String gitUsername = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
+        //    String adjustedBranch = url.replace("https://", "https://${gitUsername}:${gitPassword}@")
+
+        //    executeCommandWithException("${gitPath} push ${adjustedBranch}")
+       // }
     }
 
     String getJenkinsProperty(String propertyName) {
