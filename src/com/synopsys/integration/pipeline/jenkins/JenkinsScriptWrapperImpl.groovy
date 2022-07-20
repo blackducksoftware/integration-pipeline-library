@@ -8,8 +8,8 @@ import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     final CpsScript script
-    String USERNAME_SEARCH_TOKEN
-    String PASSWORD_SEARCH_TOKEN
+    String USERNAME_SEARCH_TOKEN = 'bob'
+    String PASSWORD_SEARCH_TOKEN = 'joe'
 
     JenkinsScriptWrapperImpl(final CpsScript script) {
         this.script = script
