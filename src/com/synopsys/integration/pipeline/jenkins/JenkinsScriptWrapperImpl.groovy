@@ -160,7 +160,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         String pushCommand = "${gitPath} push ${adjustedBranch} --all 2>&1"
         String pushCommandStdOut = executeWithCredentials(pipelineConfiguration, pushCommand, githubCredentialsId)
         pipelineConfiguration.getLogger().info("hello33 " + pushCommandStdOut)
-        //assert !pushCommandStdOut.contains("error:")
+        assert pushCommandStdOut.startsWith("To ")
 
         //script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
         //    String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
