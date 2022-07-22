@@ -156,7 +156,8 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws CommandExecutionException {
         assert url.startsWith(GitStage.GITHUB_HTTPS): "Required to use " + GitStage.GITHUB_HTTPS + " when publishing to github"
 
-        String adjustedBranch = url.replace("https://", "https://${USERNAME_SEARCH_TOKEN}:${PASSWORD_SEARCH_TOKEN}@")
+        //String adjustedBranch = url.replace("https://", "https://${USERNAME_SEARCH_TOKEN}:${PASSWORD_SEARCH_TOKEN}@")
+        String adjustedBranch = url.replace("https://", "https://bob:george@")
         String pushCommand = "${gitPath} push ${adjustedBranch} --porcelain 2>&1"
         String pushCommandStdOut = executeWithCredentials(pipelineConfiguration, pushCommand, githubCredentialsId)
         pipelineConfiguration.getLogger().info("hello33 " + pushCommandStdOut)
