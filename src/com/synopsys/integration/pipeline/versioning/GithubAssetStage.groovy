@@ -9,7 +9,6 @@ import org.jenkinsci.plugins.workflow.cps.CpsScript
 import org.apache.commons.lang3.StringUtils
 
 class GithubAssetStage extends Stage{
-    public static String ASSET_FILE = 'assets.json'
     private String githubCredentialsId
     private String glob
     private String[] assetNames
@@ -42,7 +41,8 @@ class GithubAssetStage extends Stage{
             for (int i = 0; i < files.length; i++) {
                 assetNames[i] = files[i].path
                 String assetCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName(i)}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName(i)}\" | xargs)\" -T \"${getAssetName(i)}\" \"${uploadUrl}?name=\$(basename ${getAssetName(i)})\""
-                getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", "", githubCredentialsId, pipelineConfiguration, getAssetName(i))
+                String newAssetName = "asset-" + StringUtils.substringAfterLast(getAssetName(i), '/') + ".json"
+                getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", newAssetName, githubCredentialsId, pipelineConfiguration)
             }
 
             //for (int i = 0; i < assetNames.length; i++) {
