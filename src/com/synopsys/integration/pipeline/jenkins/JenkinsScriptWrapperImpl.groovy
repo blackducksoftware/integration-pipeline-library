@@ -128,7 +128,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
             String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
             String adjustedCommand = command.replaceAll(USERNAME_SEARCH_TOKEN, gitUsername).replaceAll(PASSWORD_SEARCH_TOKEN, gitPassword)
 
-            return executeCommand(adjustedCommand, true)
+            return executeCommand(adjustedCommand, true).trim()
         }
     }
 
@@ -156,12 +156,11 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws CommandExecutionException {
         assert url.startsWith(GitStage.GITHUB_HTTPS): "Required to use " + GitStage.GITHUB_HTTPS + " when publishing to github"
 
-        //String adjustedBranch = url.replace("https://", "https://${USERNAME_SEARCH_TOKEN}:${PASSWORD_SEARCH_TOKEN}@")
-        String adjustedBranch = url
+        String adjustedBranch = url.replace("https://", "https://${USERNAME_SEARCH_TOKEN}:${PASSWORD_SEARCH_TOKEN}@")
         String pushCommand = "${gitPath} push ${adjustedBranch} --porcelain 2>&1"
         String pushCommandStdOut = executeWithCredentials(pipelineConfiguration, pushCommand, githubCredentialsId)
         pipelineConfiguration.getLogger().info("hello33 " + pushCommandStdOut)
-        assert !pushCommandStdOut.contains("!\t")
+        assert pushCommandStdOut.endsWith("Done")
 
         //script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
         //    String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
