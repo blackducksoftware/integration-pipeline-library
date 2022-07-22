@@ -42,7 +42,7 @@ class GithubAssetStage extends Stage{
             for (int i = 0; i < files.length; i++) {
                 assetNames[i] = files[i].path
                 String assetCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName(i)}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName(i)}\" | xargs)\" -T \"${getAssetName(i)}\" \"${uploadUrl}?name=\$(basename ${getAssetName(i)})\""
-                getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE, githubCredentialsId, pipelineConfiguration, getAssetName(i))
+                getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", "", githubCredentialsId, pipelineConfiguration, getAssetName(i))
             }
 
             //for (int i = 0; i < assetNames.length; i++) {

@@ -109,10 +109,9 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
 
         //taking the Http status code
         String receivedHttpStatusCode = executeWithCredentials(pipelineConfiguration, newCommand, githubCredentialsId)
+
         // If receivedHttpStatusCode != expectedHttpStatusCode throw. 201 is the success code
-        if (receivedHttpStatusCode != (expectedHttpStatusCode)) {
-            throw new Exception("Did not return ${expectedHttpStatusCode} HTTP code, not successful. Instead returned ${receivedHttpStatusCode}")
-        }
+        assert receivedHttpStatusCode == expectedHttpStatusCode : "Did not return ${expectedHttpStatusCode} HTTP code, not successful. Instead returned ${receivedHttpStatusCode}"
 
         //ensuring the output json file is in pretty formatting
         writeJsonFile(jsonResponseFileName, readJsonFile(jsonResponseFileName))
@@ -128,7 +127,9 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
             String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
             String adjustedCommand = command.replaceAll(USERNAME_SEARCH_TOKEN, gitUsername).replaceAll(PASSWORD_SEARCH_TOKEN, gitPassword)
 
-            return executeCommand(adjustedCommand, true).trim()
+            String output = executeCommand(adjustedCommand, true).trim()
+            pipelineConfiguration.getLogger().info(output)
+            return output
         }
     }
 
@@ -159,7 +160,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         String adjustedBranch = url.replace("https://", "https://${USERNAME_SEARCH_TOKEN}:${PASSWORD_SEARCH_TOKEN}@")
         String pushCommand = "${gitPath} push ${adjustedBranch} --porcelain 2>&1"
         String pushCommandStdOut = executeWithCredentials(pipelineConfiguration, pushCommand, githubCredentialsId)
-        pipelineConfiguration.getLogger().info("hello33 " + pushCommandStdOut)
+
         assert pushCommandStdOut.endsWith("Done")
 
         //script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
