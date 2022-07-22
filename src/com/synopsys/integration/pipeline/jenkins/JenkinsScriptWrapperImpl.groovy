@@ -7,9 +7,9 @@ import org.apache.commons.lang3.StringUtils
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
+    public static final String USERNAME_SEARCH_TOKEN = 'USERNAME_SEARCH_TOKEN'
+    public static final String PASSWORD_SEARCH_TOKEN = 'PASSWORD_SEARCH_TOKEN'
     final CpsScript script
-    String USERNAME_SEARCH_TOKEN = 'bob'
-    String PASSWORD_SEARCH_TOKEN = 'joe'
 
     JenkinsScriptWrapperImpl(final CpsScript script) {
         this.script = script
@@ -157,7 +157,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         assert url.startsWith(GitStage.GITHUB_HTTPS): "Required to use " + GitStage.GITHUB_HTTPS + " when publishing to github"
 
         //String adjustedBranch = url.replace("https://", "https://${USERNAME_SEARCH_TOKEN}:${PASSWORD_SEARCH_TOKEN}@")
-        String adjustedBranch = url.replace("https://", "https://bob:george@")
+        String adjustedBranch = url
         String pushCommand = "${gitPath} push ${adjustedBranch} --porcelain 2>&1"
         String pushCommandStdOut = executeWithCredentials(pipelineConfiguration, pushCommand, githubCredentialsId)
         pipelineConfiguration.getLogger().info("hello33 " + pushCommandStdOut)
