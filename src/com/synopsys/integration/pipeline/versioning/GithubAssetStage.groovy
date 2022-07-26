@@ -24,8 +24,8 @@ class GithubAssetStage extends Stage{
     @Override
     void stageExecution() throws PipelineException, Exception {
         try {
-            getPipelineConfiguration().getLogger().info("hello")
-            getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage.RELEASE_FILE)["upload_url"] as String)
+           // getPipelineConfiguration().getLogger().info("hello")
+           // getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage.RELEASE_FILE)["upload_url"] as String)
 
             //taking the upload URL out of the json file from creating the release, and deleting the part at the end we don't want
             String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage.RELEASE_FILE)["upload_url"] as String)
@@ -45,19 +45,9 @@ class GithubAssetStage extends Stage{
                 getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", newAssetName, githubCredentialsId, pipelineConfiguration)
             }
 
-            //for (int i = 0; i < assetNames.length; i++) {
-           //     String assetCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName(i)}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName(i)}\" | xargs)\" -T \"${getAssetName(i)}\" \"${uploadUrl}?name=\$(basename ${getAssetName(i)})\""
-                //getPipelineConfiguration().getLogger().info(assetCommandLines)
-           //     getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", ASSET_FILE, githubCredentialsId, pipelineConfiguration, getAssetName(i))
-           // }
-
         } catch (Exception e) {
             throw new GitHubReleaseException("Failed to run the GitHub auto release ${e.getMessage()}")
         }
-    }
-
-    String getGithubCredentialsId() {
-        return githubCredentialsId
     }
 
     String getAssetName(int i) {

@@ -12,7 +12,6 @@ import static groovy.io.FileType.FILES
 class GithubReleaseStage extends Stage{
     public static String RELEASE_FILE = 'release.json'
     public static String BUILD_FILE = 'build_data.json'
-    //public static String ASSET_FILE = 'assets.json'
     private String releaseOwner
     private String releaseRepo
     private String releaseTagName
@@ -37,8 +36,8 @@ class GithubReleaseStage extends Stage{
             setReleaseTagName(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(GithubReleaseStageLegacy.GITHUB_RELEASE_VERSION))
             setReleaseBody("Released from Jenkins " + timeStamp)
 
-            getPipelineConfiguration().getLogger().info("anything")
-            getPipelineConfiguration().getLogger().info("hello1" + getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RemoveSnapshotStage.RELEASE_COMMIT_HASH))
+            //getPipelineConfiguration().getLogger().info("anything")
+            //getPipelineConfiguration().getLogger().info("hello1" + getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RemoveSnapshotStage.RELEASE_COMMIT_HASH))
 
             targetCommitish = getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RemoveSnapshotStage.RELEASE_COMMIT_HASH)
             String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'"

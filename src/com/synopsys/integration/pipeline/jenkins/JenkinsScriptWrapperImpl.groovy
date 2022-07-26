@@ -90,24 +90,8 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     @Override
     void executeCommandWithHttpStatusCheck(String command, String expectedHttpStatusCode, String jsonResponseFileName, String githubCredentialsId, PipelineConfiguration pipelineConfiguration) {
         // adding the http code checker command and sending output into jsonResponseFileName file
-        //script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-        //    String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
-        //    String newCommand = command + " -H \"Authorization: token ${gitPassword}\" -o ${jsonResponseFileName} -w %{http_code}"
-
-            //taking the Http status code
-        //    String receivedHttpStatusCode = executeCommand(newCommand, true)
-            // If receivedHttpStatusCode != expectedHttpStatusCode throw. 201 is the success code
-        //    if (receivedHttpStatusCode != (expectedHttpStatusCode)) {
-         //       throw new Exception("Did not return ${expectedHttpStatusCode} HTTP code, not successful. Instead returned ${receivedHttpStatusCode}")
-        //    }
-       // }
-
         String newCommand = command + " -H \"Authorization: token ${PASSWORD_SEARCH_TOKEN}\" -o ${jsonResponseFileName} -w %{http_code}"
-
-        //taking the Http status code
         String receivedHttpStatusCode = executeWithCredentials(pipelineConfiguration, newCommand, githubCredentialsId)
-
-        // If receivedHttpStatusCode != expectedHttpStatusCode throw. 201 is the success code
         assert receivedHttpStatusCode == expectedHttpStatusCode : "Did not return ${expectedHttpStatusCode} HTTP code, not successful. Instead returned ${receivedHttpStatusCode}"
 
         //ensuring the output json file is in pretty formatting
@@ -159,14 +143,6 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
         String pushCommandStdOut = executeWithCredentials(pipelineConfiguration, pushCommand, githubCredentialsId)
 
         assert pushCommandStdOut.endsWith("Done")
-
-        //script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-        //    String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
-        //    String gitUsername = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
-        //    String adjustedBranch = url.replace("https://", "https://${gitUsername}:${gitPassword}@")
-
-        //    executeCommandWithException("${gitPath} push ${adjustedBranch}")
-       // }
     }
 
     String getJenkinsProperty(String propertyName) {
