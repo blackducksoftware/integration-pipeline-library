@@ -224,16 +224,6 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(githubReleaseStage)
     }
 
-    GithubReleaseStage addGithubReleaseStageOld(String stageName, String[] assetNames) {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo, githubCredentialsId)
-        addCommonStage(githubReleaseStage)
-        if (assetNames.length > 0)
-            for (int i = 0; i < assetNames.length; i++){
-                addGithubAssetStage(assetNames[i])
-            }
-        return githubReleaseStage
-    }
-
     GithubReleaseStage addGithubReleaseStage(String stageName, String glob) {
         GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), stageName, releaseOwner, releaseRepo, githubCredentialsId)
         addCommonStage(githubReleaseStage)
