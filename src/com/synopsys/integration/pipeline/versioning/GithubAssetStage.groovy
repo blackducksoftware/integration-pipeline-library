@@ -29,9 +29,9 @@ class GithubAssetStage extends Stage{
             if (files.length == 0)
                 throw new Exception("no files found matching input " + glob)
             //taking the path of each file and uploading to the release
-            //for (int i = 0; i < files.length; i++) {
-            for (File file : files){
-                String assetName = file.path
+            for (int i = 0; i < files.length; i++) {
+            //for (File file : files){
+                String assetName = files[i].path
                 String assetCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${assetName}\")\" -H \"Content-Length: \$(wc -c <\"${assetName}\" | xargs)\" -T \"${assetName}\" \"${uploadUrl}?name=\$(basename ${assetName})\""
                 assetName = "asset-" + StringUtils.substringAfterLast(assetName, '/') + ".json"
                 getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", assetName, githubCredentialsId, pipelineConfiguration)
