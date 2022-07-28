@@ -24,12 +24,14 @@ class GithubAssetStage extends Stage{
             String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage.RELEASE_FILE)["upload_url"] as String)
             uploadUrl = StringUtils.substringBeforeLast(uploadUrl, '{')
 
+            if (glob.trim().length() == 0)
+                throw new Exception("glob must contain characters")
+
             def files = getPipelineConfiguration().getScriptWrapper().findFileGlob(glob)
             //throwing if no files matching glob pattern are found
             if (files.length == 0)
                 throw new Exception("no files found matching input " + glob)
             //taking the path of each file and uploading to the release
-            //for (int i = 0; i < files.length; i++) {
             for (File file : files){
                 String assetName = file.path
                 String assetCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${assetName}\")\" -H \"Content-Length: \$(wc -c <\"${assetName}\" | xargs)\" -T \"${assetName}\" \"${uploadUrl}?name=\$(basename ${assetName})\""

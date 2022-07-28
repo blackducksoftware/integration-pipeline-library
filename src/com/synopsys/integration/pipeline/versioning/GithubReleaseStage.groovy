@@ -7,7 +7,6 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 
 import java.text.SimpleDateFormat
-import static groovy.io.FileType.FILES
 
 class GithubReleaseStage extends Stage{
     public static String RELEASE_FILE = 'release.json'
