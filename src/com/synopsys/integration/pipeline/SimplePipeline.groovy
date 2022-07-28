@@ -219,7 +219,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStage addGithubReleaseStage() {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'Github Release', releaseOwner, releaseRepo, githubCredentialsId)
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'Github Release', releaseOwner, releaseRepo, "george")
         return addCommonStage(githubReleaseStage)
     }
 
@@ -230,7 +230,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubAssetStage addGithubAssetStage(String glob) {
-        GithubAssetStage githubAssetStage = new GithubAssetStage(getPipelineConfiguration(), 'Github Asset Release', glob, githubCredentialsId)
+        GithubAssetStage githubAssetStage = new GithubAssetStage(getPipelineConfiguration(), 'Github Asset Release', glob, "george")
         return addCommonStage(githubAssetStage)
     }
 
@@ -417,9 +417,6 @@ class SimplePipeline extends Pipeline {
 
     void setUrl(final String url) {
         this.url = url
-        //String removeHttp = url.substring(8, url.length())
-        //if (removeHttp.substring(removeHttp.length() - 4, removeHttp.length()) == '.git')
-        //    removeHttp = removeHttp.substring(0, removeHttp.length() - 4)
         String removeHttp = StringUtils.substringAfterLast(url, '//')
         removeHttp = StringUtils.substringBeforeLast(removeHttp, '.')
         String[] urlParameters = removeHttp.split("/")
