@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils
 class GithubAssetStage extends Stage{
     private String githubCredentialsId
     private String glob
-    private String[] assetNames
+    //private String[] assetNames
     final CpsScript script
 
     GithubAssetStage(PipelineConfiguration pipelineConfiguration, String stageName, String glob, String githubCredentialsId, final CpsScript script) {
@@ -34,11 +34,11 @@ class GithubAssetStage extends Stage{
             if (files.length == 0)
                 throw new Exception("no files found matching input " + glob)
             //taking the path of each file and uploading to the release
-            assetNames = new String[files.length]
+            //assetNames = new String[files.length]
             for (int i = 0; i < files.length; i++) {
-                assetNames[i] = files[i].path
-                String assetCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${getAssetName(i)}\")\" -H \"Content-Length: \$(wc -c <\"${getAssetName(i)}\" | xargs)\" -T \"${getAssetName(i)}\" \"${uploadUrl}?name=\$(basename ${getAssetName(i)})\""
-                String newAssetName = "asset-" + StringUtils.substringAfterLast(getAssetName(i), '/') + ".json"
+                String assetName = files[i].path
+                String assetCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${assetName}\")\" -H \"Content-Length: \$(wc -c <\"${assetName}\" | xargs)\" -T \"${assetName}\" \"${uploadUrl}?name=\$(basename ${assetName})\""
+                String newAssetName = "asset-" + StringUtils.substringAfterLast(assetName, '/') + ".json"
                 getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", newAssetName, githubCredentialsId, pipelineConfiguration)
             }
 
@@ -47,8 +47,5 @@ class GithubAssetStage extends Stage{
         }
     }
 
-    String getAssetName(int i) {
-        return assetNames[i]
-    }
 }
 
