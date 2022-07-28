@@ -5,20 +5,16 @@ import com.synopsys.integration.pipeline.exception.GitHubReleaseException
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
-import org.jenkinsci.plugins.workflow.cps.CpsScript
 import org.apache.commons.lang3.StringUtils
 
 class GithubAssetStage extends Stage{
     private String githubCredentialsId
     private String glob
-    //private String[] assetNames
-    final CpsScript script
 
-    GithubAssetStage(PipelineConfiguration pipelineConfiguration, String stageName, String glob, String githubCredentialsId, final CpsScript script) {
+    GithubAssetStage(PipelineConfiguration pipelineConfiguration, String stageName, String glob, String githubCredentialsId) {
         super(pipelineConfiguration, stageName)
         this.glob = glob
         this.githubCredentialsId = githubCredentialsId
-        this.script = script
     }
 
     @Override
@@ -28,18 +24,17 @@ class GithubAssetStage extends Stage{
             String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage.RELEASE_FILE)["upload_url"] as String)
             uploadUrl = StringUtils.substringBeforeLast(uploadUrl, '{')
 
-            //finding files which match glob pattern
             def files = getPipelineConfiguration().getScriptWrapper().findFileGlob(glob)
             //throwing if no files matching glob pattern are found
             if (files.length == 0)
                 throw new Exception("no files found matching input " + glob)
             //taking the path of each file and uploading to the release
-            //assetNames = new String[files.length]
-            for (int i = 0; i < files.length; i++) {
-                String assetName = files[i].path
+            //for (int i = 0; i < files.length; i++) {
+            for (File file : files){
+                String assetName = file.path
                 String assetCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${assetName}\")\" -H \"Content-Length: \$(wc -c <\"${assetName}\" | xargs)\" -T \"${assetName}\" \"${uploadUrl}?name=\$(basename ${assetName})\""
-                String newAssetName = "asset-" + StringUtils.substringAfterLast(assetName, '/') + ".json"
-                getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", newAssetName, githubCredentialsId, pipelineConfiguration)
+                assetName = "asset-" + StringUtils.substringAfterLast(assetName, '/') + ".json"
+                getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", assetName, githubCredentialsId, pipelineConfiguration)
             }
 
         } catch (Exception e) {
