@@ -238,4 +238,9 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     JSONObject readJsonFile(String fileName) {
         return script.readJSON(file: fileName)
     }
+
+    @Override
+    File[] findFileGlob (String glob){
+        return script.findFiles(glob: glob)
+    }
 }

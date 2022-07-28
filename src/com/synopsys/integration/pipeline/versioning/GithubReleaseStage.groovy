@@ -17,7 +17,6 @@ class GithubReleaseStage extends Stage{
     private String releaseTargetCommitish
     private String releaseName
     private String releaseBody
-    private String githubToken
     private String githubCredentialsId
     private String targetCommitish
 
@@ -84,10 +83,6 @@ class GithubReleaseStage extends Stage{
 
     void setReleaseBody(String releaseBody) {
         this.releaseBody = releaseBody
-    }
-
-    String getGithubToken() {
-        return githubToken
     }
 
     String getTargetCommitish() {

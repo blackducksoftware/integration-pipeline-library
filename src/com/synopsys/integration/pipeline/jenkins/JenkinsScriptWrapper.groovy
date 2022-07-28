@@ -71,4 +71,6 @@ interface JenkinsScriptWrapper extends Serializable {
 
     JSONObject readJsonFile(String fileName)
 
+    File[] findFileGlob(String glob)
+
 }

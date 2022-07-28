@@ -29,10 +29,10 @@ class GithubAssetStage extends Stage{
             uploadUrl = StringUtils.substringBeforeLast(uploadUrl, '{')
 
             //finding files which match glob pattern
-            def files = script.findFiles(glob: glob)
+            def files = getPipelineConfiguration().getScriptWrapper().findFileGlob(glob)
             //throwing if no files matching glob pattern are found
             if (files.length == 0)
-                throw new Exception("no files found matching input glob")
+                throw new Exception("no files found matching input " + glob)
             //taking the path of each file and uploading to the release
             assetNames = new String[files.length]
             for (int i = 0; i < files.length; i++) {
