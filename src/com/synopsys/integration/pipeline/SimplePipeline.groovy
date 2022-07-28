@@ -3,7 +3,6 @@ package com.synopsys.integration.pipeline
 import com.synopsys.integration.pipeline.buildTool.GradleStage
 import com.synopsys.integration.pipeline.buildTool.MavenStage
 import com.synopsys.integration.pipeline.email.EmailPipelineWrapper
-import com.synopsys.integration.pipeline.exception.CommandExecutionException
 import com.synopsys.integration.pipeline.generic.ClosureStage
 import com.synopsys.integration.pipeline.generic.ClosureStep
 import com.synopsys.integration.pipeline.model.Stage
