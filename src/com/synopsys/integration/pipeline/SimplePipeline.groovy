@@ -219,7 +219,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubReleaseStage addGithubReleaseStage() {
-        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'Github Release', releaseOwner, releaseRepo, "george")
+        GithubReleaseStage githubReleaseStage = new GithubReleaseStage(getPipelineConfiguration(), 'Github Release', releaseOwner, releaseRepo, githubCredentialsId)
         return addCommonStage(githubReleaseStage)
     }
 
@@ -230,7 +230,7 @@ class SimplePipeline extends Pipeline {
     }
 
     GithubAssetStage addGithubAssetStage(String glob) {
-        GithubAssetStage githubAssetStage = new GithubAssetStage(getPipelineConfiguration(), 'Github Asset Release', glob, "george")
+        GithubAssetStage githubAssetStage = new GithubAssetStage(getPipelineConfiguration(), 'Github Asset Release', glob, githubCredentialsId)
         return addCommonStage(githubAssetStage)
     }
 
