@@ -24,9 +24,6 @@ class GithubAssetStage extends Stage{
             String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage.RELEASE_FILE)["upload_url"] as String)
             uploadUrl = StringUtils.substringBeforeLast(uploadUrl, '{')
 
-            if (glob.trim().length() == 0)
-                throw new Exception("glob must contain characters")
-
             def files = getPipelineConfiguration().getScriptWrapper().findFileGlob(glob)
             //throwing if no files matching glob pattern are found
             if (files.length == 0)

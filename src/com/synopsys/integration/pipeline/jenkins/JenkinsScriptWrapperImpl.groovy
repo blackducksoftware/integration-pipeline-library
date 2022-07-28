@@ -241,6 +241,8 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
 
     @Override
     File[] findFileGlob (String glob){
+        if (glob.trim().length() == 0)
+            throw new Exception("glob must contain characters")
         return script.findFiles(glob: glob)
     }
 }
