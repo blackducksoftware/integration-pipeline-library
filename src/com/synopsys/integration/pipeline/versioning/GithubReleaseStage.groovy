@@ -29,14 +29,14 @@ class GithubReleaseStage extends Stage{
     @Override
     void stageExecution() throws PipelineException, Exception {
         try {
-            String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date())
+            String timeStamp = new SimpleDateFormat("MMM d, yyyy HH:mm:ss").format(new Date())
             setReleaseTagName(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(GithubReleaseStageLegacy.GITHUB_RELEASE_VERSION))
             setReleaseBody("Released from Jenkins " + timeStamp)
 
             targetCommitish = getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RemoveSnapshotStage.RELEASE_COMMIT_HASH)
-            String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\", \"draft\":false, \"prerelease\":false, \"generate_release_notes\":false}'"
+            String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\"'"
 
-            getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, "201", RELEASE_FILE, githubCredentialsId, pipelineConfiguration)
+            getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, 201, RELEASE_FILE, githubCredentialsId, pipelineConfiguration)
             getPipelineConfiguration().getLogger().info(getPipelineConfiguration().getScriptWrapper().readJsonFile(RELEASE_FILE) as String)
 
         } catch (Exception e) {

@@ -33,7 +33,7 @@ class GithubAssetStage extends Stage{
                 String assetName = file.path
                 String assetCommandLines = "curl -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${assetName}\")\" -H \"Content-Length: \$(wc -c <\"${assetName}\" | xargs)\" -T \"${assetName}\" \"${uploadUrl}?name=\$(basename ${assetName})\""
                 assetName = "asset-" + StringUtils.substringAfterLast(assetName, '/') + ".json"
-                getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, "201", assetName, githubCredentialsId, pipelineConfiguration)
+                getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(assetCommandLines, 201, assetName, githubCredentialsId, pipelineConfiguration)
             }
 
         } catch (Exception e) {
