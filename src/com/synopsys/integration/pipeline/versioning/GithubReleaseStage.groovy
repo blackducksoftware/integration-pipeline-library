@@ -34,6 +34,7 @@ class GithubReleaseStage extends Stage{
             setReleaseBody("Released from Jenkins on " + timeStamp)
 
             targetCommitish = getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(RemoveSnapshotStage.RELEASE_COMMIT_HASH)
+            //TODO phase out curl command for direct Github API calls
             String stringCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" https://api.github.com/repos/${getReleaseOwner()}/${getReleaseRepo()}/releases -d '{\"tag_name\":\"${getReleaseTagName()}\", \"target_commitish\":\"${getTargetCommitish()}\", \"name\":\"${getReleaseTagName()}\", \"body\":\"${getReleaseBody()}\"'"
 
             getPipelineConfiguration().getScriptWrapper().executeCommandWithHttpStatusCheck(stringCommandLines, 201, RELEASE_FILE, githubCredentialsId, pipelineConfiguration)
