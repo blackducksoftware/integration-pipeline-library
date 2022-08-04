@@ -58,9 +58,8 @@ class SimplePipeline extends Pipeline {
         } else {
             gitBranch = pipeline.determineGitBranch(branch)
             pipeline.setDirectoryFromBranch(gitBranch)
+            pipeline.setUrl(url)
         }
-
-        pipeline.setUrl(url)
 
         GitStage gitStage = pipeline.addGitStage(url, gitBranch, gitPolling)
         gitStage.setChangelog(true)
