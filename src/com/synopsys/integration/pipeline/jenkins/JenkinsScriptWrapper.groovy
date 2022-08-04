@@ -31,6 +31,10 @@ interface JenkinsScriptWrapper extends Serializable {
 
     String executeCommand(String command, Boolean returnStdout)
 
+    void executeCommandWithHttpStatusCheck(String command, int expectedHttpStatusCode, String jsonResponseFileName, String githubCredentialsId, PipelineConfiguration pipelineConfiguration)
+
+    String executeWithCredentials(PipelineConfiguration pipelineConfiguration, String command, String githubCredentialsId)
+
     void executeCommandWithException(String command) throws CommandExecutionException
 
     void executeCommandWithCatchError(String command)
@@ -66,5 +70,7 @@ interface JenkinsScriptWrapper extends Serializable {
     void writeJsonFile(String fileName, Map data)
 
     JSONObject readJsonFile(String fileName)
+
+    File[] findFileGlob(String glob)
 
 }

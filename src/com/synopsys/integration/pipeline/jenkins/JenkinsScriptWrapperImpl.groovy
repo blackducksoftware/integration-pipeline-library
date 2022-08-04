@@ -3,9 +3,12 @@ package com.synopsys.integration.pipeline.jenkins
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
 import com.synopsys.integration.pipeline.scm.GitStage
 import net.sf.json.JSONObject
+import org.apache.commons.lang3.StringUtils
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
+    public static final String USERNAME_SEARCH_TOKEN = 'USERNAME_SEARCH_TOKEN'
+    public static final String PASSWORD_SEARCH_TOKEN = 'PASSWORD_SEARCH_TOKEN'
     final CpsScript script
 
     JenkinsScriptWrapperImpl(final CpsScript script) {
@@ -85,6 +88,33 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
+    void executeCommandWithHttpStatusCheck(String command, int expectedHttpStatusCode, String jsonResponseFileName, String githubCredentialsId, PipelineConfiguration pipelineConfiguration) {
+        // adding the http code checker command and sending output into jsonResponseFileName file
+        String newCommand = command + " -H \"Authorization: token ${PASSWORD_SEARCH_TOKEN}\" -o ${jsonResponseFileName} -w %{http_code}"
+        int receivedHttpStatusCode = Integer.parseInt(executeWithCredentials(pipelineConfiguration, newCommand, githubCredentialsId))
+        assert receivedHttpStatusCode == expectedHttpStatusCode : "Did not return ${expectedHttpStatusCode} HTTP code, not successful. Instead returned ${receivedHttpStatusCode}"
+
+        //ensuring the output json file is in pretty formatting
+        writeJsonFile(jsonResponseFileName, readJsonFile(jsonResponseFileName))
+
+        //adding the json output as an artifact to the release
+        archiveArtifacts(jsonResponseFileName)
+    }
+
+    @Override
+    String executeWithCredentials(PipelineConfiguration pipelineConfiguration, String command, String githubCredentialsId) throws CommandExecutionException {
+        script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+            String gitUsername = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
+            String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
+            String adjustedCommand = command.replaceAll(USERNAME_SEARCH_TOKEN, gitUsername).replaceAll(PASSWORD_SEARCH_TOKEN, gitPassword)
+
+            String output = executeCommand(adjustedCommand, true).trim()
+            pipelineConfiguration.getLogger().info(output)
+            return output
+        }
+    }
+
+    @Override
     void executeCommandWithException(String command) throws CommandExecutionException {
         int errorStatus
         if (isUnix()) {
@@ -107,13 +137,12 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     @Override
     void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws CommandExecutionException {
         assert url.startsWith(GitStage.GITHUB_HTTPS): "Required to use " + GitStage.GITHUB_HTTPS + " when publishing to github"
-        script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-            String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
-            String gitUsername = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
-            String adjustedBranch = url.replace("https://", "https://${gitUsername}:${gitPassword}@")
 
-            executeCommandWithException("${gitPath} push ${adjustedBranch}")
-        }
+        String adjustedBranch = url.replace("https://", "https://${USERNAME_SEARCH_TOKEN}:${PASSWORD_SEARCH_TOKEN}@")
+        String pushCommand = "${gitPath} push ${adjustedBranch} --porcelain 2>&1"
+        String pushCommandStdOut = executeWithCredentials(pipelineConfiguration, pushCommand, githubCredentialsId)
+
+        assert pushCommandStdOut.endsWith("Done")
     }
 
     String getJenkinsProperty(String propertyName) {
@@ -208,5 +237,12 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     @Override
     JSONObject readJsonFile(String fileName) {
         return script.readJSON(file: fileName)
+    }
+
+    @Override
+    File[] findFileGlob (String glob){
+        if (glob.trim().length() == 0)
+            throw new Exception("glob must contain characters")
+        return script.findFiles(glob: glob)
     }
 }
