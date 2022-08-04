@@ -18,11 +18,7 @@ import com.synopsys.integration.pipeline.setup.SetJdkStage
 import com.synopsys.integration.pipeline.tools.DetectStage
 import com.synopsys.integration.pipeline.tools.DockerImage
 import com.synopsys.integration.pipeline.utilities.GradleUtils
-import com.synopsys.integration.pipeline.versioning.GithubAssetStage
-import com.synopsys.integration.pipeline.versioning.GithubReleaseStageLegacy
-import com.synopsys.integration.pipeline.versioning.GithubReleaseStage
-import com.synopsys.integration.pipeline.versioning.NextSnapshotStage
-import com.synopsys.integration.pipeline.versioning.RemoveSnapshotStage
+import com.synopsys.integration.pipeline.versioning.*
 import org.apache.commons.lang3.BooleanUtils
 import org.apache.commons.lang3.StringUtils
 import org.jenkinsci.plugins.workflow.cps.CpsScript
@@ -64,14 +60,13 @@ class SimplePipeline extends Pipeline {
             pipeline.setDirectoryFromBranch(gitBranch)
         }
 
+        pipeline.setUrl(url)
+
         GitStage gitStage = pipeline.addGitStage(url, gitBranch, gitPolling)
         gitStage.setChangelog(true)
+        pipeline.setGithubCredentialsId(gitStage.getCredentialsId())
 
         pipeline.addApiTokenStage()
-
-        pipeline.setUrl(url)
-        pipeline.setDirectoryFromBranch(branch)
-        pipeline.setGithubCredentialsId(gitStage.getCredentialsId())
 
         return pipeline
     }
