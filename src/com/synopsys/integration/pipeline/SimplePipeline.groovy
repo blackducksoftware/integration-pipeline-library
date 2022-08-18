@@ -48,37 +48,37 @@ class SimplePipeline extends Pipeline {
 
     static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling, boolean isPopBuild) {
         SimplePipeline pipeline = new SimplePipeline(script, relativeDirectory)
-        getLogger().info("DANA - 1")
+        pipeline.getLogger().info("DANA - 1")
         pipeline.addCleanupStep(relativeDirectory)
-        getLogger().info("DANA - 2")
+        pipeline.getLogger().info("DANA - 2")
         pipeline.addSetJdkStage(jdkToolName)
-        getLogger().info("DANA - 3")
+        pipeline.getLogger().info("DANA - 3")
 
         String gitBranch = branch
 
-        getLogger().info("DANA - 4")
+        pipeline.getLogger().info("DANA - 4")
         if (isPopBuild) {
-            getLogger().info("DANA - 5")
+            pipeline.getLogger().info("DANA - 5")
             pipeline.setDirectoryFromUrl(url)
         } else {
-            getLogger().info("DANA - 6")
+            pipeline.getLogger().info("DANA - 6")
             gitBranch = pipeline.determineGitBranch(branch)
-            getLogger().info("DANA - 7")
+            pipeline.getLogger().info("DANA - 7")
             pipeline.setDirectoryFromBranch(gitBranch)
-            getLogger().info("DANA - 8")
+            pipeline.getLogger().info("DANA - 8")
             pipeline.setUrl(url)
         }
-        getLogger().info("DANA - 9")
+        pipeline.getLogger().info("DANA - 9")
 
         GitStage gitStage = pipeline.addGitStage(url, gitBranch, gitPolling)
-        getLogger().info("DANA - 10")
+        pipeline.getLogger().info("DANA - 10")
         gitStage.setChangelog(true)
-        getLogger().info("DANA - 11")
+        pipeline.getLogger().info("DANA - 11")
         pipeline.setGithubCredentialsId(gitStage.getCredentialsId())
-        getLogger().info("DANA - 12")
+        pipeline.getLogger().info("DANA - 12")
 
         pipeline.addApiTokenStage()
-        getLogger().info("DANA - 13")
+        pipeline.getLogger().info("DANA - 13")
 
         return pipeline
     }
