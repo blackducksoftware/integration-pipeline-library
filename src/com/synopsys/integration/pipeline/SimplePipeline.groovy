@@ -423,9 +423,17 @@ class SimplePipeline extends Pipeline {
 
     void setUrl(final String url) {
         this.url = url
-        String removeHttp = StringUtils.substringAfterLast(url, '//')
+        String removeHttp = null
+        if (url.contains('https')) {
+            removeHttp = StringUtils.substringAfterLast(url, '//')
+        } else if (url.contains(':')) {
+            removeHttp = StringUtils.substringAfterLast(url, ':')
+        }
+
         removeHttp = StringUtils.substringBeforeLast(removeHttp, '.')
         String[] urlParameters = removeHttp.split("/")
+
+        assert urlParameters.size() > 2: "Could not correctly split url to determine Owner and Repo: " + url
         releaseOwner = urlParameters[1]
         releaseRepo = urlParameters[2]
     }
@@ -451,4 +459,5 @@ class SimplePipeline extends Pipeline {
         inputUrl = StringUtils.substringBeforeLast(inputUrl, '.')
         this.commonRunDirectory = inputUrl
     }
+
 }
