@@ -17,6 +17,7 @@ import com.synopsys.integration.pipeline.setup.CleanupStep
 import com.synopsys.integration.pipeline.setup.SetJdkStage
 import com.synopsys.integration.pipeline.tools.DetectStage
 import com.synopsys.integration.pipeline.tools.DockerImage
+import com.synopsys.integration.pipeline.tools.PublishToGCR
 import com.synopsys.integration.pipeline.utilities.GradleUtils
 import com.synopsys.integration.pipeline.versioning.*
 import org.apache.commons.lang3.BooleanUtils
@@ -357,6 +358,11 @@ class SimplePipeline extends Pipeline {
     ApiTokenStage addApiTokenStage() {
         ApiTokenStage apiTokenStage = new ApiTokenStage(getPipelineConfiguration(), 'Black Duck Api Token')
         return addCommonStage(apiTokenStage)
+    }
+
+    PublishToGCR addPublishToGCR(String gcrRepo) {
+        PublishToGCR publishToGCR = new PublishToGCR(getPipelineConfiguration(), 'Publish Images to GCR', gcrRepo)
+        return addCommonStage(publishToGCR)
     }
 
     ClosureStage addStage(String stageName, Closure closure) {

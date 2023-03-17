@@ -154,4 +154,10 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
         getDryRunPipelineBuilder().addPipelineLine("readJsonFile file: ${fileName}")
         return new JSONObject()
     }
+
+    @Override
+    Map<?, ?> readYamlFile(String fileName) {
+        getDryRunPipelineBuilder().addPipelineLine("readYamlFile file: ${fileName}")
+        return new HashMap<>()
+    }
 }

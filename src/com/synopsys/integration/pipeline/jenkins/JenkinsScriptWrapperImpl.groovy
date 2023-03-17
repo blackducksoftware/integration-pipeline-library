@@ -3,7 +3,6 @@ package com.synopsys.integration.pipeline.jenkins
 import com.synopsys.integration.pipeline.exception.CommandExecutionException
 import com.synopsys.integration.pipeline.scm.GitStage
 import net.sf.json.JSONObject
-import org.apache.commons.lang3.StringUtils
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
@@ -240,9 +239,19 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    File[] findFileGlob (String glob){
+    Map<?, ?> readYamlFile(final String fileName) {
+        return script.readYaml(file: fileName)
+    }
+
+    @Override
+    File[] findFileGlob(String glob){
         if (glob.trim().length() == 0)
             throw new Exception("glob must contain characters")
         return script.findFiles(glob: glob)
+    }
+
+    @Override
+    void triggerPushToGCR(String imageData, String gcrRepo) {
+        script.build(job: 'Push_to_GCR', parameters: [script.string(name: 'IMAGE_LIST', value: imageData), script.string(name: 'GCR_REPO', value: gcrRepo)])
     }
 }
