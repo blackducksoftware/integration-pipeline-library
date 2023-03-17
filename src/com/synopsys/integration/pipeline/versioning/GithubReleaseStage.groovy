@@ -8,7 +8,7 @@ import com.synopsys.integration.pipeline.model.Stage
 
 import java.text.SimpleDateFormat
 
-class GithubReleaseStage extends Stage{
+class GithubReleaseStage extends Stage {
     public static String RELEASE_FILE = 'release.json'
     private String releaseOwner
     private String releaseRepo

@@ -7,7 +7,7 @@ import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
 import com.synopsys.integration.pipeline.model.Stage
 import org.apache.commons.lang3.StringUtils
 
-class GithubAssetStage extends Stage{
+class GithubAssetStage extends Stage {
     private String githubCredentialsId
     private String glob
 
@@ -26,10 +26,11 @@ class GithubAssetStage extends Stage{
 
             def files = getPipelineConfiguration().getScriptWrapper().findFileGlob(glob)
             //throwing if no files matching glob pattern are found
-            if (files.length == 0)
+            if (files.length == 0) {
                 throw new Exception("no files found matching input " + glob)
+            }
             //taking the path of each file and uploading to the release
-            for (File file : files){
+            for (File file : files) {
                 String assetName = file.path
                 //TODO phase out curl command for direct Github API calls
                 String assetCommandLines = "curl -s -X POST -H \"Accept: application/vnd.github.v3+json\" -H \"Content-Type: \$(file -b --mime-type \"${assetName}\")\" -H \"Content-Length: \$(wc -c <\"${assetName}\" | xargs)\" -T \"${assetName}\" \"${uploadUrl}?name=\$(basename ${assetName})\""

@@ -16,5 +16,5 @@ class PipelineException extends Exception {
     PipelineException(final Throwable cause) {
         super(cause)
     }
-    
+
 }
