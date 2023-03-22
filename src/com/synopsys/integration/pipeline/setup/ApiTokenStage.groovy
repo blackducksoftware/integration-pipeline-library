@@ -3,6 +3,7 @@ package com.synopsys.integration.pipeline.setup
 import com.cloudbees.groovy.cps.NonCPS
 import com.synopsys.integration.pipeline.exception.PipelineException
 import com.synopsys.integration.pipeline.jenkins.PipelineConfiguration
+import com.synopsys.integration.pipeline.logging.PipelineLogger
 import com.synopsys.integration.pipeline.model.Stage
 
 class ApiTokenStage extends Stage {
@@ -12,6 +13,7 @@ class ApiTokenStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
+        PipelineLogger logger = pipelineConfiguration.getLogger()
         String apiTokensUrl = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKENS_URL')
         String blackDuckUrl = retrieveDefaultStringFromEnv('BLACKDUCK_URL')
         String blackDuckApiTokenName = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKEN_NAME')
@@ -20,6 +22,9 @@ class ApiTokenStage extends Stage {
         if (blackDuckUrl) {
             if (apiTokensUrl?.trim()) {
                 throw new RuntimeException("BLACKDUCK_API_TOKENS_URL is not defined within environment")
+            } else {
+                logger.info("apiTokensUrl?.trim()::" + apiTokensUrl?.trim())
+                logger.info("apiTokensUrl::${apiTokensUrl}")
             }
 
             if (blackDuckApiTokenName?.trim() || blackDuckApiTokenName?.trim()) {
@@ -27,18 +32,18 @@ class ApiTokenStage extends Stage {
             }
 
             String url = "${apiTokensUrl}?vm=${blackDuckUrl}&name=${blackDuckApiTokenName}&username=${blackDuckApiTokenUsername}"
-            pipelineConfiguration.getLogger().info("Trying to get the token from url --> ${url}")
+            logger.info("Trying to get the token from url --> ${url}")
             String blackDuckApiToken = retrieveApiTokenFromServer(url)
 
             if (blackDuckApiToken?.trim()) {
                 pipelineConfiguration.scriptWrapper.setJenkinsProperty('BLACKDUCK_API_TOKEN', blackDuckApiToken)
-                pipelineConfiguration.getLogger().info("BLACKDUCK_API_TOKEN for server ${blackDuckUrl} set as ${blackDuckApiToken}")
+                logger.info("BLACKDUCK_API_TOKEN for server ${blackDuckUrl} set as ${blackDuckApiToken}")
             } else {
                 throw new RuntimeException("${blackDuckUrl} is not defined within ${apiTokensUrl}")
             }
 
         } else {
-            pipelineConfiguration.getLogger().info("BLACKDUCK_API_TOKEN not set as required BLACKDUCK_URL not set.")
+            logger.info("BLACKDUCK_API_TOKEN not set as required BLACKDUCK_URL not set.")
         }
     }
 
