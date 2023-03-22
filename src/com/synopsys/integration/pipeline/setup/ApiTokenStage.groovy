@@ -19,6 +19,7 @@ class ApiTokenStage extends Stage {
 
         if (blackDuckUrl) {
             String url = "${apiTokensUrl}?vm=${blackDuckUrl}&name=${blackDuckApiTokenName}&username=${blackDuckApiTokenUsername}"
+            pipelineConfiguration.getLogger().info("Trying to get the token from url --> ${url}")
             String blackDuckApiToken = retrieveApiTokenFromServer(url)
 
             if (blackDuckApiToken?.trim()) {
