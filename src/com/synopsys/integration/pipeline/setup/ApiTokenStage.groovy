@@ -20,11 +20,13 @@ class ApiTokenStage extends Stage {
         String blackDuckApiTokenUsername = retrieveDefaultStringFromEnv('BLACKDUCK_API_TOKEN_USERNAME')
 
         if (blackDuckUrl) {
+            logger.info("apiTokensUrl-->${apiTokensUrl}")
+            logger.info("blackDuckUrl-->${blackDuckUrl}")
+            logger.info("blackDuckApiTokenName-->${blackDuckApiTokenName}")
+            logger.info("blackDuckApiTokenUsername-->${blackDuckApiTokenUsername}")
+            
             if (apiTokensUrl?.trim()) {
                 throw new RuntimeException("BLACKDUCK_API_TOKENS_URL is not defined within environment")
-            } else {
-                logger.info("apiTokensUrl?.trim()::" + apiTokensUrl?.trim())
-                logger.info("apiTokensUrl::${apiTokensUrl}")
             }
 
             if (blackDuckApiTokenName?.trim() || blackDuckApiTokenName?.trim()) {
