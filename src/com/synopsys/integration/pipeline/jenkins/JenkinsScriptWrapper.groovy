@@ -71,6 +71,9 @@ interface JenkinsScriptWrapper extends Serializable {
 
     JSONObject readJsonFile(String fileName)
 
+    Map<?, ?> readYamlFile(String fileName)
+
     File[] findFileGlob(String glob)
 
+    void triggerPushToGCR(String imageList, String gcrRepo)
 }
