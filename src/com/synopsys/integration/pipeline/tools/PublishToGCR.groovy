@@ -8,7 +8,6 @@ import com.synopsys.integration.pipeline.model.Stage
 
 class PublishToGCR extends Stage {
     private String fileGlob = 'build/**/docker-compose.yml'
-    private String imageFilter = 'alert'
     private String delimiter = ':::'
     private String gcrRepo
 
@@ -42,10 +41,7 @@ class PublishToGCR extends Stage {
 
         // Loop all image names to get the sha
         for (imageName in dockerImageNames) {
-            // Once the Alert images are in Artifactory, we can remove this
-            if (!imageName.contains(imageFilter)) {
-                jenkinsScriptWrapper.executeCommandWithException("docker logout && docker rmi ${imageName} && docker pull ${imageName}")
-            }
+            jenkinsScriptWrapper.executeCommandWithException("docker pull ${imageName}")
 
             // Get and check the sha
             String shaFromImage = jenkinsScriptWrapper.executeCommand("docker inspect --format='{{index .RepoDigests 0}}' ${imageName}", true).trim()
@@ -70,10 +66,6 @@ class PublishToGCR extends Stage {
 
     void setFileGlob(String fileGlob) {
         this.fileGlob = fileGlob
-    }
-
-    void setImageFilter(String imageFilter) {
-        this.imageFilter = imageFilter
     }
 
     void setDelimiter(String delimiter) {
