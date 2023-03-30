@@ -8,6 +8,7 @@ import com.synopsys.integration.pipeline.model.Stage
 
 class PublishToGCR extends Stage {
     private String fileGlob = 'build/**/docker-compose.yml'
+    private String imageFilter = 'blackduck-alert'
     private String delimiter = ':::'
     private String gcrRepo
 
@@ -34,7 +35,10 @@ class PublishToGCR extends Stage {
         for (File composeFile : files) {
             def fileAsYaml = jenkinsScriptWrapper.readYamlFile(composeFile.path)
             for (def service : fileAsYaml.services) {
-                dockerImageNames << service.getValue().get('image')
+                String imageName = service.getValue().get('image')
+                if (imageName.contains(imageFilter)) {
+                    dockerImageNames << imageName
+                }
             }
         }
         logger.info("Found ${dockerImageNames.size()} unique docker image names within orchestration")
@@ -66,6 +70,10 @@ class PublishToGCR extends Stage {
 
     void setFileGlob(String fileGlob) {
         this.fileGlob = fileGlob
+    }
+
+    void setImageFilter(final String imageFilter) {
+        this.imageFilter = imageFilter
     }
 
     void setDelimiter(String delimiter) {
