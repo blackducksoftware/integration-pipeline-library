@@ -64,7 +64,7 @@ class DockerImage {
     }
 
     String setFullDockerImageName() {
-        setFullDockerImageName(dockerImageOrg + '/' + dockerImageName + ':' + dockerImageVersion)
+        setFullDockerImageName(dockerImageOrg + '/' + dockerImageName + ':' + getDockerVersionFromEnvironment())
         return getFullDockerImageName()
     }
 
