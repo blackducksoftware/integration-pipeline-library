@@ -32,7 +32,7 @@ class DetectStage extends Stage {
         if (!Objects.isNull(dockerImage)) {
             updateDetectCommand(DockerImage.DEFAULT_IMAGE_VERSION, dockerImage.getDockerVersionFromEnvironment())
 
-            String fullImageName = dockerImage.getFullDockerImageName()
+            String fullImageName = dockerImage.setFullDockerImageName()
             getPipelineConfiguration().getScriptWrapper().executeCommandWithException("docker pull ${fullImageName}")
         }
 

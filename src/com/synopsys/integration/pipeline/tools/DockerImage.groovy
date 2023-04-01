@@ -63,6 +63,11 @@ class DockerImage {
         return fullDockerImageName
     }
 
+    String setFullDockerImageName() {
+        setFullDockerImageName(dockerImageOrg + '/' + dockerImageName + ':' + dockerImageVersion)
+        return getFullDockerImageName()
+    }
+
     void setFullDockerImageName(String fullDockerImageName) {
         this.fullDockerImageName = fullDockerImageName
     }
