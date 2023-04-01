@@ -13,6 +13,7 @@ class DockerImage {
     private final String dockerImageName
     private final String bdProjectName
 
+    private String fullDockerImageName
     private String dockerImageVersion
 
     DockerImage(PipelineConfiguration pipelineConfiguration, String rawDockerImage) {
@@ -58,6 +59,19 @@ class DockerImage {
         return dockerImageVersion
     }
 
+    String getFullDockerImageName() {
+        return fullDockerImageName
+    }
+
+    String setFullDockerImageName() {
+        setFullDockerImageName(dockerImageOrg + '/' + dockerImageName + ':' + getDockerVersionFromEnvironment())
+        return getFullDockerImageName()
+    }
+
+    void setFullDockerImageName(String fullDockerImageName) {
+        this.fullDockerImageName = fullDockerImageName
+    }
+
     private void setDockerImageVersion(String dockerImageVersion) {
         this.dockerImageVersion = dockerImageVersion
     }
@@ -76,7 +90,7 @@ class DockerImage {
             pipelineConfiguration.getLogger().info("Using environment variable '${SimplePipeline.PROJECT_VERSION}' for docker image")
         }
 
-        String fullDockerImageName = dockerImageOrg + '/' + dockerImageName + ':' + dockerImageVersion
+        setFullDockerImageName(dockerImageOrg + '/' + dockerImageName + ':' + dockerImageVersion)
 
         return "--detect.docker.image=${fullDockerImageName} --detect.target.type=IMAGE --detect.project.name=${bdProjectName} --detect.project.version.name=${dockerImageVersion}"
     }

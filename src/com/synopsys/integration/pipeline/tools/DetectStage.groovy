@@ -31,6 +31,10 @@ class DetectStage extends Stage {
         // But, because of the duplicate param bug, the default parameters is set prior to execution
         if (!Objects.isNull(dockerImage)) {
             updateDetectCommand(DockerImage.DEFAULT_IMAGE_VERSION, dockerImage.getDockerVersionFromEnvironment())
+
+            getPipelineConfiguration().getScriptWrapper().executeCommandWithException("docker logout")
+            String fullImageName = dockerImage.setFullDockerImageName()
+            getPipelineConfiguration().getScriptWrapper().executeCommandWithException("docker pull ${fullImageName}")
         }
 
         String combinedDetectParameters = "${blackduckConnection} ${getDetectCommand()} ${getDefaultExclusionParameters()}"
