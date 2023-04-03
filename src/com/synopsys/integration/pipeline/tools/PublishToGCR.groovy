@@ -45,6 +45,7 @@ class PublishToGCR extends Stage {
 
         // Loop all image names to get the sha
         for (imageName in dockerImageNames) {
+            jenkinsScriptWrapper.executeCommandWithException("docker logout")
             jenkinsScriptWrapper.executeCommandWithException("docker pull ${imageName}")
 
             // Get and check the sha
