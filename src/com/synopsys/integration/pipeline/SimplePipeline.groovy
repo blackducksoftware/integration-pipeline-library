@@ -68,6 +68,7 @@ class SimplePipeline extends Pipeline {
 
         pipeline.addApiTokenStage()
 
+        pipeline.getLogger().alwaysLog("This is DJMs branch!!!!")
         return pipeline
     }
 
