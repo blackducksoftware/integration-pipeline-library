@@ -64,7 +64,8 @@ class DockerImage {
     }
 
     String setFullDockerImageName() {
-        setFullDockerImageName(dockerImageOrg + '/' + dockerImageName + ':' + getDockerVersionFromEnvironment())
+        setDockerImageVersion(getDockerVersionFromEnvironment())
+        setFullDockerImageName(dockerImageOrg + '/' + dockerImageName + ':' + dockerImageVersion)
         return getFullDockerImageName()
     }
 
@@ -77,11 +78,16 @@ class DockerImage {
     }
 
     String getDockerVersionFromEnvironment() {
-        String dockerVersion = pipelineConfiguration.getScriptWrapper().getJenkinsProperty(SimplePipeline.PROJECT_VERSION)
-        if (!dockerVersion?.trim()) {
-            dockerVersion = DEFAULT_IMAGE_VERSION
+        String dockerImageVersion = getDockerImageVersion()?.trim()
+        String projectVersion = pipelineConfiguration.getScriptWrapper().getJenkinsProperty(SimplePipeline.PROJECT_VERSION)?.trim()
+
+        if (dockerImageVersion && !dockerImageVersion.equals(DEFAULT_IMAGE_VERSION)) {
+            return dockerImageVersion
+        } else if (projectVersion) {
+            return projectVersion
+        } else {
+            return DEFAULT_IMAGE_VERSION
         }
-        return dockerVersion
     }
 
     String getDockerDetectParams() {

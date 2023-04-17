@@ -33,7 +33,12 @@ class DetectStage extends Stage {
             updateDetectCommand(DockerImage.DEFAULT_IMAGE_VERSION, dockerImage.getDockerVersionFromEnvironment())
 
             getPipelineConfiguration().getScriptWrapper().executeCommandWithException("docker logout")
+
             String fullImageName = dockerImage.setFullDockerImageName()
+            if (dockerImage.getDockerImageVersion().contains(DockerImage.DEFAULT_IMAGE_VERSION)) {
+                throw new RuntimeException('Must either provide a version for the image, or include a stage which calls SimplePipeline.addSetGradleVersionStage')
+            }
+
             getPipelineConfiguration().getScriptWrapper().executeCommandWithException("docker pull ${fullImageName}")
         }
 
