@@ -50,12 +50,20 @@ public class MavenUtils implements ToolUtils, Serializable {
         String version = getProjectVersion()
         jenkinsScriptWrapper.println "Maven version ${version}"
         if (version.contains('-SNAPSHOT')) {
-            String modifiedVersion = version.replace('-SNAPSHOT', '')
-            logger.info("Maven updated version ${modifiedVersion}")
+            if (runRelease) {
+                String modifiedVersion = version.replace('-SNAPSHOT', '')
+                logger.info("Maven updated version ${modifiedVersion}")
 
-            jenkinsScriptWrapper.executeCommandWithException("${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}")
-            logger.info("Maven pom updated with version ${modifiedVersion}")
-            return modifiedVersion
+                jenkinsScriptWrapper.executeCommandWithException("${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}")
+                logger.info("Maven pom updated with version ${modifiedVersion}")
+                return modifiedVersion
+            } else if (runQARelease) {
+                String modifiedVersion = version.replace('-SNAPSHOT','-SIGQA1')
+                logger.info("Maven updated version ${modifiedVersion}")
+
+                jenkinsScriptWrapper.executeCommandWithException("${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}")
+                logger.info("Maven pom updated with version ${modifiedVersion}")
+            }
         }
         return version
     }
@@ -85,7 +93,23 @@ public class MavenUtils implements ToolUtils, Serializable {
     public String increaseSemver(boolean runRelease, boolean runQARelease) {
         String version = getProjectVersion()
         logger.info("Maven version ${version}")
-        if (!version.contains('-SNAPSHOT')) {
+        if (runQARelease && version.contains('-SIGQA')) {
+            int currentQAVersionIndex = version.indexOf("SIGQA") + 1
+            String currentQAVersion = ""
+            if(version.charAt(currentQAVersionIndex+1).isDigit()) {
+                currentQAVersion = version.substring(currentQAVersionIndex, currentQAVersionIndex + 1)
+            } else {
+                currentQAVersion = version.substring(currentQAVersionIndex)
+            }
+            String modifiedVersion = version.substring(0, currentQAVersionIndex)
+            logger.info("Current QA Version SIGQA${currentQAVersion}")
+            Integer incrementedPiece = Integer.valueOf(currentQAVersion) + 1
+            modifiedVersion = "${modifiedVersion}${incrementedPiece}"
+
+            jenkinsScriptWrapper.executeCommandWithException("${exe} versions:set -DgenerateBackupPoms=false -DnewVersion=${modifiedVersion}")
+            logger.info("Maven pom updated with version ${modifiedVersion}")
+            return modifiedVersion
+        } else if (!version.contains('-SNAPSHOT')) {
             int finalVersionPieceIndex = version.lastIndexOf('.') + 1
             String finalVersionPiece = version.substring(finalVersionPieceIndex)
             String modifiedVersion = version.substring(0, finalVersionPieceIndex)
