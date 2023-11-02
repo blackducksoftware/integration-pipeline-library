@@ -73,6 +73,16 @@ public class GradleUtils implements ToolUtils, Serializable {
     public String getCleanedProjectVersion() {
         String version = getProjectVersion()
 
+        int pRLocation = version.indexOf('-PR')
+        if (pRLocation != -1) {
+            version = version.substring(0, pRLocation)
+        }
+
+        int iDetectLocation = version.indexOf('-IDETECT')
+        if (iDetectLocation != -1) {
+            version = version.substring(0, iDetectLocation)
+        }
+
         int sigQaLocation = version.indexOf('-SIGQA')
         if (sigQaLocation != -1) {
             version = version.substring(0, sigQaLocation)
