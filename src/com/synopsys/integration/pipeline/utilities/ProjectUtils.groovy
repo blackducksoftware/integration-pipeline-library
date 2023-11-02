@@ -64,6 +64,14 @@ public class ProjectUtils {
         return version
     }
 
+    public String updateVersionForRelease(boolean runRelease, boolean runQARelease, String versionUpdateCommand) {
+        String version = ""
+        if (null != toolUtils) {
+            version = toolUtils.updateVersionForRelease(runRelease, runQARelease, versionUpdateCommand)
+        }
+        return version
+    }
+
     public String increaseSemver(boolean runRelease, boolean runQARelease) {
         String version = ""
         if (null != toolUtils) {

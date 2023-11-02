@@ -60,6 +60,11 @@ public class MavenUtils implements ToolUtils, Serializable {
         return version
     }
 
+    @Override
+    public String updateVersionForRelease(boolean runRelease, boolean runQARelease, String versionUpdateCommand) {
+        return updateVersionForRelease(runRelease, runQARelease)
+    }
+
 
     @Override
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {

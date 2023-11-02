@@ -8,6 +8,8 @@ public interface ToolUtils {
 
     public String updateVersionForRelease(boolean runRelease, boolean runQARelease)
 
+    public String updateVersionForRelease(boolean runRelease, boolean runQARelease, String versionUpdateCommand)
+
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies)
 
     public String increaseSemver(boolean runRelease, boolean runQARelease)

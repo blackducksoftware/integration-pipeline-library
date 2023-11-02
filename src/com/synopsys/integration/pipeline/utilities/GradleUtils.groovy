@@ -47,6 +47,12 @@ public class GradleUtils implements ToolUtils, Serializable {
     }
 
     @Override
+    public String updateVersionForRelease(boolean runRelease, boolean runQARelease, String versionUpdateCommand) {
+        jenkinsScriptWrapper.executeCommandWithException("${exe} ${versionUpdateCommand} ")
+        return getProjectVersion()
+    }
+
+    @Override
     public boolean checkForSnapshotDependencies(boolean checkAllDependencies) {
         String command = "${exe} dependencies -q"
         if (!checkAllDependencies) {
