@@ -10,6 +10,7 @@ import com.synopsys.integration.pipeline.model.Stage
 import com.synopsys.integration.pipeline.scm.GitStage
 import com.synopsys.integration.pipeline.utilities.ProjectUtils
 import com.synopsys.integration.utilities.GithubBranchParser
+import org.apache.commons.lang3.StringUtils
 
 class RemoveSnapshotStage extends Stage {
     public static final String RELEASE_COMMIT_HASH = 'RELEASE_COMMIT_HASH'
@@ -19,6 +20,7 @@ class RemoveSnapshotStage extends Stage {
 
     private final String buildTool
     private final String exe
+    private final String buildCommand
 
     private final String branch
     private final String url
@@ -27,12 +29,13 @@ class RemoveSnapshotStage extends Stage {
     private boolean checkAllDependencies = false
     private String gitToolName = GitStage.DEFAULT_GIT_TOOL
 
-    RemoveSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch, String url, String githubCredentialsId) {
+    RemoveSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String buildCommand, String branch, String url, String githubCredentialsId) {
         super(pipelineConfiguration, stageName)
         this.runRelease = runRelease
         this.runQARelease = runQARelease
         this.buildTool = buildTool
         this.exe = exe
+        this.buildCommand = buildCommand
         this.branch = branch
         this.url = url
         this.githubCredentialsId = githubCredentialsId
@@ -63,7 +66,11 @@ class RemoveSnapshotStage extends Stage {
         pipelineLogger.info("Updating the Project version '${version}'. Release: ${runRelease}, QA release: ${runQARelease}")
 
         pipelineLogger.info("Removing SNAPSHOT from the Project Version")
-        String newVersion = projectUtils.updateVersionForRelease(runRelease, runQARelease)
+        String newVersion
+        if (StringUtils.isNotBlank(buildCommand))
+            newVersion = projectUtils.updateVersionForRelease(runRelease, runQARelease, buildCommand)
+        else
+            newVersion = projectUtils.updateVersionForRelease(runRelease, runQARelease)
         String gitPath = jenkinsScriptWrapper.tool(gitToolName)
 
         if (!newVersion.equals(version)) {
