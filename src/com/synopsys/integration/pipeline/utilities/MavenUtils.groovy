@@ -62,6 +62,8 @@ public class MavenUtils implements ToolUtils, Serializable {
 
     @Override
     public String updateVersionForRelease(boolean runRelease, boolean runQARelease, String versionUpdateCommand) {
+        // No customized command is used for the Maven projects. Built-in version:set from Maven is used.
+        // If any custom command is used in the future, this method will be the place to change.
         return updateVersionForRelease(runRelease, runQARelease)
     }
 
