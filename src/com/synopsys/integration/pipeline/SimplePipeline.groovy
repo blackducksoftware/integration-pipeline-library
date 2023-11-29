@@ -330,13 +330,17 @@ class SimplePipeline extends Pipeline {
     }
 
     RemoveSnapshotStage addRemoveSnapshotStage(String buildTool, String exe, String branch) {
-        return addRemoveSnapshotStage('Remove Snapshot', buildTool, exe, branch)
+        return addRemoveSnapshotStage('Remove Snapshot', buildTool, exe, branch, '')
     }
 
-    RemoveSnapshotStage addRemoveSnapshotStage(String stageName, String buildTool, String exe, String branch) {
+    RemoveSnapshotStage addRemoveSnapshotStage(String buildTool, String exe, String branch, String buildCommand) {
+        addRemoveSnapshotStage('Remove Snapshot', buildTool, exe, branch, buildCommand)
+    }
+
+    RemoveSnapshotStage addRemoveSnapshotStage(String stageName, String buildTool, String exe, String branch, String buildCommand) {
         boolean runRelease = getJenkinsBooleanProperty(RUN_RELEASE)
         boolean runQARelease = getJenkinsBooleanProperty(RUN_QA_BUILD)
-        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getPipelineConfiguration(), stageName, runRelease, runQARelease, buildTool, exe, branch, getUrl(), getGithubCredentialsId())
+        RemoveSnapshotStage removeSnapshotStage = new RemoveSnapshotStage(getPipelineConfiguration(), stageName, runRelease, runQARelease, buildTool, exe, buildCommand, branch, getUrl(), getGithubCredentialsId())
         return addCommonStage(removeSnapshotStage)
     }
 
