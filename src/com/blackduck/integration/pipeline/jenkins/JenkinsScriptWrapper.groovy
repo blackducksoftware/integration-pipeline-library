@@ -1,15 +1,15 @@
 package com.blackduck.integration.pipeline.jenkins
 
-
+import com.blackduck.integration.pipeline.exception.CommandExecutionException
 import net.sf.json.JSONObject
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 interface JenkinsScriptWrapper extends Serializable {
     void archiveArtifacts(String artifactPattern)
 
-    int bat(String command) throws com.blackduck.integration.pipeline.exception.CommandExecutionException
+    int bat(String command) throws CommandExecutionException
 
-    String bat(String command, Boolean returnStdout) throws com.blackduck.integration.pipeline.exception.CommandExecutionException
+    String bat(String command, Boolean returnStdout) throws CommandExecutionException
 
     Map<String, String> checkout(String url, String branch, String gitToolName, boolean changelog, boolean poll, String credentialsId)
 
@@ -35,11 +35,11 @@ interface JenkinsScriptWrapper extends Serializable {
 
     String executeWithCredentials(PipelineConfiguration pipelineConfiguration, String command, String githubCredentialsId)
 
-    void executeCommandWithException(String command) throws com.blackduck.integration.pipeline.exception.CommandExecutionException
+    void executeCommandWithException(String command) throws CommandExecutionException
 
     void executeCommandWithCatchError(String command)
 
-    void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws com.blackduck.integration.pipeline.exception.CommandExecutionException
+    void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws CommandExecutionException
 
     boolean isUnix()
 
@@ -55,9 +55,9 @@ interface JenkinsScriptWrapper extends Serializable {
 
     CpsScript script()
 
-    int sh(String command) throws com.blackduck.integration.pipeline.exception.CommandExecutionException
+    int sh(String command) throws CommandExecutionException
 
-    String sh(String command, Boolean returnStdout) throws com.blackduck.integration.pipeline.exception.CommandExecutionException
+    String sh(String command, Boolean returnStdout) throws CommandExecutionException
 
     void stage(String stageName, Closure closure)
 

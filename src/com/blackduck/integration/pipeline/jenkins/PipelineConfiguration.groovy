@@ -1,11 +1,13 @@
 package com.blackduck.integration.pipeline.jenkins
 
+import com.blackduck.integration.pipeline.logging.PipelineLogger
+
 class PipelineConfiguration implements Serializable {
-    public com.blackduck.integration.pipeline.logging.PipelineLogger logger
+    public PipelineLogger logger
     public JenkinsScriptWrapper scriptWrapper
     private Map<String, String> buildDataMap = new HashMap<>()
 
-    public PipelineConfiguration(com.blackduck.integration.pipeline.logging.PipelineLogger logger, JenkinsScriptWrapper scriptWrapper) {
+    public PipelineConfiguration(PipelineLogger logger, JenkinsScriptWrapper scriptWrapper) {
         this.logger = logger
         this.scriptWrapper = scriptWrapper
     }
@@ -18,11 +20,11 @@ class PipelineConfiguration implements Serializable {
         this.scriptWrapper = scriptWrapper
     }
 
-    public com.blackduck.integration.pipeline.logging.PipelineLogger getLogger() {
+    public PipelineLogger getLogger() {
         return logger
     }
 
-    void setLogger(final com.blackduck.integration.pipeline.logging.PipelineLogger logger) {
+    void setLogger(final PipelineLogger logger) {
         this.logger = logger
     }
 

@@ -2,8 +2,9 @@ package com.blackduck.integration.pipeline.results
 
 
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
+import com.blackduck.integration.pipeline.model.StageWrapper
 
-class JunitStageWrapper extends com.blackduck.integration.pipeline.model.StageWrapper {
+class JunitStageWrapper extends StageWrapper {
     public static final String DEFAULT_JUNIT_XML_PATTERN = 'build/**/*.xml'
 
     private LinkedHashMap junitOptions = [allowEmptyResults: false, testResults: DEFAULT_JUNIT_XML_PATTERN]

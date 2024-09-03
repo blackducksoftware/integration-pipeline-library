@@ -1,11 +1,11 @@
 package com.blackduck.integration.pipeline.setup
 
-
+import com.blackduck.integration.pipeline.model.Stage
 import com.cloudbees.groovy.cps.NonCPS
 import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
 
-class ApiTokenStage extends com.blackduck.integration.pipeline.model.Stage {
+class ApiTokenStage extends Stage {
     ApiTokenStage(PipelineConfiguration pipelineConfiguration, String name) {
         super(pipelineConfiguration, name)
     }

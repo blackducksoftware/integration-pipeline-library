@@ -2,11 +2,13 @@ package com.blackduck.integration.pipeline.versioning
 
 
 import com.blackduck.integration.pipeline.exception.GitHubReleaseException
+import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
+import com.blackduck.integration.pipeline.model.Stage
 
 import java.text.SimpleDateFormat
 
-class GithubReleaseStage extends com.blackduck.integration.pipeline.model.Stage {
+class GithubReleaseStage extends Stage {
     public static String RELEASE_FILE = 'release.json'
     private String releaseOwner
     private String releaseRepo
@@ -25,7 +27,7 @@ class GithubReleaseStage extends com.blackduck.integration.pipeline.model.Stage 
     }
 
     @Override
-    void stageExecution() throws com.blackduck.integration.pipeline.exception.PipelineException, Exception {
+    void stageExecution() throws PipelineException, Exception {
         try {
             String timeStamp = new SimpleDateFormat("MMM d, yyyy HH:mm:ss").format(new Date())
             setReleaseTagName(getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(GithubReleaseStageLegacy.GITHUB_RELEASE_VERSION))

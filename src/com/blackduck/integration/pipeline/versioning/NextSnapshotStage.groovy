@@ -1,14 +1,16 @@
 package com.blackduck.integration.pipeline.versioning
 
-
+import com.blackduck.integration.model.GithubBranchModel
 import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
 import com.blackduck.integration.pipeline.logging.PipelineLogger
+import com.blackduck.integration.pipeline.model.Stage
+import com.blackduck.integration.pipeline.scm.GitStage
 import com.blackduck.integration.pipeline.utilities.ProjectUtils
 import com.blackduck.integration.utilities.GithubBranchParser
 
-class NextSnapshotStage extends com.blackduck.integration.pipeline.model.Stage {
+class NextSnapshotStage extends Stage {
     private final boolean runRelease
     private final boolean runQARelease
 
@@ -19,7 +21,7 @@ class NextSnapshotStage extends com.blackduck.integration.pipeline.model.Stage {
     private final String url
     private final String githubCredentialsId
 
-    private String gitToolName = com.blackduck.integration.pipeline.scm.GitStage.DEFAULT_GIT_TOOL
+    private String gitToolName = GitStage.DEFAULT_GIT_TOOL
 
     NextSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String branch, String url, String githubCredentialsId) {
         super(pipelineConfiguration, stageName)
@@ -60,11 +62,11 @@ class NextSnapshotStage extends com.blackduck.integration.pipeline.model.Stage {
             jenkinsScriptWrapper.executeCommandWithException("${gitPath} commit -a -m \"${commitMessage}\"")
 
             pipelineLogger.info("Pushing ${newVersion} to branch ${branch}")
-            if (url.startsWith(com.blackduck.integration.pipeline.scm.GitStage.GITHUB_HTTPS)) {
+            if (url.startsWith(GitStage.GITHUB_HTTPS)) {
                 jenkinsScriptWrapper.executeGitPushToGithub(pipelineConfiguration, url, githubCredentialsId, gitPath)
             } else {
                 GithubBranchParser githubBranchParser = new GithubBranchParser()
-                com.blackduck.integration.model.GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
+                GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
                 jenkinsScriptWrapper.executeCommandWithException("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
             }
         }

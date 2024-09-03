@@ -1,6 +1,6 @@
 package com.blackduck.integration.pipeline.jenkins
 
-
+import com.blackduck.integration.pipeline.exception.CommandExecutionException
 import net.sf.json.JSONObject
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
@@ -13,13 +13,13 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
     }
 
     @Override
-    int bat(String command) throws com.blackduck.integration.pipeline.exception.CommandExecutionException {
+    int bat(String command) throws CommandExecutionException {
         getDryRunPipelineBuilder().addPipelineLine("bat script: ${command}, returnStatus: true")
         return 0
     }
 
     @Override
-    String bat(String command, Boolean returnStdout) throws com.blackduck.integration.pipeline.exception.CommandExecutionException {
+    String bat(String command, Boolean returnStdout) throws CommandExecutionException {
         getDryRunPipelineBuilder().addPipelineLine("bat script: ${command}, returnStdout: ${returnStdout}")
         return ""
     }
@@ -109,13 +109,13 @@ class JenkinsScriptWrapperDryRun extends JenkinsScriptWrapperImpl {
     }
 
     @Override
-    int sh(String command) throws com.blackduck.integration.pipeline.exception.CommandExecutionException {
+    int sh(String command) throws CommandExecutionException {
         getDryRunPipelineBuilder().addPipelineLine("sh script: ${command}, returnStatus: true")
         return 0
     }
 
     @Override
-    String sh(String command, Boolean returnStdout) throws com.blackduck.integration.pipeline.exception.CommandExecutionException {
+    String sh(String command, Boolean returnStdout) throws CommandExecutionException {
         getDryRunPipelineBuilder().addPipelineLine("sh script: ${command}, returnStdout: ${returnStdout}")
         return ""
     }

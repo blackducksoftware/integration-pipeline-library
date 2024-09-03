@@ -1,6 +1,7 @@
 package com.blackduck.integration.pipeline.utilities
 
-
+import com.blackduck.integration.pipeline.SimplePipeline
+import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.blackduck.integration.pipeline.logging.PipelineLogger
 
@@ -19,13 +20,13 @@ public class ProjectUtils {
         logger.info("Using tool ${tool}")
 
         ToolUtils newToolUtils = null
-        if (tool.equalsIgnoreCase(com.blackduck.integration.pipeline.SimplePipeline.MAVEN_BUILD_TOOL)) {
+        if (tool.equalsIgnoreCase(SimplePipeline.MAVEN_BUILD_TOOL)) {
             newToolUtils = new MavenUtils(logger, jenkinsScriptWrapper, exe)
-        } else if (tool.equalsIgnoreCase(com.blackduck.integration.pipeline.SimplePipeline.GRADLE_BUILD_TOOL)) {
+        } else if (tool.equalsIgnoreCase(SimplePipeline.GRADLE_BUILD_TOOL)) {
             newToolUtils = new GradleUtils(logger, jenkinsScriptWrapper, exe)
         }
         if (null == newToolUtils) {
-            throw new com.blackduck.integration.pipeline.exception.PipelineException("Did not recognize the tool '${tool}'")
+            throw new PipelineException("Did not recognize the tool '${tool}'")
         }
         toolUtils = newToolUtils
         logger.info("Initializing tool ${tool}")

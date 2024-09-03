@@ -8,6 +8,9 @@ import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
 import com.blackduck.integration.pipeline.logging.DefaultPipelineLogger
 import com.blackduck.integration.pipeline.logging.PipelineLogger
 import com.blackduck.integration.pipeline.logging.SilentPipelineLogger
+import com.blackduck.integration.pipeline.model.PipelineWrapper
+import com.blackduck.integration.pipeline.model.Stage
+import com.blackduck.integration.pipeline.model.Step
 import com.blackduck.integration.pipeline.results.PublishBuildDataStage
 import org.apache.commons.lang3.StringUtils
 import org.jenkinsci.plugins.workflow.cps.CpsScript
@@ -16,8 +19,8 @@ class Pipeline implements Serializable {
     public final CpsScript script
     public final PipelineConfiguration pipelineConfiguration
 
-    public final List<com.blackduck.integration.pipeline.model.PipelineWrapper> wrappers = new LinkedList<>()
-    public final List<com.blackduck.integration.pipeline.model.Step> steps = new LinkedList<>()
+    public final List<PipelineWrapper> wrappers = new LinkedList<>()
+    public final List<Step> steps = new LinkedList<>()
 
     Pipeline(CpsScript script) {
         this.script = script
@@ -25,17 +28,17 @@ class Pipeline implements Serializable {
         this.pipelineConfiguration = new PipelineConfiguration(new DefaultPipelineLogger(scriptWrapper), scriptWrapper)
     }
 
-    void addStage(com.blackduck.integration.pipeline.model.Stage stage) {
+    void addStage(Stage stage) {
         getPipelineConfiguration().getLogger().debug("Adding stage ${stage.getName()}")
         steps.add(stage)
     }
 
-    void addStep(com.blackduck.integration.pipeline.model.Step step) {
+    void addStep(Step step) {
         getPipelineConfiguration().getLogger().debug("Adding step")
         steps.add(step)
     }
 
-    void addPipelineWrapper(com.blackduck.integration.pipeline.model.PipelineWrapper wrapper) {
+    void addPipelineWrapper(PipelineWrapper wrapper) {
         getPipelineConfiguration().getLogger().debug("Adding pipeline wrapper ${wrapper.getName()}")
         wrappers.add(wrapper)
     }
@@ -72,7 +75,7 @@ class Pipeline implements Serializable {
         PipelineLogger logger = getLogger()
 
         for (int i = 0; i < getWrappers().size(); i++) {
-            com.blackduck.integration.pipeline.model.PipelineWrapper wrapper = getWrappers().get(i)
+            PipelineWrapper wrapper = getWrappers().get(i)
             scriptWrapper.dir(wrapper.getRelativeDirectory()) {
                 String message = wrapper.startMessage()
                 if (StringUtils.isNotBlank(message)) {
@@ -83,10 +86,10 @@ class Pipeline implements Serializable {
         }
         try {
             for (int i = 0; i < getSteps().size(); i++) {
-                com.blackduck.integration.pipeline.model.Step currentStep = getSteps().get(i)
+                Step currentStep = getSteps().get(i)
                 scriptWrapper.dir(currentStep.getRelativeDirectory()) {
-                    if (currentStep instanceof com.blackduck.integration.pipeline.model.Stage) {
-                        com.blackduck.integration.pipeline.model.Stage currentStage = (com.blackduck.integration.pipeline.model.Stage) currentStep
+                    if (currentStep instanceof Stage) {
+                        Stage currentStage = (Stage) currentStep
                         scriptWrapper.stage(currentStage.getName()) {
                             logger.info("running stage ${currentStage.getName()}")
                             currentStage.run()
@@ -104,7 +107,7 @@ class Pipeline implements Serializable {
             scriptWrapper.currentBuild().result = "FAILURE"
             logger.error("Build failed because ${e.getMessage()}", e)
             for (int i = 0; i < getWrappers().size(); i++) {
-                com.blackduck.integration.pipeline.model.PipelineWrapper wrapper = getWrappers().get(i)
+                PipelineWrapper wrapper = getWrappers().get(i)
                 scriptWrapper.dir(wrapper.getRelativeDirectory()) {
                     String message = wrapper.exceptionMessage()
                     if (StringUtils.isNotBlank(message)) {
@@ -115,7 +118,7 @@ class Pipeline implements Serializable {
             }
         } finally {
             for (int i = 0; i < getWrappers().size(); i++) {
-                com.blackduck.integration.pipeline.model.PipelineWrapper wrapper = getWrappers().get(i)
+                PipelineWrapper wrapper = getWrappers().get(i)
                 scriptWrapper.dir(wrapper.getRelativeDirectory()) {
                     String message = wrapper.endMessage()
                     if (StringUtils.isNotBlank(message)) {
@@ -131,11 +134,11 @@ class Pipeline implements Serializable {
         return pipelineConfiguration
     }
 
-    public List<com.blackduck.integration.pipeline.model.PipelineWrapper> getWrappers() {
+    public List<PipelineWrapper> getWrappers() {
         return wrappers
     }
 
-    public List<com.blackduck.integration.pipeline.model.Step> getSteps() {
+    public List<Step> getSteps() {
         return steps
     }
 

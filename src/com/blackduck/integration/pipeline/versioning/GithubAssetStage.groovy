@@ -2,10 +2,12 @@ package com.blackduck.integration.pipeline.versioning
 
 
 import com.blackduck.integration.pipeline.exception.GitHubReleaseException
+import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
+import com.blackduck.integration.pipeline.model.Stage
 import org.apache.commons.lang3.StringUtils
 
-class GithubAssetStage extends com.blackduck.integration.pipeline.model.Stage {
+class GithubAssetStage extends Stage {
     private String githubCredentialsId
     private String glob
 
@@ -16,7 +18,7 @@ class GithubAssetStage extends com.blackduck.integration.pipeline.model.Stage {
     }
 
     @Override
-    void stageExecution() throws com.blackduck.integration.pipeline.exception.PipelineException, Exception {
+    void stageExecution() throws PipelineException, Exception {
         try {
             //taking the upload URL out of the json file from creating the release, and deleting the part at the end we don't want
             String uploadUrl = (getPipelineConfiguration().getScriptWrapper().readJsonFile(GithubReleaseStage.RELEASE_FILE)["upload_url"] as String)

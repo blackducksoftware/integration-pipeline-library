@@ -1,11 +1,16 @@
 package com.blackduck.integration.pipeline.versioning
 
-
+import com.blackduck.integration.model.GithubBranchModel
 import com.blackduck.integration.pipeline.exception.GitHubReleaseException
+import com.blackduck.integration.pipeline.exception.PipelineException
+import com.blackduck.integration.pipeline.exception.PrepareForReleaseException
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
+import com.blackduck.integration.pipeline.model.Stage
+import com.blackduck.integration.pipeline.scm.GitStage
+import com.blackduck.integration.utilities.GithubBranchParser
 import org.apache.commons.lang3.StringUtils
 
-class GithubReleaseStageLegacy extends com.blackduck.integration.pipeline.model.Stage {
+class GithubReleaseStageLegacy extends Stage {
     public static final String DEFAULT_GITHUB_OWNER = 'blackducksoftware'
     public static final String DEFAULT_RELEASE_MESSAGE = 'Auto Release'
     public static final String DEFAULT_SCRIPT_URL = 'https://github.com/blackducksoftware/github-auto-release/releases/download/2.1.0/github_auto_release.sh'
@@ -17,7 +22,7 @@ class GithubReleaseStageLegacy extends com.blackduck.integration.pipeline.model.
     private final String artifactDirectory
     private final String branch
 
-    private String gitToolName = com.blackduck.integration.pipeline.scm.GitStage.DEFAULT_GIT_TOOL
+    private String gitToolName = GitStage.DEFAULT_GIT_TOOL
     private String owner = DEFAULT_GITHUB_OWNER
     private String releaseDescription = DEFAULT_RELEASE_MESSAGE
     private String releaseScriptUrl = DEFAULT_SCRIPT_URL
@@ -53,14 +58,14 @@ class GithubReleaseStageLegacy extends com.blackduck.integration.pipeline.model.
     }
 
     @Override
-    void stageExecution() throws com.blackduck.integration.pipeline.exception.PipelineException, Exception {
+    void stageExecution() throws PipelineException, Exception {
         if (!runRelease) {
             getPipelineConfiguration().getLogger().info("Skipping the ${this.getClass().getSimpleName()} because this is not a release.")
             return
         }
         String version = getPipelineConfiguration().getScriptWrapper().getJenkinsProperty(GITHUB_RELEASE_VERSION)
         if (StringUtils.isBlank(version)) {
-            throw new com.blackduck.integration.pipeline.exception.PrepareForReleaseException("Could not find the \"${GITHUB_RELEASE_VERSION}\" environment variable. Will not perform the GitHub release.")
+            throw new PrepareForReleaseException("Could not find the \"${GITHUB_RELEASE_VERSION}\" environment variable. Will not perform the GitHub release.")
         }
         List<String> options = []
         options.add('-o')
@@ -86,8 +91,8 @@ class GithubReleaseStageLegacy extends com.blackduck.integration.pipeline.model.
         options.add('-m')
         options.add("\"${releaseDescription}\"")
 
-        com.blackduck.integration.utilities.GithubBranchParser githubBranchParser = new com.blackduck.integration.utilities.GithubBranchParser()
-        com.blackduck.integration.model.GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
+        GithubBranchParser githubBranchParser = new GithubBranchParser()
+        GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
 
         options.add('-br')
         options.add(githubBranchModel.getBranchName())

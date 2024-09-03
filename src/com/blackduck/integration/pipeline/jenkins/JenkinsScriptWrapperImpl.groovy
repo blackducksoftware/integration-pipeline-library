@@ -1,6 +1,7 @@
 package com.blackduck.integration.pipeline.jenkins
 
-
+import com.blackduck.integration.pipeline.exception.CommandExecutionException
+import com.blackduck.integration.pipeline.scm.GitStage
 import net.sf.json.JSONObject
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
@@ -19,20 +20,20 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    int bat(String command) throws com.blackduck.integration.pipeline.exception.CommandExecutionException {
+    int bat(String command) throws CommandExecutionException {
         try {
             return script.bat(script: command, returnStatus: true)
         } catch (Exception e) {
-            throw new com.blackduck.integration.pipeline.exception.CommandExecutionException(e.getMessage(), e)
+            throw new CommandExecutionException(e.getMessage(), e)
         }
     }
 
     @Override
-    String bat(String command, Boolean returnStdout) throws com.blackduck.integration.pipeline.exception.CommandExecutionException {
+    String bat(String command, Boolean returnStdout) throws CommandExecutionException {
         try {
             return script.bat(script: command, returnStdout: returnStdout)
         } catch (Exception e) {
-            throw new com.blackduck.integration.pipeline.exception.CommandExecutionException(e.getMessage(), e)
+            throw new CommandExecutionException(e.getMessage(), e)
         }
     }
 
@@ -113,7 +114,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    void executeCommandWithException(String command) throws com.blackduck.integration.pipeline.exception.CommandExecutionException {
+    void executeCommandWithException(String command) throws CommandExecutionException {
         int errorStatus
         if (isUnix()) {
             errorStatus = sh(command)
@@ -121,7 +122,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
             errorStatus = bat(command)
         }
         if (errorStatus != 0) {
-            throw new com.blackduck.integration.pipeline.exception.CommandExecutionException(errorStatus, "Executing command '${command}', resulted in error status code '${errorStatus}'")
+            throw new CommandExecutionException(errorStatus, "Executing command '${command}', resulted in error status code '${errorStatus}'")
         }
     }
 
@@ -133,8 +134,8 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws com.blackduck.integration.pipeline.exception.CommandExecutionException {
-        assert url.startsWith(com.blackduck.integration.pipeline.scm.GitStage.GITHUB_HTTPS): "Required to use " + com.blackduck.integration.pipeline.scm.GitStage.GITHUB_HTTPS + " when publishing to github"
+    void executeGitPushToGithub(PipelineConfiguration pipelineConfiguration, String url, String githubCredentialsId, String gitPath) throws CommandExecutionException {
+        assert url.startsWith(GitStage.GITHUB_HTTPS): "Required to use " + GitStage.GITHUB_HTTPS + " when publishing to github"
 
         String adjustedBranch = url.replace("https://", "https://${USERNAME_SEARCH_TOKEN}:${PASSWORD_SEARCH_TOKEN}@")
         String pushCommand = "${gitPath} push ${adjustedBranch} --porcelain 2>&1"
@@ -195,20 +196,20 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    int sh(String command) throws com.blackduck.integration.pipeline.exception.CommandExecutionException {
+    int sh(String command) throws CommandExecutionException {
         try {
             return script.sh(script: command, returnStatus: true)
         } catch (Exception e) {
-            throw new com.blackduck.integration.pipeline.exception.CommandExecutionException(e.getMessage(), e)
+            throw new CommandExecutionException(e.getMessage(), e)
         }
     }
 
     @Override
-    String sh(String command, Boolean returnStdout) throws com.blackduck.integration.pipeline.exception.CommandExecutionException {
+    String sh(String command, Boolean returnStdout) throws CommandExecutionException {
         try {
             return script.sh(script: command, returnStdout: returnStdout)
         } catch (Exception e) {
-            throw new com.blackduck.integration.pipeline.exception.CommandExecutionException(e.getMessage(), e)
+            throw new CommandExecutionException(e.getMessage(), e)
         }
     }
 

@@ -1,9 +1,10 @@
 package com.blackduck.integration.pipeline.results
 
-
+import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
+import com.blackduck.integration.pipeline.model.Stage
 
-class ArchiveStage extends com.blackduck.integration.pipeline.model.Stage {
+class ArchiveStage extends Stage {
     public static final String DEFAULT_ARCHIVE_FILE_PATTERN = '**/*.jar'
 
     private String archiveFilePattern = DEFAULT_ARCHIVE_FILE_PATTERN
@@ -13,7 +14,7 @@ class ArchiveStage extends com.blackduck.integration.pipeline.model.Stage {
     }
 
     @Override
-    void stageExecution() throws com.blackduck.integration.pipeline.exception.PipelineException, Exception {
+    void stageExecution() throws PipelineException, Exception {
         getPipelineConfiguration().getScriptWrapper().archiveArtifacts(archiveFilePattern)
     }
 

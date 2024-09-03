@@ -3,11 +3,22 @@ package com.blackduck.integration.pipeline
 
 import com.blackduck.integration.pipeline.buildTool.GradleStage
 import com.blackduck.integration.pipeline.buildTool.MavenStage
+import com.blackduck.integration.pipeline.email.EmailPipelineWrapper
 import com.blackduck.integration.pipeline.generic.ClosureStage
 import com.blackduck.integration.pipeline.generic.ClosureStep
+import com.blackduck.integration.pipeline.model.Stage
+import com.blackduck.integration.pipeline.model.Step
 import com.blackduck.integration.pipeline.results.ArchiveStage
 import com.blackduck.integration.pipeline.results.JacocoStage
 import com.blackduck.integration.pipeline.results.JunitStageWrapper
+import com.blackduck.integration.pipeline.scm.GitBranch
+import com.blackduck.integration.pipeline.scm.GitStage
+import com.blackduck.integration.pipeline.setup.ApiTokenStage
+import com.blackduck.integration.pipeline.setup.CleanupStep
+import com.blackduck.integration.pipeline.setup.SetJdkStage
+import com.blackduck.integration.pipeline.tools.DetectStage
+import com.blackduck.integration.pipeline.tools.DockerImage
+import com.blackduck.integration.pipeline.tools.PublishToGCR
 import com.blackduck.integration.pipeline.utilities.GradleUtils
 import com.blackduck.integration.pipeline.versioning.GithubAssetStage
 import com.blackduck.integration.pipeline.versioning.GithubReleaseStage
@@ -56,7 +67,7 @@ class SimplePipeline extends Pipeline {
             pipeline.setUrl(url)
         }
 
-        com.blackduck.integration.pipeline.scm.GitStage gitStage = pipeline.addGitStage(url, gitBranch, gitPolling)
+        GitStage gitStage = pipeline.addGitStage(url, gitBranch, gitPolling)
         gitStage.setChangelog(true)
         pipeline.setGithubCredentialsId(gitStage.getCredentialsId())
 
@@ -90,90 +101,90 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(archiveStage)
     }
 
-    com.blackduck.integration.pipeline.setup.CleanupStep addCleanupStep() {
-        com.blackduck.integration.pipeline.setup.CleanupStep cleanupStep = new com.blackduck.integration.pipeline.setup.CleanupStep(getPipelineConfiguration())
+    CleanupStep addCleanupStep() {
+        CleanupStep cleanupStep = new CleanupStep(getPipelineConfiguration())
         addStep(cleanupStep)
         return cleanupStep
     }
 
-    com.blackduck.integration.pipeline.setup.CleanupStep addCleanupStep(String relativeDirectory) {
-        com.blackduck.integration.pipeline.setup.CleanupStep cleanupStep = new com.blackduck.integration.pipeline.setup.CleanupStep(getPipelineConfiguration(), relativeDirectory)
+    CleanupStep addCleanupStep(String relativeDirectory) {
+        CleanupStep cleanupStep = new CleanupStep(getPipelineConfiguration(), relativeDirectory)
         addStep(cleanupStep)
         return cleanupStep
     }
 
-    com.blackduck.integration.pipeline.tools.DetectStage addDetectStage(String detectCommand) {
+    DetectStage addDetectStage(String detectCommand) {
         return addDetectStage('Detect', detectCommand)
     }
 
-    com.blackduck.integration.pipeline.tools.DetectStage addDetectStage(String stageName, String detectCommand) {
+    DetectStage addDetectStage(String stageName, String detectCommand) {
         detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.tools.excluded=SIGNATURE_SCAN --detect.force.success=true'
 
-        com.blackduck.integration.pipeline.tools.DetectStage detectStage = new com.blackduck.integration.pipeline.tools.DetectStage(getPipelineConfiguration(), stageName, getJenkinsProperty(HUB_DETECT_URL), detectCommand)
+        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), stageName, getJenkinsProperty(HUB_DETECT_URL), detectCommand)
         return addCommonStage(detectStage)
     }
 
-    com.blackduck.integration.pipeline.tools.DetectStage addDetectPopStage() {
+    DetectStage addDetectPopStage() {
         return addDetectPopStage("")
     }
 
-    com.blackduck.integration.pipeline.tools.DetectStage addDetectPopStage(String detectCommand) {
+    DetectStage addDetectPopStage(String detectCommand) {
         return addDetectPopStage("", detectCommand)
     }
 
-    com.blackduck.integration.pipeline.tools.DetectStage addDetectPopStage(String stageNameSuffix, String detectCommand) {
-        com.blackduck.integration.pipeline.tools.DetectStage detectStage = new com.blackduck.integration.pipeline.tools.DetectStage(getPipelineConfiguration(), "Detect " + stageNameSuffix, getJenkinsProperty(HUB_DETECT_URL), detectCommand)
-        detectStage.addDetectParameters(com.blackduck.integration.pipeline.tools.DetectStage.DEFAULT_DETECT_SETTINGS)
+    DetectStage addDetectPopStage(String stageNameSuffix, String detectCommand) {
+        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), "Detect " + stageNameSuffix, getJenkinsProperty(HUB_DETECT_URL), detectCommand)
+        detectStage.addDetectParameters(DetectStage.DEFAULT_DETECT_SETTINGS)
         detectStageSigBDHub(detectStage)
         return addCommonStage(detectStage)
     }
 
-    com.blackduck.integration.pipeline.tools.DetectStage addDetectPopSourceStage() {
+    DetectStage addDetectPopSourceStage() {
         return addDetectPopSourceStage("")
     }
 
-    com.blackduck.integration.pipeline.tools.DetectStage addDetectPopSourceStage(String detectCommand) {
+    DetectStage addDetectPopSourceStage(String detectCommand) {
         return addDetectPopStage('source', detectCommand)
     }
 
-    com.blackduck.integration.pipeline.tools.DetectStage addDetectPopDockerStage(String imageName) {
+    DetectStage addDetectPopDockerStage(String imageName) {
         return addDetectPopDockerStage(imageName, "")
     }
 
-    ArrayList<com.blackduck.integration.pipeline.tools.DetectStage> addDetectPopDockerStages(ArrayList<String> imageNames) {
+    ArrayList<DetectStage> addDetectPopDockerStages(ArrayList<String> imageNames) {
         return addDetectPopDockerStages(imageNames, "")
     }
 
-    ArrayList<com.blackduck.integration.pipeline.tools.DetectStage> addDetectPopDockerStages(ArrayList<String> imageNames, String detectCommand) {
-        ArrayList<com.blackduck.integration.pipeline.tools.DetectStage> detectStages = []
+    ArrayList<DetectStage> addDetectPopDockerStages(ArrayList<String> imageNames, String detectCommand) {
+        ArrayList<DetectStage> detectStages = []
         imageNames.each { imageName -> detectStages << addDetectPopDockerStage(imageName, detectCommand) }
         return detectStages
     }
 
-    com.blackduck.integration.pipeline.tools.DetectStage addDetectPopDockerStage(String imageName, String detectCommand) {
-        com.blackduck.integration.pipeline.tools.DockerImage dockerImage = new com.blackduck.integration.pipeline.tools.DockerImage(pipelineConfiguration, imageName)
-        com.blackduck.integration.pipeline.tools.DetectStage detectDockerStage = addDetectPopStage(dockerImage.getBdProjectName(), detectCommand)
+    DetectStage addDetectPopDockerStage(String imageName, String detectCommand) {
+        DockerImage dockerImage = new DockerImage(pipelineConfiguration, imageName)
+        DetectStage detectDockerStage = addDetectPopStage(dockerImage.getBdProjectName(), detectCommand)
         detectDockerStage.setDockerImage(dockerImage)
         return detectDockerStage
     }
 
-    void detectStageSigBDHub(com.blackduck.integration.pipeline.tools.DetectStage detectStage) {
+    void detectStageSigBDHub(DetectStage detectStage) {
         detectStage.setBlackduckConnection(getJenkinsProperty(SIG_BD_HUB_SERVER_URL), getJenkinsProperty(SIG_BD_HUB_API_TOKEN))
     }
 
-    void detectStageHubBDPop(com.blackduck.integration.pipeline.tools.DetectStage detectStage) {
+    void detectStageHubBDPop(DetectStage detectStage) {
         detectStage.setBlackduckConnection(getJenkinsProperty(HUB_BDS_POP_SERVER_URL), getJenkinsProperty(ENG_HUB_PRD_TOKEN))
     }
 
-    com.blackduck.integration.pipeline.email.EmailPipelineWrapper addEmailPipelineWrapper(String recipientList) {
-        com.blackduck.integration.pipeline.email.EmailPipelineWrapper emailPipelineWrapper = new com.blackduck.integration.pipeline.email.EmailPipelineWrapper(getPipelineConfiguration(), recipientList, getJenkinsProperty(JOB_NAME), getJenkinsProperty(BUILD_NUMBER), getJenkinsProperty(BUILD_URL))
+    EmailPipelineWrapper addEmailPipelineWrapper(String recipientList) {
+        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), recipientList, getJenkinsProperty(JOB_NAME), getJenkinsProperty(BUILD_NUMBER), getJenkinsProperty(BUILD_URL))
         emailPipelineWrapper.setRelativeDirectory(commonRunDirectory)
         addPipelineWrapper(emailPipelineWrapper)
         return emailPipelineWrapper
     }
 
-    com.blackduck.integration.pipeline.email.EmailPipelineWrapper addEmailPipelineWrapper(String wrapperName, String recipientList) {
-        com.blackduck.integration.pipeline.email.EmailPipelineWrapper emailPipelineWrapper = new com.blackduck.integration.pipeline.email.EmailPipelineWrapper(getPipelineConfiguration(), wrapperName, recipientList, getJenkinsProperty(JOB_NAME), getJenkinsProperty(BUILD_NUMBER), getJenkinsProperty(BUILD_URL))
+    EmailPipelineWrapper addEmailPipelineWrapper(String wrapperName, String recipientList) {
+        EmailPipelineWrapper emailPipelineWrapper = new EmailPipelineWrapper(getPipelineConfiguration(), wrapperName, recipientList, getJenkinsProperty(JOB_NAME), getJenkinsProperty(BUILD_NUMBER), getJenkinsProperty(BUILD_URL))
         emailPipelineWrapper.setRelativeDirectory(commonRunDirectory)
         addPipelineWrapper(emailPipelineWrapper)
         return emailPipelineWrapper
@@ -222,12 +233,12 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(githubAssetStage)
     }
 
-    com.blackduck.integration.pipeline.scm.GitStage addGitStage(String url, String branch, boolean gitPolling) {
+    GitStage addGitStage(String url, String branch, boolean gitPolling) {
         return addGitStage('Git', url, branch, gitPolling)
     }
 
-    com.blackduck.integration.pipeline.scm.GitStage addGitStage(String stageName, String url, String branch, boolean gitPolling) {
-        com.blackduck.integration.pipeline.scm.GitStage gitStage = new com.blackduck.integration.pipeline.scm.GitStage(getPipelineConfiguration(), stageName, url, branch)
+    GitStage addGitStage(String stageName, String url, String branch, boolean gitPolling) {
+        GitStage gitStage = new GitStage(getPipelineConfiguration(), stageName, url, branch)
         gitStage.setPoll(gitPolling)
         return addCommonStage(gitStage)
     }
@@ -262,7 +273,7 @@ class SimplePipeline extends Pipeline {
     }
 
     ClosureStage addSetCleanedGradleVersionStage() {
-        return addSetCleanedGradleVersionStage(com.blackduck.integration.pipeline.tools.DetectStage.DETECT_PROJECT_VERSION_NAME_OVERRIDE)
+        return addSetCleanedGradleVersionStage(DetectStage.DETECT_PROJECT_VERSION_NAME_OVERRIDE)
     }
 
     ClosureStage addSetCleanedGradleVersionStage(String gradleVariableName) {
@@ -289,11 +300,11 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(jacocoStage)
     }
 
-    JunitStageWrapper addJunitStageWrapper(com.blackduck.integration.pipeline.model.Stage stage, LinkedHashMap junitOptions) {
+    JunitStageWrapper addJunitStageWrapper(Stage stage, LinkedHashMap junitOptions) {
         return addJunitStageWrapper(stage, 'Junit', junitOptions)
     }
 
-    JunitStageWrapper addJunitStageWrapper(com.blackduck.integration.pipeline.model.Stage stage, String stageName, LinkedHashMap junitOptions) {
+    JunitStageWrapper addJunitStageWrapper(Stage stage, String stageName, LinkedHashMap junitOptions) {
         JunitStageWrapper junitStageWrapper = new JunitStageWrapper(getPipelineConfiguration(), stageName)
         junitStageWrapper.setJunitOptions(junitOptions)
         junitStageWrapper.setRelativeDirectory(commonRunDirectory)
@@ -338,28 +349,28 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(removeSnapshotStage)
     }
 
-    com.blackduck.integration.pipeline.setup.SetJdkStage addSetJdkStage() {
-        com.blackduck.integration.pipeline.setup.SetJdkStage setJdkStage = new com.blackduck.integration.pipeline.setup.SetJdkStage(getPipelineConfiguration(), 'Set JDK')
+    SetJdkStage addSetJdkStage() {
+        SetJdkStage setJdkStage = new SetJdkStage(getPipelineConfiguration(), 'Set JDK')
         return addCommonStage(setJdkStage)
     }
 
-    com.blackduck.integration.pipeline.setup.SetJdkStage addSetJdkStage(String jdkToolName) {
+    SetJdkStage addSetJdkStage(String jdkToolName) {
         return addSetJdkStage('Set JDK', jdkToolName)
     }
 
-    com.blackduck.integration.pipeline.setup.SetJdkStage addSetJdkStage(String stageName, String jdkToolName) {
-        com.blackduck.integration.pipeline.setup.SetJdkStage setJdkStage = new com.blackduck.integration.pipeline.setup.SetJdkStage(getPipelineConfiguration(), stageName)
+    SetJdkStage addSetJdkStage(String stageName, String jdkToolName) {
+        SetJdkStage setJdkStage = new SetJdkStage(getPipelineConfiguration(), stageName)
         setJdkStage.setJdkToolName(jdkToolName)
         return addCommonStage(setJdkStage)
     }
 
-    com.blackduck.integration.pipeline.setup.ApiTokenStage addApiTokenStage() {
-        com.blackduck.integration.pipeline.setup.ApiTokenStage apiTokenStage = new com.blackduck.integration.pipeline.setup.ApiTokenStage(getPipelineConfiguration(), 'Black Duck Api Token')
+    ApiTokenStage addApiTokenStage() {
+        ApiTokenStage apiTokenStage = new ApiTokenStage(getPipelineConfiguration(), 'Black Duck Api Token')
         return addCommonStage(apiTokenStage)
     }
 
-    com.blackduck.integration.pipeline.tools.PublishToGCR addPublishToGCR(String gcrRepo) {
-        com.blackduck.integration.pipeline.tools.PublishToGCR publishToGCR = new com.blackduck.integration.pipeline.tools.PublishToGCR(getPipelineConfiguration(), 'Publish Images to GCR', gcrRepo)
+    PublishToGCR addPublishToGCR(String gcrRepo) {
+        PublishToGCR publishToGCR = new PublishToGCR(getPipelineConfiguration(), 'Publish Images to GCR', gcrRepo)
         return addCommonStage(publishToGCR)
     }
 
@@ -372,7 +383,7 @@ class SimplePipeline extends Pipeline {
     }
 
     String determineGitBranch(String branch) {
-        com.blackduck.integration.pipeline.scm.GitBranch gitBranch = new com.blackduck.integration.pipeline.scm.GitBranch(getPipelineConfiguration(), branch)
+        GitBranch gitBranch = new GitBranch(getPipelineConfiguration(), branch)
         return gitBranch.determineAndGetBranch()
     }
 
@@ -388,13 +399,13 @@ class SimplePipeline extends Pipeline {
         return BooleanUtils.toBooleanDefaultIfNull(Boolean.valueOf(result), Boolean.FALSE)
     }
 
-    private <T extends com.blackduck.integration.pipeline.model.Stage> T addCommonStage(T stage) {
+    private <T extends Stage> T addCommonStage(T stage) {
         stage.setRelativeDirectory(commonRunDirectory)
         addStage(stage)
         return stage
     }
 
-    private <T extends com.blackduck.integration.pipeline.model.Step> T addCommonStep(T step) {
+    private <T extends Step> T addCommonStep(T step) {
         step.setRelativeDirectory(commonRunDirectory)
         addStep(step)
         return step

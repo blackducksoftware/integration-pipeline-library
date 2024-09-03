@@ -1,9 +1,10 @@
 package com.blackduck.integration.pipeline.results
 
-
+import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
+import com.blackduck.integration.pipeline.model.Stage
 
-class PublishBuildDataStage extends com.blackduck.integration.pipeline.model.Stage {
+class PublishBuildDataStage extends Stage {
     public static final String JSON_FILE_NAME = "build_data.json"
 
     private Map<String, String> buildDataMap
@@ -14,7 +15,7 @@ class PublishBuildDataStage extends com.blackduck.integration.pipeline.model.Sta
     }
 
     @Override
-    void stageExecution() throws com.blackduck.integration.pipeline.exception.PipelineException, Exception {
+    void stageExecution() throws PipelineException, Exception {
         getPipelineConfiguration().getScriptWrapper().writeJsonFile(JSON_FILE_NAME, buildDataMap)
         getPipelineConfiguration().getScriptWrapper().archiveArtifacts(JSON_FILE_NAME)
     }

@@ -3,8 +3,9 @@ package com.blackduck.integration.pipeline.setup
 
 import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
+import com.blackduck.integration.pipeline.model.Stage
 
-class SetJdkStage extends com.blackduck.integration.pipeline.model.Stage {
+class SetJdkStage extends Stage {
     public static final String DEFAULT_JDK_TOOL_NAME = 'jdk11'
 
     private String jdkToolName = DEFAULT_JDK_TOOL_NAME

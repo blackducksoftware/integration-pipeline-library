@@ -3,8 +3,9 @@ package com.blackduck.integration.pipeline.setup
 
 import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
+import com.blackduck.integration.pipeline.model.Step
 
-class CleanupStep extends com.blackduck.integration.pipeline.model.Step {
+class CleanupStep extends Step {
     CleanupStep(PipelineConfiguration pipelineConfiguration) {
         super(pipelineConfiguration)
     }

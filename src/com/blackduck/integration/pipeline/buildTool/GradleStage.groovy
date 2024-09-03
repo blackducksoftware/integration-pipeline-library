@@ -3,8 +3,9 @@ package com.blackduck.integration.pipeline.buildTool
 
 import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
+import com.blackduck.integration.pipeline.model.Stage
 
-class GradleStage extends com.blackduck.integration.pipeline.model.Stage {
+class GradleStage extends Stage {
     public static final String DEFAULT_GRADLE_EXE = './gradlew'
     public static final String DEFAULT_GRADLE_OPTIONS = 'clean build'
 

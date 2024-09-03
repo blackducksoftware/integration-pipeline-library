@@ -1,16 +1,18 @@
 package com.blackduck.integration.pipeline.versioning
 
-
+import com.blackduck.integration.model.GithubBranchModel
 import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.exception.PrepareForReleaseException
 import com.blackduck.integration.pipeline.jenkins.JenkinsScriptWrapper
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
 import com.blackduck.integration.pipeline.logging.PipelineLogger
+import com.blackduck.integration.pipeline.model.Stage
+import com.blackduck.integration.pipeline.scm.GitStage
 import com.blackduck.integration.pipeline.utilities.ProjectUtils
 import com.blackduck.integration.utilities.GithubBranchParser
 import org.apache.commons.lang3.StringUtils
 
-class RemoveSnapshotStage extends com.blackduck.integration.pipeline.model.Stage {
+class RemoveSnapshotStage extends Stage {
     public static final String RELEASE_COMMIT_HASH = 'RELEASE_COMMIT_HASH'
 
     private final boolean runRelease
@@ -25,7 +27,7 @@ class RemoveSnapshotStage extends com.blackduck.integration.pipeline.model.Stage
     private final String githubCredentialsId
 
     private boolean checkAllDependencies = false
-    private String gitToolName = com.blackduck.integration.pipeline.scm.GitStage.DEFAULT_GIT_TOOL
+    private String gitToolName = GitStage.DEFAULT_GIT_TOOL
 
     RemoveSnapshotStage(PipelineConfiguration pipelineConfiguration, String stageName, boolean runRelease, boolean runQARelease, String buildTool, String exe, String buildCommand, String branch, String url, String githubCredentialsId) {
         super(pipelineConfiguration, stageName)
@@ -77,11 +79,11 @@ class RemoveSnapshotStage extends com.blackduck.integration.pipeline.model.Stage
             jenkinsScriptWrapper.executeCommandWithException("${gitPath} commit -a -m \"${commitMessage}\"")
 
             pipelineLogger.info("Pushing ${newVersion} to branch ${branch}")
-            if (url.startsWith(com.blackduck.integration.pipeline.scm.GitStage.GITHUB_HTTPS)) {
+            if (url.startsWith(GitStage.GITHUB_HTTPS)) {
                 jenkinsScriptWrapper.executeGitPushToGithub(pipelineConfiguration, url, githubCredentialsId, gitPath)
             } else {
                 GithubBranchParser githubBranchParser = new GithubBranchParser()
-                com.blackduck.integration.model.GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
+                GithubBranchModel githubBranchModel = githubBranchParser.parseBranch(branch)
                 jenkinsScriptWrapper.executeCommandWithException("${gitPath} push ${githubBranchModel.getRemote()} ${githubBranchModel.getBranchName()}")
             }
         }

@@ -1,9 +1,10 @@
 package com.blackduck.integration.pipeline.results
 
-
+import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
+import com.blackduck.integration.pipeline.model.Stage
 
-class JacocoStage extends com.blackduck.integration.pipeline.model.Stage {
+class JacocoStage extends Stage {
     private LinkedHashMap jacocoOptions = [changeBuildStatus: false]
 
     JacocoStage(PipelineConfiguration pipelineConfiguration, String name) {
@@ -11,7 +12,7 @@ class JacocoStage extends com.blackduck.integration.pipeline.model.Stage {
     }
 
     @Override
-    void stageExecution() throws com.blackduck.integration.pipeline.exception.PipelineException, Exception {
+    void stageExecution() throws PipelineException, Exception {
         getPipelineConfiguration().getScriptWrapper().jacoco(jacocoOptions)
     }
 

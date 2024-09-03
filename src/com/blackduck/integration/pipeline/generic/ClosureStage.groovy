@@ -1,9 +1,10 @@
 package com.blackduck.integration.pipeline.generic
 
-
+import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
+import com.blackduck.integration.pipeline.model.Stage
 
-class ClosureStage extends com.blackduck.integration.pipeline.model.Stage {
+class ClosureStage extends Stage {
     private final Closure closure
 
     ClosureStage(PipelineConfiguration pipelineConfiguration, String name, Closure closure) {
@@ -12,7 +13,7 @@ class ClosureStage extends com.blackduck.integration.pipeline.model.Stage {
     }
 
     @Override
-    void stageExecution() throws com.blackduck.integration.pipeline.exception.PipelineException, Exception {
+    void stageExecution() throws PipelineException, Exception {
         getPipelineConfiguration().getScriptWrapper().closure(closure)
     }
 }

@@ -2,8 +2,9 @@ package com.blackduck.integration.pipeline.buildTool
 
 import com.blackduck.integration.pipeline.exception.PipelineException
 import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
+import com.blackduck.integration.pipeline.model.Stage
 
-class MavenStage extends com.blackduck.integration.pipeline.model.Stage {
+class MavenStage extends Stage {
     static final String DEFAULT_MAVEN_TOOL_NAME = 'maven-3'
     static final String DEFAULT_MAVEN_OPTIONS = '-U clean package deploy'
 
