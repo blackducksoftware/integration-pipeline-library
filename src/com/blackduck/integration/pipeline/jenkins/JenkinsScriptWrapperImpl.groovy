@@ -101,7 +101,7 @@ class JenkinsScriptWrapperImpl implements JenkinsScriptWrapper {
     }
 
     @Override
-    String executeWithCredentials(PipelineConfiguration pipelineConfiguration, String command, String githubCredentialsId) throws com.blackduck.integration.pipeline.exception.CommandExecutionException {
+    String executeWithCredentials(PipelineConfiguration pipelineConfiguration, String command, String githubCredentialsId) throws CommandExecutionException {
         script.withCredentials([script.usernamePassword(credentialsId: githubCredentialsId, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
             String gitUsername = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_USERNAME')
             String gitPassword = pipelineConfiguration.getScriptWrapper().getJenkinsProperty('GIT_PASSWORD')
