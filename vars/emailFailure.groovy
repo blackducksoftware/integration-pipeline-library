@@ -1,5 +1,5 @@
 #!/usr/bin/groovy
-import com.synopsys.integration.Constants
+import com.blackduck.integration.Constants
 
 def call(String recipientList = Constants.INTEGRATIONS_TEAM_EMAIL) {
     echo 'Sending out Build Failure email'

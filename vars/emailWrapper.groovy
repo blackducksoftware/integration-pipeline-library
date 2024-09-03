@@ -1,6 +1,6 @@
 #!/usr/bin/groovy
 
-def call(String recipientList = 'justiceleague@synopsys.com', Closure body) {
+def call(String recipientList = 'justiceleague@blackduck.com', Closure body) {
     try {
         body()
     } catch (e) {

@@ -1,0 +1,150 @@
+package com.blackduck.integration.pipeline
+
+import com.blackduck.integration.pipeline.jenkins.DryRunPipelineBuilder
+import com.blackduck.integration.pipeline.jenkins.JenkinsScriptWrapper
+import com.blackduck.integration.pipeline.jenkins.JenkinsScriptWrapperDryRun
+import com.blackduck.integration.pipeline.jenkins.JenkinsScriptWrapperImpl
+import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
+import com.blackduck.integration.pipeline.logging.DefaultPipelineLogger
+import com.blackduck.integration.pipeline.logging.PipelineLogger
+import com.blackduck.integration.pipeline.logging.SilentPipelineLogger
+import com.blackduck.integration.pipeline.results.PublishBuildDataStage
+import org.apache.commons.lang3.StringUtils
+import org.jenkinsci.plugins.workflow.cps.CpsScript
+
+class Pipeline implements Serializable {
+    public final CpsScript script
+    public final PipelineConfiguration pipelineConfiguration
+
+    public final List<com.blackduck.integration.pipeline.model.PipelineWrapper> wrappers = new LinkedList<>()
+    public final List<com.blackduck.integration.pipeline.model.Step> steps = new LinkedList<>()
+
+    Pipeline(CpsScript script) {
+        this.script = script
+        JenkinsScriptWrapper scriptWrapper = new JenkinsScriptWrapperImpl(script)
+        this.pipelineConfiguration = new PipelineConfiguration(new DefaultPipelineLogger(scriptWrapper), scriptWrapper)
+    }
+
+    void addStage(com.blackduck.integration.pipeline.model.Stage stage) {
+        getPipelineConfiguration().getLogger().debug("Adding stage ${stage.getName()}")
+        steps.add(stage)
+    }
+
+    void addStep(com.blackduck.integration.pipeline.model.Step step) {
+        getPipelineConfiguration().getLogger().debug("Adding step")
+        steps.add(step)
+    }
+
+    void addPipelineWrapper(com.blackduck.integration.pipeline.model.PipelineWrapper wrapper) {
+        getPipelineConfiguration().getLogger().debug("Adding pipeline wrapper ${wrapper.getName()}")
+        wrappers.add(wrapper)
+    }
+
+    void addProperties(List pipelineProperties) {
+        getPipelineConfiguration().getScriptWrapper().pipelineProperties(pipelineProperties)
+    }
+
+    void run() {
+        JenkinsScriptWrapper originalScriptWrapper = getPipelineConfiguration().getScriptWrapper()
+        PipelineLogger originalLogger = getPipelineConfiguration().getLogger()
+
+        DryRunPipelineBuilder dryRunPipelineBuilder = new DryRunPipelineBuilder(getPipelineConfiguration())
+        dryRunPipelineBuilder.initialize()
+        JenkinsScriptWrapper dryRunWrapper = new JenkinsScriptWrapperDryRun(this.script, dryRunPipelineBuilder)
+        getPipelineConfiguration().setScriptWrapper(dryRunWrapper)
+        SilentPipelineLogger silentLogger = new SilentPipelineLogger()
+        getPipelineConfiguration().setLogger(silentLogger)
+
+        originalLogger.info("Starting dry run")
+        runWithJenkinsWrapper()
+        originalLogger.info("End dry run")
+        originalLogger.alwaysLog(dryRunWrapper.getDryRunPipelineBuilder().getPipelineString())
+
+        getPipelineConfiguration().setScriptWrapper(originalScriptWrapper)
+        getPipelineConfiguration().setLogger(originalLogger)
+        addStage(new PublishBuildDataStage(pipelineConfiguration, "Publish Build Data ", pipelineConfiguration.getBuildDataMap()))
+        getPipelineConfiguration().getLogger().info("Starting run")
+        runWithJenkinsWrapper()
+    }
+
+    void runWithJenkinsWrapper() {
+        JenkinsScriptWrapper scriptWrapper = getPipelineConfiguration().getScriptWrapper()
+        PipelineLogger logger = getLogger()
+
+        for (int i = 0; i < getWrappers().size(); i++) {
+            com.blackduck.integration.pipeline.model.PipelineWrapper wrapper = getWrappers().get(i)
+            scriptWrapper.dir(wrapper.getRelativeDirectory()) {
+                String message = wrapper.startMessage()
+                if (StringUtils.isNotBlank(message)) {
+                    logger.info(message)
+                }
+                wrapper.start()
+            }
+        }
+        try {
+            for (int i = 0; i < getSteps().size(); i++) {
+                com.blackduck.integration.pipeline.model.Step currentStep = getSteps().get(i)
+                scriptWrapper.dir(currentStep.getRelativeDirectory()) {
+                    if (currentStep instanceof com.blackduck.integration.pipeline.model.Stage) {
+                        com.blackduck.integration.pipeline.model.Stage currentStage = (com.blackduck.integration.pipeline.model.Stage) currentStep
+                        scriptWrapper.stage(currentStage.getName()) {
+                            logger.info("running stage ${currentStage.getName()}")
+                            currentStage.run()
+                        }
+                    } else {
+                        try {
+                            currentStep.run()
+                        } catch (Exception e) {
+                            logger.error(e)
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            scriptWrapper.currentBuild().result = "FAILURE"
+            logger.error("Build failed because ${e.getMessage()}", e)
+            for (int i = 0; i < getWrappers().size(); i++) {
+                com.blackduck.integration.pipeline.model.PipelineWrapper wrapper = getWrappers().get(i)
+                scriptWrapper.dir(wrapper.getRelativeDirectory()) {
+                    String message = wrapper.exceptionMessage()
+                    if (StringUtils.isNotBlank(message)) {
+                        logger.error(message)
+                    }
+                    wrapper.handleException(e)
+                }
+            }
+        } finally {
+            for (int i = 0; i < getWrappers().size(); i++) {
+                com.blackduck.integration.pipeline.model.PipelineWrapper wrapper = getWrappers().get(i)
+                scriptWrapper.dir(wrapper.getRelativeDirectory()) {
+                    String message = wrapper.endMessage()
+                    if (StringUtils.isNotBlank(message)) {
+                        logger.info(message)
+                    }
+                    wrapper.end()
+                }
+            }
+        }
+    }
+
+    public PipelineConfiguration getPipelineConfiguration() {
+        return pipelineConfiguration
+    }
+
+    public List<com.blackduck.integration.pipeline.model.PipelineWrapper> getWrappers() {
+        return wrappers
+    }
+
+    public List<com.blackduck.integration.pipeline.model.Step> getSteps() {
+        return steps
+    }
+
+    public PipelineLogger getLogger() {
+        return getPipelineConfiguration().getLogger()
+    }
+
+    public JenkinsScriptWrapper getScriptWrapper() {
+        return getPipelineConfiguration().getScriptWrapper()
+    }
+
+}

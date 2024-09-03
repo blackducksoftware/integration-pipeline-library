@@ -1,10 +1,10 @@
 #!/usr/bin/groovy
-import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapper
-import com.synopsys.integration.pipeline.jenkins.JenkinsScriptWrapperImpl
-import com.synopsys.integration.pipeline.logging.DefaultPipelineLogger
-import com.synopsys.integration.pipeline.logging.LogLevel
-import com.synopsys.integration.pipeline.logging.PipelineLogger
-import com.synopsys.integration.pipeline.utilities.ProjectUtils
+import com.blackduck.integration.pipeline.jenkins.JenkinsScriptWrapper
+import com.blackduck.integration.pipeline.jenkins.JenkinsScriptWrapperImpl
+import com.blackduck.integration.pipeline.logging.DefaultPipelineLogger
+import com.blackduck.integration.pipeline.logging.LogLevel
+import com.blackduck.integration.pipeline.logging.PipelineLogger
+import com.blackduck.integration.pipeline.utilities.ProjectUtils
 
 
 def call(String stageName = 'GitHub auto release', Closure body) {

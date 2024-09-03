@@ -1,5 +1,5 @@
 #!/usr/bin/groovy
-import com.synopsys.integration.pipeline.SimplePipeline
+import com.blackduck.integration.pipeline.SimplePipeline
 
 def call(Closure body) {
     def config = [:]

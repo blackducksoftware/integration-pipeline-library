@@ -1,5 +1,5 @@
 #!/usr/bin/groovy
-import com.synopsys.integration.pipeline.scm.GitStage
+import com.blackduck.integration.pipeline.scm.GitStage
 
 def call(String url) {
     def branch = params.BRANCH
