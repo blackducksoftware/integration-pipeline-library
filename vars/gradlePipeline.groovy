@@ -1,5 +1,5 @@
 #!/usr/bin/groovy
-import com.synopsys.integration.ConfigUtils
+import com.blackduck.integration.ConfigUtils
 
 def call(Closure body) {
     def config = [:]

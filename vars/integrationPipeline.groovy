@@ -1,7 +1,7 @@
 #!/usr/bin/groovy
 
-import com.synopsys.integration.ConfigUtils
-import com.synopsys.integration.pipeline.SimplePipeline
+import com.blackduck.integration.ConfigUtils
+import com.blackduck.integration.pipeline.SimplePipeline
 
 def call(String buildToolVar, String exeVar, Closure buildBody, Closure body) {
     def config = [:]

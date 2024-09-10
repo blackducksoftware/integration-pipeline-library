@@ -252,12 +252,12 @@ class Releaser {
     }
 
     String getPatternForBuildDotGradleDependencyLine(String dependencyLibraryName) {
-        String pattern = "\\s*compile\\s+'com\\.(synopsys|blackducksoftware)\\.integration:${dependencyLibraryName}:.*"
+        String pattern = "\\s*compile\\s+'com\\.(synopsys|blackducksoftware|blackduck)\\.integration:${dependencyLibraryName}:.*"
         return pattern
     }
 
     String getPatternForGradleReportedDependencyLine(String dependencyLibraryName) {
-        String pattern = "com\\.(synopsys|blackducksoftware)\\.integration:${dependencyLibraryName}:.*"
+        String pattern = "com\\.(synopsys|blackducksoftware|blackduck)\\.integration:${dependencyLibraryName}:.*"
         return pattern
     }
 
