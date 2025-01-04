@@ -6,6 +6,9 @@ import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
 import com.blackduck.integration.pipeline.model.Stage
 
 class DetectStage extends Stage {
+    public static final String DEFAULT_DETECT_BASE_URL = 'https://detect.blackduck.com/detect10.sh'
+    public static final String DETECT_URL_OVERRIDE = 'DETECT_URL_OVERRIDE'
+
     public static final String DEFAULT_DETECT_SETTINGS = '--blackduck.trust.cert=true --detect.docker.passthrough.service.timeout=960000 --blackduck.timeout=600'
     public static final String DEFAULT_DETECT_EXCLUSION_PROPERTIES = "--detect.gradle.excluded.configurations=test* --detect.gradle.configuration.types.excluded=UNRESOLVED --detect.blackduck.signature.scanner.arguments=\\\"--exclude /gradle/ --exclude /src/test/resources/\\\""
     public static final String DETECT_PROJECT_VERSION_NAME_PROPERTY = '--detect.project.version.name'
@@ -16,12 +19,11 @@ class DetectStage extends Stage {
     private String detectCommand
     private String blackduckConnection
     private DockerImage dockerImage
-    private final String detectURL
+    private String detectURL
     private String defaultExclusionParameters = DEFAULT_DETECT_EXCLUSION_PROPERTIES
 
-    DetectStage(PipelineConfiguration pipelineConfiguration, String stageName, String detectURL, String detectCommand) {
+    DetectStage(PipelineConfiguration pipelineConfiguration, String stageName, String detectCommand) {
         super(pipelineConfiguration, stageName)
-        this.detectURL = detectURL
         this.detectCommand = detectCommand
     }
 
@@ -47,6 +49,8 @@ class DetectStage extends Stage {
         // Override parameters already in Detect command if override variable set
         combinedDetectParameters = removeDetectPropertyFromCommand(combinedDetectParameters, DETECT_PROJECT_VERSION_NAME_PROPERTY, DETECT_PROJECT_VERSION_NAME_OVERRIDE, null)
         combinedDetectParameters = removeDetectPropertyFromCommand(combinedDetectParameters, DETECT_PROJECT_CODELOCATION_UNMAP_PROPERTY, DETECT_PROJECT_CODELOCATION_UNMAP_OVERRIDE, 'false')
+
+        configureDetectUrl()
 
         def commandLines = []
         commandLines.add("#!/bin/bash")
@@ -134,5 +138,17 @@ class DetectStage extends Stage {
         }
 
         return newDetectCommand + " ${detectProperty}=${foundOverrideValue}"
+    }
+
+    private void configureDetectUrl() {
+        String foundOverrideValue = pipelineConfiguration.scriptWrapper.getJenkinsProperty(DETECT_URL_OVERRIDE)
+
+        if (foundOverrideValue?.trim()) {
+            detectURL = foundOverrideValue.trim()
+            pipelineConfiguration.getLogger().info("Detect URL set from override variable (${detectURL})")
+        } else {
+            detectURL = DEFAULT_DETECT_BASE_URL
+            pipelineConfiguration.getLogger().info("Detect URL set from default configuration (${detectURL})")
+        }
     }
 }

@@ -41,7 +41,6 @@ class SimplePipeline extends Pipeline {
     public static final String BUILD_NUMBER = 'BUILD_NUMBER'
     public static final String JOB_NAME = 'JOB_NAME'
     public static final String BUILD_URL = 'BUILD_URL'
-    public static final String HUB_DETECT_URL = 'HUB_DETECT_URL'
 
     public static final String SIG_BD_HUB_SERVER_URL = 'SIG_BD_HUB_SERVER_URL'
     public static final String SIG_BD_HUB_API_TOKEN = 'SIG_BD_HUB_API_TOKEN'
@@ -120,7 +119,7 @@ class SimplePipeline extends Pipeline {
     DetectStage addDetectStage(String stageName, String detectCommand) {
         detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.tools.excluded=SIGNATURE_SCAN --detect.force.success=true'
 
-        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), stageName, getJenkinsProperty(HUB_DETECT_URL), detectCommand)
+        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), stageName, detectCommand)
         return addCommonStage(detectStage)
     }
 
@@ -133,7 +132,7 @@ class SimplePipeline extends Pipeline {
     }
 
     DetectStage addDetectPopStage(String stageNameSuffix, String detectCommand) {
-        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), "Detect " + stageNameSuffix, getJenkinsProperty(HUB_DETECT_URL), detectCommand)
+        DetectStage detectStage = new DetectStage(getPipelineConfiguration(), "Detect " + stageNameSuffix, detectCommand)
         detectStage.addDetectParameters(DetectStage.DEFAULT_DETECT_SETTINGS)
         detectStageSigBDHub(detectStage)
         return addCommonStage(detectStage)
