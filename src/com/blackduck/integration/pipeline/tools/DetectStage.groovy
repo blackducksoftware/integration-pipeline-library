@@ -6,7 +6,7 @@ import com.blackduck.integration.pipeline.jenkins.PipelineConfiguration
 import com.blackduck.integration.pipeline.model.Stage
 
 class DetectStage extends Stage {
-    public static final String DEFAULT_DETECT_BASE_URL = 'https://detect.blackduck.com/detect10.sh'
+    public static final String DEFAULT_DETECT_BASE_URL = 'https://detect.blackduck.com/'
     public static final String DETECT_URL_OVERRIDE = 'DETECT_URL_OVERRIDE'
 
     public static final String DEFAULT_DETECT_SETTINGS = '--blackduck.trust.cert=true --detect.docker.passthrough.service.timeout=960000 --blackduck.timeout=600'
@@ -145,10 +145,41 @@ class DetectStage extends Stage {
 
         if (foundOverrideValue?.trim()) {
             detectURL = foundOverrideValue.trim()
-            pipelineConfiguration.getLogger().info("Detect URL set from override variable (${detectURL})")
+            pipelineConfiguration.getLogger().info("Detect URL set from override variable (${DETECT_URL_OVERRIDE})")
         } else {
-            detectURL = DEFAULT_DETECT_BASE_URL
-            pipelineConfiguration.getLogger().info("Detect URL set from default configuration (${detectURL})")
+            URL url2download = new URL(DEFAULT_DETECT_BASE_URL)
+            def detectScript = ''
+            BufferedReader reader = null
+
+            try {
+                reader = new BufferedReader(new InputStreamReader(url2download.openStream()))
+                String line;
+                def maxDetectVersion = 0
+                while ((line = reader.readLine()) != null) {
+                    if (line.contains('.sh')) {
+                        def thisDetectScript = line.substring(line.indexOf('detect'), line.indexOf('.sh') + 3).trim()
+                        def thisDetectVersion = thisDetectScript.replaceAll("[^0-9]", "").trim().toInteger()
+                        if (thisDetectVersion > maxDetectVersion) {
+                            maxDetectVersion = thisDetectVersion
+                            detectScript = thisDetectScript
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                pipelineConfiguration.getLogger().info("Exception caught while trying do parse ${DEFAULT_DETECT_BASE_URL}")
+                throw e
+            } finally {
+                reader.close();
+            }
+
+            if (!detectScript?.trim()) {
+                throw new Exception("Unable to determine latest version of Detect to use when parsing -> ${DEFAULT_DETECT_BASE_URL}")
+            }
+
+            detectURL = DEFAULT_DETECT_BASE_URL + detectScript
+            pipelineConfiguration.getLogger().info("Detect URL parsed from (${DEFAULT_DETECT_BASE_URL})")
         }
+
+        pipelineConfiguration.getLogger().info(detectURL)
     }
 }
