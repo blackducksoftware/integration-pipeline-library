@@ -140,6 +140,16 @@ class DetectStage extends Stage {
         return newDetectCommand + " ${detectProperty}=${foundOverrideValue}"
     }
 
+    /*
+    configureDetectUrl() downloads the contents of the webpage stored in DEFAULT_DETECT_BASE_URL. The contents are then parsed line
+    by line, looking for all lines that contains '.sh'. For any found, each line is parsed to pull out the version of the Detect
+    script. The versions of the Detect script are then compared in order to find the highest versioned script. Once found, it will
+    then combine DEFAULT_DETECT_BASE_URL with the highest versioned script to use as the detectUrl.
+
+    This logic is being implemented in order to dynamically get the latest script, versus depending on an environment variable at
+    run time. It is a known and assumed risk that the webpage located at DEFAULT_DETECT_BASE_URL could change, which would cause
+    this method to fail and throw a stacktrace.
+     */
     private void configureDetectUrl() {
         String foundOverrideValue = pipelineConfiguration.scriptWrapper.getJenkinsProperty(DETECT_URL_OVERRIDE)
 
