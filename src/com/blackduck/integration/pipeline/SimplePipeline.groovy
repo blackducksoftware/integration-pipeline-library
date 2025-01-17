@@ -71,8 +71,6 @@ class SimplePipeline extends Pipeline {
         gitStage.setChangelog(true)
         pipeline.setGithubCredentialsId(gitStage.getCredentialsId())
 
-        pipeline.addApiTokenStage()
-
         return pipeline
     }
 
