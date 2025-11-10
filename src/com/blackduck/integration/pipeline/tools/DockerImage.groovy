@@ -34,6 +34,8 @@ class DockerImage {
         this.dockerImageName = rawDockerImage.substring(slashIndex + 1, dockerImageNameEndingIndex)
 
         this.bdProjectName = dockerImageName + '-Docker'
+
+        pipelineConfiguration.getLogger().info("codeLocationNameAsImage set as :: " + codeLocationNameAsImage.toString())
     }
 
     @NonCPS
@@ -94,6 +96,7 @@ class DockerImage {
 
     String getCodeLocationNameAsImage() {
         if (codeLocationNameAsImage) {
+            pipelineConfiguration.getLogger().info("Using Detect option: detect.code.location.name")
             return ' --detect.code.location.name=' + dockerImageOrg + "_" + dockerImageName + '_' + dockerImageVersion
         } else {
             return ''
