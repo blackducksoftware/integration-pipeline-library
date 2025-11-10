@@ -9,6 +9,7 @@ class DockerImage {
 
     private PipelineConfiguration pipelineConfiguration
     private final String rawDockerImage
+    private final boolean codeLocationNameAsImage
     private final String dockerImageOrg
     private final String dockerImageName
     private final String bdProjectName
@@ -16,9 +17,10 @@ class DockerImage {
     private String fullDockerImageName
     private String dockerImageVersion
 
-    DockerImage(PipelineConfiguration pipelineConfiguration, String rawDockerImage) {
+    DockerImage(PipelineConfiguration pipelineConfiguration, String rawDockerImage, boolean codeLocationNameAsImage) {
         this.pipelineConfiguration = pipelineConfiguration
         this.rawDockerImage = rawDockerImage
+        this.codeLocationNameAsImage = codeLocationNameAsImage
 
         int slashIndex = getSlashIndex()
         this.dockerImageOrg = rawDockerImage.substring(0, slashIndex)
@@ -87,6 +89,15 @@ class DockerImage {
             return projectVersion
         } else {
             return DEFAULT_IMAGE_VERSION
+        }
+    }
+
+    String getCodeLocationNameAsImage(String version) {
+        if (codeLocationNameAsImage) {
+            pipelineConfiguration.getLogger().info("Using Detect option: detect.code.location.name")
+            return ' --detect.code.location.name=' + dockerImageOrg + "_" + dockerImageName + '_' + version
+        } else {
+            return ''
         }
     }
 
