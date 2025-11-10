@@ -92,21 +92,10 @@ class DockerImage {
         }
     }
 
-    String getCodeLocationNameAsImage() {
+    String getCodeLocationNameAsImage(String version) {
         if (codeLocationNameAsImage) {
             pipelineConfiguration.getLogger().info("Using Detect option: detect.code.location.name")
-            String cleanedDockerImageVersion = dockerImageVersion
-            int sigQaLocation = cleanedDockerImageVersion.indexOf('-SIGQA')
-            if (sigQaLocation != -1) {
-                cleanedDockerImageVersion = cleanedDockerImageVersion.substring(0, sigQaLocation)
-            }
-
-            int snapshotLocation = cleanedDockerImageVersion.indexOf('-SNAPSHOT')
-            if (snapshotLocation != -1) {
-                cleanedDockerImageVersion = cleanedDockerImageVersion.substring(0, snapshotLocation)
-            }
-
-            return ' --detect.code.location.name=' + dockerImageOrg + "_" + dockerImageName + '_' + cleanedDockerImageVersion
+            return ' --detect.code.location.name=' + dockerImageOrg + "_" + dockerImageName + '_' + version
         } else {
             return ''
         }
@@ -120,6 +109,6 @@ class DockerImage {
 
         setFullDockerImageName(dockerImageOrg + '/' + dockerImageName + ':' + dockerImageVersion)
 
-        return "--detect.docker.image=${fullDockerImageName} --detect.target.type=IMAGE --detect.project.name=${bdProjectName} --detect.project.version.name=${dockerImageVersion}" + getCodeLocationNameAsImage()
+        return "--detect.docker.image=${fullDockerImageName} --detect.target.type=IMAGE --detect.project.name=${bdProjectName} --detect.project.version.name=${dockerImageVersion}"
     }
 }
