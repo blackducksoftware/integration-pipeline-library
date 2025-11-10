@@ -49,7 +49,7 @@ class DetectStage extends Stage {
 
         // Override parameters already in Detect command if override variable set
         combinedDetectParameters = removeDetectPropertyFromCommand(combinedDetectParameters, DETECT_PROJECT_VERSION_NAME_PROPERTY, DETECT_PROJECT_VERSION_NAME_OVERRIDE, null)
-        pipelineConfiguration.getLogger().info("DANA::AFTER FIRST removeDetectPropertyFromCommand :: " + combinedDetectParameters)
+        pipelineConfiguration.getLogger().info("DANA::AFTER FIRST  removeDetectPropertyFromCommand :: " + combinedDetectParameters)
         combinedDetectParameters = removeDetectPropertyFromCommand(combinedDetectParameters, DETECT_PROJECT_CODELOCATION_UNMAP_PROPERTY, DETECT_PROJECT_CODELOCATION_UNMAP_OVERRIDE, 'false')
         pipelineConfiguration.getLogger().info("DANA::AFTER SECOND removeDetectPropertyFromCommand :: " + combinedDetectParameters)
 

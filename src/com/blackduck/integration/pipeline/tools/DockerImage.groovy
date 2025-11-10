@@ -95,7 +95,18 @@ class DockerImage {
     String getCodeLocationNameAsImage() {
         if (codeLocationNameAsImage) {
             pipelineConfiguration.getLogger().info("Using Detect option: detect.code.location.name")
-            return ' --detect.code.location.name=' + dockerImageOrg + "_" + dockerImageName + '_' + dockerImageVersion
+            String cleanedDockerImageVersion = dockerImageVersion
+            int sigQaLocation = cleanedDockerImageVersion.indexOf('-SIGQA')
+            if (sigQaLocation != -1) {
+                cleanedDockerImageVersion = cleanedDockerImageVersion.substring(0, sigQaLocation)
+            }
+
+            int snapshotLocation = cleanedDockerImageVersion.indexOf('-SNAPSHOT')
+            if (snapshotLocation != -1) {
+                cleanedDockerImageVersion = cleanedDockerImageVersion.substring(0, snapshotLocation)
+            }
+
+            return ' --detect.code.location.name=' + dockerImageOrg + "_" + dockerImageName + '_' + cleanedDockerImageVersion
         } else {
             return ''
         }

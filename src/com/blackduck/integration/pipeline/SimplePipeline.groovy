@@ -175,7 +175,6 @@ class SimplePipeline extends Pipeline {
         DockerImage dockerImage = new DockerImage(pipelineConfiguration, imageName, codeLocationNameAsImage)
         DetectStage detectDockerStage = addDetectPopStage(dockerImage.getBdProjectName(), detectCommand)
         detectDockerStage.setDockerImage(dockerImage)
-        throw new IllegalArgumentException("codeLocationNameAsImage is -->" + codeLocationNameAsImage)
         return detectDockerStage
     }
 
