@@ -146,21 +146,33 @@ class SimplePipeline extends Pipeline {
     }
 
     DetectStage addDetectPopDockerStage(String imageName) {
-        return addDetectPopDockerStage(imageName, "")
+        return addDetectPopDockerStage(imageName, "", false)
+    }
+
+    DetectStage addDetectPopDockerStage(String imageName, boolean codeLocationNameAsImage) {
+        return addDetectPopDockerStage(imageName, "", codeLocationNameAsImage)
     }
 
     ArrayList<DetectStage> addDetectPopDockerStages(ArrayList<String> imageNames) {
         return addDetectPopDockerStages(imageNames, "")
     }
 
+    ArrayList<DetectStage> addDetectPopDockerStages(ArrayList<String> imageNames, boolean codeLocationNameAsImage) {
+        return addDetectPopDockerStages(imageNames, "", codeLocationNameAsImage)
+    }
+
     ArrayList<DetectStage> addDetectPopDockerStages(ArrayList<String> imageNames, String detectCommand) {
+        return addDetectPopDockerStages(imageNames, detectCommand, false)
+    }
+
+    ArrayList<DetectStage> addDetectPopDockerStages(ArrayList<String> imageNames, String detectCommand, boolean codeLocationNameAsImage) {
         ArrayList<DetectStage> detectStages = []
-        imageNames.each { imageName -> detectStages << addDetectPopDockerStage(imageName, detectCommand) }
+        imageNames.each { imageName -> detectStages << addDetectPopDockerStage(imageName, detectCommand, codeLocationNameAsImage) }
         return detectStages
     }
 
-    DetectStage addDetectPopDockerStage(String imageName, String detectCommand) {
-        DockerImage dockerImage = new DockerImage(pipelineConfiguration, imageName)
+    DetectStage addDetectPopDockerStage(String imageName, String detectCommand, boolean codeLocationNameAsImage) {
+        DockerImage dockerImage = new DockerImage(pipelineConfiguration, imageName, codeLocationNameAsImage)
         DetectStage detectDockerStage = addDetectPopStage(dockerImage.getBdProjectName(), detectCommand)
         detectDockerStage.setDockerImage(dockerImage)
         return detectDockerStage

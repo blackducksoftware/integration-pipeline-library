@@ -27,6 +27,7 @@ class DetectStage extends Stage {
 
     @Override
     void stageExecution() throws PipelineException, Exception {
+        pipelineConfiguration.getLogger().info("DANA::params at start:: ${getDetectCommand()}")
         // This is done because setting of the version is done during the pipeline execution.
         // But, because of the duplicate param bug, the default parameters is set prior to execution
         if (!Objects.isNull(dockerImage)) {
@@ -41,12 +42,16 @@ class DetectStage extends Stage {
 
             getPipelineConfiguration().getScriptWrapper().executeCommandWithException("docker pull ${fullImageName}")
         }
+        pipelineConfiguration.getLogger().info("DANA::AFTER IF :: ${getDetectCommand()}")
 
         String combinedDetectParameters = "${blackduckConnection} ${getDetectCommand()} ${getDefaultExclusionParameters()}"
+        pipelineConfiguration.getLogger().info("DANA::AFTER COMBINE :: " + combinedDetectParameters)
 
         // Override parameters already in Detect command if override variable set
         combinedDetectParameters = removeDetectPropertyFromCommand(combinedDetectParameters, DETECT_PROJECT_VERSION_NAME_PROPERTY, DETECT_PROJECT_VERSION_NAME_OVERRIDE, null)
+        pipelineConfiguration.getLogger().info("DANA::AFTER FIRST removeDetectPropertyFromCommand :: " + combinedDetectParameters)
         combinedDetectParameters = removeDetectPropertyFromCommand(combinedDetectParameters, DETECT_PROJECT_CODELOCATION_UNMAP_PROPERTY, DETECT_PROJECT_CODELOCATION_UNMAP_OVERRIDE, 'false')
+        pipelineConfiguration.getLogger().info("DANA::AFTER SECOND removeDetectPropertyFromCommand :: " + combinedDetectParameters)
 
         def commandLines = []
         commandLines.add("#!/bin/bash")
