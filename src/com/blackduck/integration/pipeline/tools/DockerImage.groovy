@@ -34,8 +34,6 @@ class DockerImage {
         this.dockerImageName = rawDockerImage.substring(slashIndex + 1, dockerImageNameEndingIndex)
 
         this.bdProjectName = dockerImageName + '-Docker'
-
-        pipelineConfiguration.getLogger().info("codeLocationNameAsImage set as :: " + codeLocationNameAsImage.toString())
     }
 
     @NonCPS
