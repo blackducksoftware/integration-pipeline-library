@@ -40,6 +40,8 @@ class DetectStage extends Stage {
             }
 
             getPipelineConfiguration().getScriptWrapper().executeCommandWithException("docker pull ${fullImageName}")
+
+            addDetectParameters(dockerImage.getCodeLocationNameAsImage(pipelineConfiguration.scriptWrapper.getJenkinsProperty(DETECT_PROJECT_VERSION_NAME_OVERRIDE)))
         }
 
         String combinedDetectParameters = "${blackduckConnection} ${getDetectCommand()} ${getDefaultExclusionParameters()}"
