@@ -16,6 +16,7 @@ import com.blackduck.integration.pipeline.scm.GitStage
 import com.blackduck.integration.pipeline.setup.ApiTokenStage
 import com.blackduck.integration.pipeline.setup.CleanupStep
 import com.blackduck.integration.pipeline.setup.SetJdkStage
+import com.blackduck.integration.pipeline.setup.SetNodeStage
 import com.blackduck.integration.pipeline.tools.DetectStage
 import com.blackduck.integration.pipeline.tools.DockerImage
 import com.blackduck.integration.pipeline.tools.PublishToGCR
@@ -43,19 +44,34 @@ class SimplePipeline extends Pipeline {
     public static final String BUILD_URL = 'BUILD_URL'
     public static final String HUB_DETECT_URL = 'HUB_DETECT_URL'
 
-    public static final String SIG_BD_HUB_SERVER_URL = 'SIG_BD_HUB_SERVER_URL'
-    public static final String SIG_BD_HUB_API_TOKEN = 'SIG_BD_HUB_API_TOKEN'
-    public static final String HUB_BDS_POP_SERVER_URL = 'HUB_BDS_POP_SERVER_URL'
-    public static final String ENG_HUB_PRD_TOKEN = 'ENG_HUB_PRD_TOKEN'
+    public static final String SIG_BD_HUB_SERVER_URL = 'SIG_BD_HUB_SERVER_URL'    // Production BD SCA instance
+    public static final String SIG_BD_HUB_API_TOKEN = 'SIG_BD_HUB_API_TOKEN'      // Production BD SCA instance
+    public static final String HUB_BDS_POP_SERVER_URL = 'HUB_BDS_POP_SERVER_URL'  // Internal only BD SCA instance
+    public static final String ENG_HUB_PRD_TOKEN = 'ENG_HUB_PRD_TOKEN'            // Internal only BD SCA instance
 
     static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling) {
+        // Sets default of false for isPopBuild
         return COMMON_PIPELINE(script, branch, relativeDirectory, url, jdkToolName, gitPolling, false)
     }
 
+    static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, String nodeDirPath, boolean gitPolling) {
+        // Sets default of false for isPopBuild, includes nodeDirPath
+        return COMMON_PIPELINE(script, branch, relativeDirectory, url, jdkToolName, nodeDirPath, gitPolling, false)
+    }
+
     static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling, boolean isPopBuild) {
+        // Sets default of empty string for nodeDirPath
+        return COMMON_PIPELINE(script, branch, relativeDirectory, url, jdkToolName, '', gitPolling, isPopBuild)
+    }
+
+    static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, String nodeDirPath, boolean gitPolling, boolean isPopBuild) {
         SimplePipeline pipeline = new SimplePipeline(script, relativeDirectory)
         pipeline.addCleanupStep(relativeDirectory)
         pipeline.addSetJdkStage(jdkToolName)
+
+        if (nodeDirPath?.trim()) {
+            pipeline.addSetNodeStage(nodeDirPath)
+        }
 
         String gitBranch = branch
 
@@ -372,6 +388,16 @@ class SimplePipeline extends Pipeline {
         SetJdkStage setJdkStage = new SetJdkStage(getPipelineConfiguration(), stageName)
         setJdkStage.setJdkToolName(jdkToolName)
         return addCommonStage(setJdkStage)
+    }
+
+    SetNodeStage addSetNodeStage(String nodeDirPath) {
+        return addSetNodeStage('Set NODE in PATH', nodeDirPath)
+    }
+
+    SetNodeStage addSetNodeStage(String stageName, String nodeDirPath) {
+        SetNodeStage setNodeStage = new SetNodeStage(getPipelineConfiguration(), stageName)
+        setNodeStage.setNodeDirPath(nodeDirPath)
+        return addCommonStage(setNodeStage)
     }
 
     ApiTokenStage addApiTokenStage() {
