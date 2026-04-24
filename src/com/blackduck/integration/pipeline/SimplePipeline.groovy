@@ -16,7 +16,7 @@ import com.blackduck.integration.pipeline.scm.GitStage
 import com.blackduck.integration.pipeline.setup.ApiTokenStage
 import com.blackduck.integration.pipeline.setup.CleanupStep
 import com.blackduck.integration.pipeline.setup.SetJdkStage
-import com.blackduck.integration.pipeline.setup.SetNodeStage
+import com.blackduck.integration.pipeline.setup.SetNodeToolStage
 import com.blackduck.integration.pipeline.tools.DetectStage
 import com.blackduck.integration.pipeline.tools.DockerImage
 import com.blackduck.integration.pipeline.tools.PublishToGCR
@@ -50,28 +50,25 @@ class SimplePipeline extends Pipeline {
     public static final String ENG_HUB_PRD_TOKEN = 'ENG_HUB_PRD_TOKEN'            // Internal only BD SCA instance
 
     static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling) {
-        // Sets default of false for isPopBuild
+        // Previously existing constructor which set default of false for isPopBuild
         return COMMON_PIPELINE(script, branch, relativeDirectory, url, jdkToolName, gitPolling, false)
     }
 
-    static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, String nodeDirPath, boolean gitPolling) {
-        // Sets default of false for isPopBuild, includes nodeDirPath
-        return COMMON_PIPELINE(script, branch, relativeDirectory, url, jdkToolName, nodeDirPath, gitPolling, false)
+    static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, String nodeToolName, boolean gitPolling) {
+        // Sets default of false for isPopBuild, includes nodeToolName
+        return COMMON_PIPELINE(script, branch, relativeDirectory, url, jdkToolName, nodeToolName, gitPolling, false)
     }
 
     static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling, boolean isPopBuild) {
-        // Sets default of empty string for nodeDirPath
-        return COMMON_PIPELINE(script, branch, relativeDirectory, url, jdkToolName, '', gitPolling, isPopBuild)
+        // Previously existing constructor, now also includes default for nodeToolName
+        return COMMON_PIPELINE(script, branch, relativeDirectory, url, jdkToolName, SetNodeToolStage.DEFAULT_NODE_TOOL_NAME, gitPolling, isPopBuild)
     }
 
-    static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, String nodeDirPath, boolean gitPolling, boolean isPopBuild) {
+    static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, String nodeToolName, boolean gitPolling, boolean isPopBuild) {
         SimplePipeline pipeline = new SimplePipeline(script, relativeDirectory)
         pipeline.addCleanupStep(relativeDirectory)
+        pipeline.addSetNodeToolStage(nodeToolName)
         pipeline.addSetJdkStage(jdkToolName)
-
-        if (nodeDirPath?.trim()) {
-            pipeline.addSetNodeStage(nodeDirPath)
-        }
 
         String gitBranch = branch
 
@@ -390,14 +387,14 @@ class SimplePipeline extends Pipeline {
         return addCommonStage(setJdkStage)
     }
 
-    SetNodeStage addSetNodeStage(String nodeDirPath) {
-        return addSetNodeStage('Set NODE in PATH', nodeDirPath)
+    SetNodeToolStage addSetNodeToolStage(String nodeToolName) {
+        return addSetNodeToolStage('Set NODE', nodeToolName)
     }
 
-    SetNodeStage addSetNodeStage(String stageName, String nodeDirPath) {
-        SetNodeStage setNodeStage = new SetNodeStage(getPipelineConfiguration(), stageName)
-        setNodeStage.setNodeDirPath(nodeDirPath)
-        return addCommonStage(setNodeStage)
+    SetNodeToolStage addSetNodeToolStage(String stageName, String nodeToolName) {
+        SetNodeToolStage setNodeToolStage = new SetNodeToolStage(getPipelineConfiguration(), stageName)
+        setNodeToolStage.setNodeToolName(nodeToolName)
+        return addCommonStage(setNodeToolStage)
     }
 
     ApiTokenStage addApiTokenStage() {
