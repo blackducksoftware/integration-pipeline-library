@@ -27,7 +27,7 @@ class SetNodeToolStage extends Stage {
         getPipelineConfiguration().getScriptWrapper().executeCommandWithException("realpath ${nodeToolHome}")
         getPipelineConfiguration().getScriptWrapper().executeCommandWithException("${nodeToolHome}/bin/node --version 2>&1")
 
-        pipelineConfiguration.addToBuildDataMap("NODE_HOME", nodeToolHome)
+        pipelineConfiguration.addToBuildDataMap("NODE_TOOL_HOME", nodeToolHome)
     }
 
     String getNodeToolName() {
@@ -35,10 +35,12 @@ class SetNodeToolStage extends Stage {
     }
 
     void setNodeToolName(final String nodeToolName) {
-        if (!nodeToolName?.trim()) {
+        String normalized = nodeToolName?.trim()
+
+        if (!normalized) {
             getPipelineConfiguration().getLogger().info("Node tool name '${nodeToolName}' is invalid. Using existing: ${getNodeToolName()}")
         } else {
-            this.nodeToolName = nodeToolName
+            this.nodeToolName = normalized
         }
     }
 

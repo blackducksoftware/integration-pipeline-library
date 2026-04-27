@@ -388,7 +388,7 @@ class SimplePipeline extends Pipeline {
     }
 
     SetNodeToolStage addSetNodeToolStage(String nodeToolName) {
-        return addSetNodeToolStage('Set NODE', nodeToolName)
+        return addSetNodeToolStage('Set Node', nodeToolName)
     }
 
     SetNodeToolStage addSetNodeToolStage(String stageName, String nodeToolName) {
