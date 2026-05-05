@@ -49,6 +49,8 @@ class SimplePipeline extends Pipeline {
     public static final String HUB_BDS_POP_SERVER_URL = 'HUB_BDS_POP_SERVER_URL'  // Internal only BD SCA instance
     public static final String ENG_HUB_PRD_TOKEN = 'ENG_HUB_PRD_TOKEN'            // Internal only BD SCA instance
 
+    public static final String SKIP_NODE = 'SKIP_NODE'
+
     static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, boolean gitPolling) {
         // Previously existing constructor which set default of false for isPopBuild
         return COMMON_PIPELINE(script, branch, relativeDirectory, url, jdkToolName, gitPolling, false)
@@ -67,7 +69,11 @@ class SimplePipeline extends Pipeline {
     static SimplePipeline COMMON_PIPELINE(CpsScript script, String branch, String relativeDirectory, String url, String jdkToolName, String nodeToolName, boolean gitPolling, boolean isPopBuild) {
         SimplePipeline pipeline = new SimplePipeline(script, relativeDirectory)
         pipeline.addCleanupStep(relativeDirectory)
-        pipeline.addSetNodeToolStage(nodeToolName)
+
+        if (nodeToolName?.trim() != SKIP_NODE) {
+            pipeline.addSetNodeToolStage(nodeToolName)
+        }
+
         pipeline.addSetJdkStage(jdkToolName)
 
         String gitBranch = branch
