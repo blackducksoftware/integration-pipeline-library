@@ -103,7 +103,7 @@ class DetectStage extends Stage {
 
     private void addDockerImageOptions() {
         if (dockerImage) {
-            String dockerImageOptions = dockerImage.getDockerDetectParams()
+            String dockerImageOptions = dockerImage.getDockerDetectParams(detectCommand)
             addDetectParameters(dockerImageOptions)
         }
     }

@@ -101,7 +101,7 @@ class DockerImage {
         }
     }
 
-    String getDockerDetectParams() {
+    String getDockerDetectParams(String detectCommand) {
         if (!dockerImageVersion?.trim()) {
             setDockerImageVersion(getDockerVersionFromEnvironment())
             pipelineConfiguration.getLogger().info("Using environment variable '${SimplePipeline.PROJECT_VERSION}' for docker image")
@@ -109,6 +109,14 @@ class DockerImage {
 
         setFullDockerImageName(dockerImageOrg + '/' + dockerImageName + ':' + dockerImageVersion)
 
-        return "--detect.docker.image=${fullDockerImageName} --detect.target.type=IMAGE --detect.project.name=${bdProjectName} --detect.project.version.name=${dockerImageVersion}"
+        String dockerDetectParams = "--detect.docker.image=${fullDockerImageName} --detect.project.name=${bdProjectName} --detect.project.version.name=${dockerImageVersion}"
+
+        if (detectCommand.contains('--detect.target.type=IMAGE') && detectCommand.contains('--detect.tools=CONTAINER_SCAN') ) {
+            throw new RuntimeException("Detect run command contains conflicting args: --detect.target.type && --detect.tools")
+        } else if (!detectCommand.contains('--detect.target.type=IMAGE') && !detectCommand.contains('--detect.tools=CONTAINER_SCAN') ) {
+            dockerDetectParams += ' --detect.tools=CONTAINER_SCAN'
+        }
+
+        return dockerDetectParams
     }
 }
