@@ -49,7 +49,7 @@ class DetectStage extends Stage {
                 String imageNameAsString = dockerImage.getImageNameAsString(projectVersionName)
 
                 String tarFileName = imageNameAsString + ".tar"
-                getPipelineConfiguration().getScriptWrapper().executeCommandWithException("docker save -o ${tarFileName}")
+                getPipelineConfiguration().getScriptWrapper().executeCommandWithException("docker save ${fullImageName} -o ${tarFileName}")
 
                 addDetectParameters(' --detect.container.scan.file.path=' + tarFileName)
             }
