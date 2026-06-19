@@ -92,10 +92,14 @@ class DockerImage {
         }
     }
 
+    String getImageNameAsString(String version) {
+        return dockerImageOrg + "_" + dockerImageName + '_' + version
+    }
+
     String getCodeLocationNameAsImage(String version) {
         if (codeLocationNameAsImage) {
             pipelineConfiguration.getLogger().info("Using Detect option: detect.code.location.name")
-            return ' --detect.code.location.name=' + dockerImageOrg + "_" + dockerImageName + '_' + version
+            return ' --detect.code.location.name=' + getImageNameAsString(version)
         } else {
             return ''
         }
@@ -112,9 +116,13 @@ class DockerImage {
         String dockerDetectParams = "--detect.docker.image=${fullDockerImageName} --detect.project.name=${bdProjectName} --detect.project.version.name=${dockerImageVersion}"
 
         if (detectCommand.contains('--detect.target.type=IMAGE') && detectCommand.contains('--detect.tools=CONTAINER_SCAN') ) {
-            throw new RuntimeException("Detect run command contains conflicting args: --detect.target.type && --detect.tools")
+            throw new RuntimeException("Detect run command contains conflicting args: '--detect.target.type' and '--detect.tools'")
         } else if (!detectCommand.contains('--detect.target.type=IMAGE') && !detectCommand.contains('--detect.tools=CONTAINER_SCAN') ) {
+            pipelineConfiguration.getLogger().info("Running image scan but type of image scan not specified.")
+            pipelineConfiguration.getLogger().info("Appending '--detect.tools=CONTAINER_SCAN' to Detect command.")
             dockerDetectParams += ' --detect.tools=CONTAINER_SCAN'
+        } else {
+            pipelineConfiguration.getLogger().info("Running image scan with included type of scan, either IMAGE or CONTAINER_SCAN.")
         }
 
         return dockerDetectParams
