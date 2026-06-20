@@ -116,7 +116,7 @@ class DockerImage {
         String dockerDetectParams = "--detect.docker.image=${fullDockerImageName} --detect.project.name=${bdProjectName} --detect.project.version.name=${dockerImageVersion}"
 
         if (detectCommand.contains('--detect.target.type=IMAGE') && detectCommand.contains('--detect.tools=CONTAINER_SCAN') ) {
-            throw new RuntimeException("Detect run command contains conflicting args: '--detect.target.type' and '--detect.tools'")
+            throw new RuntimeException("Detect run command contains conflicting args: '--detect.target.type=IMAGE' and '--detect.tools=CONTAINER_SCAN'")
         } else if (!detectCommand.contains('--detect.target.type=IMAGE') && !detectCommand.contains('--detect.tools=CONTAINER_SCAN') ) {
             pipelineConfiguration.getLogger().info("Running image scan but type of image scan not specified.")
             pipelineConfiguration.getLogger().info("Appending '--detect.tools=CONTAINER_SCAN' to Detect command.")
