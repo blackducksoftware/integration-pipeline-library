@@ -41,7 +41,18 @@ class DetectStage extends Stage {
 
             getPipelineConfiguration().getScriptWrapper().executeCommandWithException("docker pull ${fullImageName}")
 
-            addDetectParameters(dockerImage.getCodeLocationNameAsImage(pipelineConfiguration.scriptWrapper.getJenkinsProperty(DETECT_PROJECT_VERSION_NAME_OVERRIDE)))
+            String projectVersionName = pipelineConfiguration.scriptWrapper.getJenkinsProperty(DETECT_PROJECT_VERSION_NAME_OVERRIDE)
+
+            addDetectParameters(dockerImage.getCodeLocationNameAsImage(projectVersionName))
+
+            if (detectCommand.contains("--detect.tools=CONTAINER_SCAN")) {
+                String imageNameAsString = dockerImage.getImageNameAsString(projectVersionName)
+
+                String tarFileName = imageNameAsString + ".tar"
+                getPipelineConfiguration().getScriptWrapper().executeCommandWithException("docker save ${fullImageName} -o ${tarFileName}")
+
+                addDetectParameters(' --detect.container.scan.file.path=' + tarFileName)
+            }
         }
 
         String combinedDetectParameters = "${blackduckConnection} ${getDetectCommand()} ${getDefaultExclusionParameters()}"
@@ -103,7 +114,7 @@ class DetectStage extends Stage {
 
     private void addDockerImageOptions() {
         if (dockerImage) {
-            String dockerImageOptions = dockerImage.getDockerDetectParams()
+            String dockerImageOptions = dockerImage.getDockerDetectParams(detectCommand)
             addDetectParameters(dockerImageOptions)
         }
     }
