@@ -10,8 +10,6 @@ class DetectStage extends Stage {
     public static final String DEFAULT_DETECT_EXCLUSION_PROPERTIES = "--detect.gradle.excluded.configurations=test* --detect.gradle.configuration.types.excluded=UNRESOLVED --detect.blackduck.signature.scanner.arguments=\\\"--exclude /gradle/ --exclude /src/test/resources/\\\""
     public static final String DETECT_PROJECT_VERSION_NAME_PROPERTY = '--detect.project.version.name'
     public static final String DETECT_PROJECT_VERSION_NAME_OVERRIDE = 'DETECT_PROJECT_VERSION_NAME_OVERRIDE'
-    public static final String DETECT_PROJECT_CODELOCATION_UNMAP_PROPERTY = '--detect.project.codelocation.unmap'
-    public static final String DETECT_PROJECT_CODELOCATION_UNMAP_OVERRIDE = 'DETECT_PROJECT_CODELOCATION_UNMAP_OVERRIDE'
 
     private String detectCommand
     private String blackduckConnection
@@ -59,7 +57,6 @@ class DetectStage extends Stage {
 
         // Override parameters already in Detect command if override variable set
         combinedDetectParameters = removeDetectPropertyFromCommand(combinedDetectParameters, DETECT_PROJECT_VERSION_NAME_PROPERTY, DETECT_PROJECT_VERSION_NAME_OVERRIDE, null)
-        combinedDetectParameters = removeDetectPropertyFromCommand(combinedDetectParameters, DETECT_PROJECT_CODELOCATION_UNMAP_PROPERTY, DETECT_PROJECT_CODELOCATION_UNMAP_OVERRIDE, 'false')
 
         def commandLines = []
         commandLines.add("#!/bin/bash")

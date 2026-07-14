@@ -135,7 +135,7 @@ class SimplePipeline extends Pipeline {
     }
 
     DetectStage addDetectStage(String stageName, String detectCommand) {
-        detectCommand = detectCommand + ' --detect.project.codelocation.unmap=true --detect.tools.excluded=SIGNATURE_SCAN --detect.force.success=true'
+        detectCommand = detectCommand + ' --detect.tools.excluded=SIGNATURE_SCAN --detect.force.success=true'
 
         DetectStage detectStage = new DetectStage(getPipelineConfiguration(), stageName, getJenkinsProperty(HUB_DETECT_URL), detectCommand)
         return addCommonStage(detectStage)
